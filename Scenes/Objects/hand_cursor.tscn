@@ -1,0 +1,14 @@
+[gd_scene load_steps=4 format=3 uid="uid://c8us4vlf05i1o"]
+
+[ext_resource type="Texture2D" uid="uid://csqb0x1w8jwa0" path="res://Graphics/MenuStuff/HandCursor.png" id="1_1xld1"]
+[ext_resource type="Script" path="res://Scripts/HandCursor.cs" id="2_un1wq"]
+[ext_resource type="AudioStream" uid="uid://dlauv1tffsy00" path="res://Audio/MenuSounds/finger.ogg" id="3_dep4g"]
+
+[node name="HandCursor" type="TextureRect"]
+texture_filter = 1
+custom_minimum_size = Vector2(64, 64)
+texture = ExtResource("1_1xld1")
+script = ExtResource("2_un1wq")
+
+[node name="FingerSound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("3_dep4g")

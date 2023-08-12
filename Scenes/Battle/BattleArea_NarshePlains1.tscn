@@ -1,0 +1,18 @@
+[gd_scene load_steps=5 format=3 uid="uid://b7pfgdteftxtm"]
+
+[ext_resource type="Script" path="res://Scripts/Battle/BattleController.cs" id="1_dux0u"]
+[ext_resource type="Texture2D" uid="uid://t6i845nv0b4d" path="res://Graphics/BattleBackgrounds/NarshePlains1_6x.png" id="2_48alh"]
+[ext_resource type="PackedScene" uid="uid://dmw72wr1i311x" path="res://Scenes/Battle/BattleTemplate.tscn" id="3_wkogc"]
+[ext_resource type="PackedScene" uid="uid://duurx868s7wwb" path="res://Scenes/Battle/BattleCanvas.tscn" id="4_bqbrl"]
+
+[node name="BattleArea_NarshePlains1" type="Node2D"]
+script = ExtResource("1_dux0u")
+
+[node name="NarshePlains16x" type="Sprite2D" parent="."]
+position = Vector2(966.1, 492.03)
+scale = Vector2(1.34153, 1.34687)
+texture = ExtResource("2_48alh")
+
+[node name="BattleTemplate" parent="." instance=ExtResource("3_wkogc")]
+
+[node name="BattleCanvas" parent="." instance=ExtResource("4_bqbrl")]

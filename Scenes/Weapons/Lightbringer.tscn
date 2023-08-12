@@ -1,0 +1,163 @@
+[gd_scene load_steps=8 format=3 uid="uid://cjf1gcero3j5i"]
+
+[ext_resource type="Texture2D" uid="uid://c1o8fpp5eiecq" path="res://Graphics/Weapons/Lightbringer.png" id="1_8bo3w"]
+[ext_resource type="Texture2D" uid="uid://byriugvweal12" path="res://Graphics/Weapons/Lightbringer_Sash.png" id="1_73cdh"]
+[ext_resource type="Script" path="res://Scripts/Battle/WeaponController.cs" id="1_lk8r8"]
+[ext_resource type="AudioStream" uid="uid://b30472uogsryu" path="res://Audio/WeaponSounds/A4SwordSlash.wav" id="3_r8x2e"]
+
+[sub_resource type="Animation" id="Animation_w1fsf"]
+resource_name = "Attack"
+length = 0.6
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("SwordAnchor:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(0, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("SwordAnchor:rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0.785398, -0.785398]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("SwordAnchor/Lightbringer/SashAnchor:position")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(4.94975, 57.8787), Vector2(-15.5563, 48.6863)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("SwordAnchor/Lightbringer/SashAnchor:rotation")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [-0.785398, 0.785398]
+}
+tracks/4/type = "method"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath(".")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0.2, 0.6),
+"transitions": PackedFloat32Array(1, 1),
+"values": [{
+"args": [],
+"method": &"TriggerDamageText"
+}, {
+"args": [],
+"method": &"queue_free"
+}]
+}
+
+[sub_resource type="Animation" id="Animation_eeg5k"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("SwordAnchor:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("SwordAnchor:rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.785398]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("SwordAnchor/Lightbringer/SashAnchor:position")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(4.94975, 57.8787)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("SwordAnchor/Lightbringer/SashAnchor:rotation")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [-0.785398]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_ginmo"]
+_data = {
+"Attack": SubResource("Animation_w1fsf"),
+"RESET": SubResource("Animation_eeg5k")
+}
+
+[node name="Lightbringer" type="Node2D"]
+script = ExtResource("1_lk8r8")
+
+[node name="SwordAnchor" type="Node2D" parent="."]
+rotation = 0.785398
+
+[node name="Lightbringer" type="Sprite2D" parent="SwordAnchor"]
+z_index = 2
+position = Vector2(0, -60)
+texture = ExtResource("1_8bo3w")
+
+[node name="SashAnchor" type="Node2D" parent="SwordAnchor/Lightbringer"]
+position = Vector2(4.94975, 57.8787)
+rotation = -0.785398
+
+[node name="LightbringerSash" type="Sprite2D" parent="SwordAnchor/Lightbringer/SashAnchor"]
+z_index = 2
+position = Vector2(7, 24)
+texture = ExtResource("1_73cdh")
+flip_h = true
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("3_r8x2e")
+autoplay = true
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+autoplay = "Attack"
+libraries = {
+"": SubResource("AnimationLibrary_ginmo")
+}

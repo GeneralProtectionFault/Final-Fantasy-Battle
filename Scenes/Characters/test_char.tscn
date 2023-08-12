@@ -1,0 +1,45 @@
+[gd_scene load_steps=5 format=3 uid="uid://dqskn4p4i7fh7"]
+
+[ext_resource type="Texture2D" uid="uid://bhw7c1j4lkckv" path="res://Graphics/Sprites/Locke_4x_nearest.png" id="1_mdtg1"]
+
+[sub_resource type="SegmentShape2D" id="SegmentShape2D_vs15c"]
+a = Vector2(9, 27)
+b = Vector2(-5, 27)
+
+[sub_resource type="Animation" id="Animation_w2xac"]
+resource_name = "Attack"
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_lre0y"]
+_data = {
+"Attack": SubResource("Animation_w2xac")
+}
+
+[node name="test_char" type="CharacterBody2D"]
+
+[node name="EncounterBody2D" type="CharacterBody2D" parent="."]
+position = Vector2(-1, -45)
+collision_layer = 2
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="EncounterBody2D"]
+z_index = 2
+position = Vector2(0, 16)
+shape = SubResource("SegmentShape2D_vs15c")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+z_index = 1
+position = Vector2(-1, -45)
+texture = ExtResource("1_mdtg1")
+hframes = 7
+vframes = 15
+frame = 14
+
+[node name="WeaponOrigin" type="Node2D" parent="Sprite2D"]
+position = Vector2(-23, -40)
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_lre0y")
+}
+
+[node name="AnimationTree" type="AnimationTree" parent="."]

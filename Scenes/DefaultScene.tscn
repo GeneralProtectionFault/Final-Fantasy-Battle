@@ -1,0 +1,31 @@
+[gd_scene load_steps=6 format=3 uid="uid://g5hfwdvild1u"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_hhvuj"]
+
+[sub_resource type="Sky" id="Sky_0mbn5"]
+sky_material = SubResource("ProceduralSkyMaterial_hhvuj")
+
+[sub_resource type="Environment" id="Environment_q2xh5"]
+background_mode = 2
+sky = SubResource("Sky_0mbn5")
+ambient_light_color = Color(0, 0.392157, 0.411765, 1)
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_xxfvu"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ku3fb"]
+
+[node name="RootCanvas" type="CanvasLayer"]
+
+[node name="RootNode3D" type="Node3D" parent="."]
+
+[node name="Camera3D" type="Camera3D" parent="RootNode3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 4.64971)
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="RootNode3D"]
+environment = SubResource("Environment_q2xh5")
+
+[node name="Player" type="Node3D" parent="RootNode3D"]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="RootNode3D/Player"]
+mesh = SubResource("CapsuleMesh_xxfvu")
+surface_material_override/0 = SubResource("StandardMaterial3D_ku3fb")

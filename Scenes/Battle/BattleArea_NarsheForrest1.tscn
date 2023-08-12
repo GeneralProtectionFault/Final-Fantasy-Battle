@@ -1,0 +1,18 @@
+[gd_scene load_steps=5 format=3 uid="uid://ia2ofn74g6lu"]
+
+[ext_resource type="Script" path="res://Scripts/Battle/BattleController.cs" id="1_aged1"]
+[ext_resource type="Texture2D" uid="uid://dl74xwitfevof" path="res://Graphics/BattleBackgrounds/Forrest_4x.png" id="1_kspe3"]
+[ext_resource type="PackedScene" uid="uid://dmw72wr1i311x" path="res://Scenes/Battle/BattleTemplate.tscn" id="3_ougwv"]
+[ext_resource type="PackedScene" uid="uid://duurx868s7wwb" path="res://Scenes/Battle/BattleCanvas.tscn" id="4_t8of7"]
+
+[node name="BattleArea_NarsheForrest1" type="Node2D"]
+script = ExtResource("1_aged1")
+
+[node name="Forrest4x" type="Sprite2D" parent="."]
+position = Vector2(956, 521)
+scale = Vector2(2, 2)
+texture = ExtResource("1_kspe3")
+
+[node name="BattleTemplate" parent="." instance=ExtResource("3_ougwv")]
+
+[node name="BattleCanvas" parent="." instance=ExtResource("4_t8of7")]

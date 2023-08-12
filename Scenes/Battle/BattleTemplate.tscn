@@ -1,0 +1,48 @@
+[gd_scene load_steps=5 format=3 uid="uid://dmw72wr1i311x"]
+
+[ext_resource type="AudioStream" uid="uid://dtj5osbft0hyx" path="res://Audio/FF6_Normal_Battle.ogg" id="1_dr6ne"]
+[ext_resource type="AudioStream" uid="uid://ceplwl4jpmfdt" path="res://Audio/MenuSounds/FF6_MenuSwitch.ogg" id="2_aijfp"]
+[ext_resource type="PackedScene" uid="uid://cm17wfngxbks7" path="res://Scenes/Battle/ActiveBattleCursor.tscn" id="2_r3078"]
+[ext_resource type="Script" path="res://Scripts/AudioStreamPlayerIntro.cs" id="2_ws0ew"]
+
+[node name="BattleTemplate" type="Node2D"]
+
+[node name="BattleTheme" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("1_dr6ne")
+autoplay = true
+script = ExtResource("2_ws0ew")
+IntroSeconds = 3.5
+HasIntro = true
+
+[node name="MenuSwitch" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("2_aijfp")
+
+[node name="FrontRow_Player1" type="Node2D" parent="."]
+position = Vector2(1611, 447)
+
+[node name="FrontRow_Player2" type="Node2D" parent="."]
+position = Vector2(1644, 547)
+
+[node name="FrontRow_Player3" type="Node2D" parent="."]
+position = Vector2(1664, 654)
+
+[node name="FrontRow_Player4" type="Node2D" parent="."]
+position = Vector2(1697, 770)
+
+[node name="BackRow_Player1" type="Node2D" parent="."]
+position = Vector2(1721, 447)
+
+[node name="BackRow_Player2" type="Node2D" parent="."]
+position = Vector2(1752, 547)
+
+[node name="BackRow_Player3" type="Node2D" parent="."]
+position = Vector2(1780, 654)
+
+[node name="BackRow_Player4" type="Node2D" parent="."]
+position = Vector2(1810, 770)
+
+[node name="Enemy1" type="Node2D" parent="."]
+position = Vector2(728, 634)
+
+[node name="ActiveBattleCursor" parent="." instance=ExtResource("2_r3078")]
+visible = false

@@ -1,0 +1,7 @@
+# Godot 4+ specific ignores
+.godot/
+
+# Exclude "proprietary" assets
+Audio/
+Graphics/
+Shaders/

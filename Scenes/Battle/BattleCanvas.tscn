@@ -1,0 +1,406 @@
+[gd_scene load_steps=20 format=3 uid="uid://duurx868s7wwb"]
+
+[ext_resource type="Texture2D" uid="uid://boyu1583uosno" path="res://Graphics/BattleBackgrounds/BlueBattlePanel_Large.png" id="1_b8ug6"]
+[ext_resource type="Texture2D" uid="uid://dl3e4c8n2d8t8" path="res://Graphics/BattleBackgrounds/BlueBattlePanel_PopUp.png" id="3_ose23"]
+[ext_resource type="PackedScene" uid="uid://c8us4vlf05i1o" path="res://Scenes/Objects/hand_cursor.tscn" id="3_qjlbk"]
+[ext_resource type="Texture2D" uid="uid://dslgdmopamhtc" path="res://Graphics/MenuStuff/TimerBarEmpty.png" id="3_tlbg2"]
+[ext_resource type="Texture2D" uid="uid://lkmqiply0br" path="res://Graphics/MenuStuff/TimerBarFull.png" id="4_mrho2"]
+[ext_resource type="FontFile" uid="uid://c6xlpvnmwmyja" path="res://Fonts/final_fantasy_36_font.ttf" id="4_vwoqx"]
+[ext_resource type="Texture2D" uid="uid://b7st235pj7mq" path="res://Graphics/BattleBackgrounds/BlueBattlePanel_Small.png" id="5_wxrqa"]
+[ext_resource type="PackedScene" uid="uid://cm17wfngxbks7" path="res://Scenes/Battle/ActiveBattleCursor.tscn" id="8_02dn7"]
+
+[sub_resource type="FontVariation" id="FontVariation_cgk2u"]
+base_font = ExtResource("4_vwoqx")
+spacing_glyph = 2
+
+[sub_resource type="FontVariation" id="FontVariation_63mkq"]
+base_font = ExtResource("4_vwoqx")
+spacing_glyph = 4
+
+[sub_resource type="FontVariation" id="FontVariation_josdi"]
+base_font = ExtResource("4_vwoqx")
+spacing_glyph = 4
+
+[sub_resource type="LabelSettings" id="LabelSettings_81u18"]
+line_spacing = 5.0
+font_size = 60
+
+[sub_resource type="FontVariation" id="FontVariation_br744"]
+base_font = ExtResource("4_vwoqx")
+spacing_glyph = 4
+
+[sub_resource type="LabelSettings" id="LabelSettings_a8fc0"]
+line_spacing = 5.0
+font_size = 60
+
+[sub_resource type="FontVariation" id="FontVariation_37drn"]
+base_font = ExtResource("4_vwoqx")
+spacing_glyph = 4
+
+[sub_resource type="LabelSettings" id="LabelSettings_h0qxw"]
+line_spacing = 5.0
+font_size = 60
+
+[sub_resource type="FontVariation" id="FontVariation_ur5h8"]
+base_font = ExtResource("4_vwoqx")
+spacing_glyph = 4
+
+[sub_resource type="LabelSettings" id="LabelSettings_hc2dw"]
+line_spacing = 5.0
+font_size = 60
+
+[sub_resource type="FontVariation" id="FontVariation_0wv0l"]
+base_font = ExtResource("4_vwoqx")
+
+[node name="BattleCanvas" type="CanvasLayer"]
+
+[node name="BlueBattlePanelRight" type="Sprite2D" parent="."]
+position = Vector2(1276.5, 904)
+scale = Vector2(1.265, 0.987692)
+texture = ExtResource("1_b8ug6")
+
+[node name="Control_PartyMenuBackground" type="Control" parent="BlueBattlePanelRight"]
+layout_mode = 3
+anchor_left = 0.655
+anchor_top = 0.502
+anchor_right = 0.655
+anchor_bottom = 0.502
+offset_left = -877.0
+offset_top = -310.15
+offset_right = -173.0
+offset_bottom = -15.15
+
+[node name="MarginContainer" type="MarginContainer" parent="BlueBattlePanelRight/Control_PartyMenuBackground"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -332.5
+offset_top = -124.5
+offset_right = 332.5
+offset_bottom = 124.5
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="GridContainer" type="GridContainer" parent="BlueBattlePanelRight/Control_PartyMenuBackground/MarginContainer"]
+layout_direction = 2
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/h_separation = 135
+columns = 2
+
+[node name="Label_Player1" type="Label" parent="BlueBattlePanelRight/Control_PartyMenuBackground/MarginContainer/GridContainer" groups=["CharacterNameLabels"]]
+visible = false
+layout_mode = 2
+theme_override_fonts/font = SubResource("FontVariation_cgk2u")
+theme_override_font_sizes/font_size = 70
+text = "SABIN"
+
+[node name="HBoxContainer1" type="HBoxContainer" parent="BlueBattlePanelRight/Control_PartyMenuBackground/MarginContainer/GridContainer"]
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="HPLabel1" type="Label" parent="BlueBattlePanelRight/Control_PartyMenuBackground/MarginContainer/GridContainer/HBoxContainer1" groups=["HPLabels"]]
+layout_mode = 2
+theme_override_fonts/font = SubResource("FontVariation_63mkq")
+theme_override_font_sizes/font_size = 70
+text = "9999"
+
+[node name="TextureProgressBar1" type="TextureProgressBar" parent="BlueBattlePanelRight/Control_PartyMenuBackground/MarginContainer/GridContainer/HBoxContainer1"]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 4
+max_value = 65536.0
+value = 65.0
+texture_under = ExtResource("3_tlbg2")
+texture_progress = ExtResource("4_mrho2")
+
+[node name="Label_Player2" type="Label" parent="BlueBattlePanelRight/Control_PartyMenuBackground/MarginContainer/GridContainer" groups=["CharacterNameLabels"]]
+visible = false
+layout_mode = 2
+theme_override_fonts/font = SubResource("FontVariation_cgk2u")
+theme_override_font_sizes/font_size = 70
+text = "SABIN"
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="BlueBattlePanelRight/Control_PartyMenuBackground/MarginContainer/GridContainer"]
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="HPLabel2" type="Label" parent="BlueBattlePanelRight/Control_PartyMenuBackground/MarginContainer/GridContainer/HBoxContainer2" groups=["HPLabels"]]
+layout_mode = 2
+theme_override_fonts/font = SubResource("FontVariation_63mkq")
+theme_override_font_sizes/font_size = 70
+text = "9999"
+
+[node name="TextureProgressBar2" type="TextureProgressBar" parent="BlueBattlePanelRight/Control_PartyMenuBackground/MarginContainer/GridContainer/HBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 4
+max_value = 65536.0
+value = 65.0
+texture_under = ExtResource("3_tlbg2")
+texture_progress = ExtResource("4_mrho2")
+
+[node name="Label_Player3" type="Label" parent="BlueBattlePanelRight/Control_PartyMenuBackground/MarginContainer/GridContainer" groups=["CharacterNameLabels"]]
+visible = false
+layout_mode = 2
+theme_override_fonts/font = SubResource("FontVariation_cgk2u")
+theme_override_font_sizes/font_size = 70
+text = "SABIN"
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="BlueBattlePanelRight/Control_PartyMenuBackground/MarginContainer/GridContainer"]
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="HPLabel3" type="Label" parent="BlueBattlePanelRight/Control_PartyMenuBackground/MarginContainer/GridContainer/HBoxContainer3" groups=["HPLabels"]]
+layout_mode = 2
+theme_override_fonts/font = SubResource("FontVariation_63mkq")
+theme_override_font_sizes/font_size = 70
+text = "9999"
+
+[node name="TextureProgressBar3" type="TextureProgressBar" parent="BlueBattlePanelRight/Control_PartyMenuBackground/MarginContainer/GridContainer/HBoxContainer3"]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 4
+max_value = 65536.0
+value = 65.0
+texture_under = ExtResource("3_tlbg2")
+texture_progress = ExtResource("4_mrho2")
+
+[node name="Label_Player4" type="Label" parent="BlueBattlePanelRight/Control_PartyMenuBackground/MarginContainer/GridContainer" groups=["CharacterNameLabels"]]
+visible = false
+layout_mode = 2
+theme_override_fonts/font = SubResource("FontVariation_cgk2u")
+theme_override_font_sizes/font_size = 70
+text = "SABIN"
+
+[node name="HBoxContainer4" type="HBoxContainer" parent="BlueBattlePanelRight/Control_PartyMenuBackground/MarginContainer/GridContainer"]
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="HPLabel4" type="Label" parent="BlueBattlePanelRight/Control_PartyMenuBackground/MarginContainer/GridContainer/HBoxContainer4" groups=["HPLabels"]]
+layout_mode = 2
+theme_override_fonts/font = SubResource("FontVariation_63mkq")
+theme_override_font_sizes/font_size = 70
+text = "9999"
+
+[node name="TextureProgressBar4" type="TextureProgressBar" parent="BlueBattlePanelRight/Control_PartyMenuBackground/MarginContainer/GridContainer/HBoxContainer4"]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 4
+max_value = 65536.0
+value = 65.0
+texture_under = ExtResource("3_tlbg2")
+texture_progress = ExtResource("4_mrho2")
+
+[node name="BlueBattlePanelLeft" type="Sprite2D" parent="."]
+position = Vector2(322, 903.75)
+scale = Vector2(1.288, 0.989231)
+texture = ExtResource("5_wxrqa")
+
+[node name="Control_EnemyMenuBackground" type="Control" parent="BlueBattlePanelLeft"]
+layout_mode = 3
+anchors_preset = 0
+offset_left = -216.0
+offset_top = -131.0
+offset_right = 214.0
+offset_bottom = 134.0
+
+[node name="MarginContainer" type="MarginContainer" parent="BlueBattlePanelLeft/Control_EnemyMenuBackground"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -201.0
+offset_top = -128.0
+offset_right = 201.0
+offset_bottom = 128.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="BlueBattlePanelLeft/Control_EnemyMenuBackground/MarginContainer"]
+layout_mode = 2
+
+[node name="BlueBattlePanelPopUp" type="Sprite2D" parent="."]
+visible = false
+position = Vector2(318, 905)
+texture = ExtResource("3_ose23")
+
+[node name="Control_ActionMenuBackground" type="Control" parent="BlueBattlePanelPopUp"]
+layout_mode = 3
+anchor_left = 0.092
+anchor_top = 0.834
+anchor_right = 0.092
+anchor_bottom = 0.834
+offset_left = -177.9
+offset_top = -402.05
+offset_right = 115.1
+offset_bottom = -140.05
+
+[node name="MarginContainer" type="MarginContainer" parent="BlueBattlePanelPopUp/Control_ActionMenuBackground"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -110.0
+offset_top = -126.0
+offset_right = 110.0
+offset_bottom = 126.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="BlueBattlePanelPopUp/Control_ActionMenuBackground/MarginContainer"]
+layout_mode = 2
+
+[node name="FightLabel" type="Label" parent="BlueBattlePanelPopUp/Control_ActionMenuBackground/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_fonts/font = SubResource("FontVariation_josdi")
+text = "Fight"
+label_settings = SubResource("LabelSettings_81u18")
+horizontal_alignment = 2
+
+[node name="SkillLabel" type="Label" parent="BlueBattlePanelPopUp/Control_ActionMenuBackground/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_fonts/font = SubResource("FontVariation_br744")
+text = "Jump"
+label_settings = SubResource("LabelSettings_a8fc0")
+horizontal_alignment = 2
+
+[node name="MagicLabel" type="Label" parent="BlueBattlePanelPopUp/Control_ActionMenuBackground/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_fonts/font = SubResource("FontVariation_37drn")
+text = "Magic"
+label_settings = SubResource("LabelSettings_h0qxw")
+horizontal_alignment = 2
+
+[node name="ItemLabel" type="Label" parent="BlueBattlePanelPopUp/Control_ActionMenuBackground/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_fonts/font = SubResource("FontVariation_ur5h8")
+text = "Item"
+label_settings = SubResource("LabelSettings_hc2dw")
+horizontal_alignment = 2
+
+[node name="BlueBattlePanelMagicList" type="Sprite2D" parent="."]
+visible = false
+position = Vector2(697, 902)
+scale = Vector2(1.394, 1)
+texture = ExtResource("1_b8ug6")
+
+[node name="Control_MagicList" type="Control" parent="BlueBattlePanelMagicList"]
+layout_mode = 3
+anchor_left = 0.085
+anchor_top = 0.06
+anchor_right = 0.085
+anchor_bottom = 0.06
+offset_left = -500.0
+offset_top = -162.5
+offset_right = 397.0
+offset_bottom = 128.5
+
+[node name="MarginContainer" type="MarginContainer" parent="BlueBattlePanelMagicList/Control_MagicList"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ScrollContainer" type="ScrollContainer" parent="BlueBattlePanelMagicList/Control_MagicList/MarginContainer"]
+layout_mode = 2
+horizontal_scroll_mode = 0
+
+[node name="GridContainer" type="GridContainer" parent="BlueBattlePanelMagicList/Control_MagicList/MarginContainer/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/h_separation = 130
+columns = 3
+
+[node name="BlueBattlePanelItemList" type="Sprite2D" parent="."]
+visible = false
+position = Vector2(697, 902)
+scale = Vector2(1.394, 1)
+texture = ExtResource("1_b8ug6")
+
+[node name="Control_MagicList" type="Control" parent="BlueBattlePanelItemList"]
+layout_mode = 3
+anchor_left = 0.085
+anchor_top = 0.06
+anchor_right = 0.085
+anchor_bottom = 0.06
+offset_left = -500.0
+offset_top = -162.5
+offset_right = 397.0
+offset_bottom = 128.5
+
+[node name="MarginContainer" type="MarginContainer" parent="BlueBattlePanelItemList/Control_MagicList"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ScrollContainer" type="ScrollContainer" parent="BlueBattlePanelItemList/Control_MagicList/MarginContainer"]
+layout_mode = 2
+horizontal_scroll_mode = 0
+
+[node name="GridContainer" type="GridContainer" parent="BlueBattlePanelItemList/Control_MagicList/MarginContainer/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/h_separation = 130
+columns = 2
+
+[node name="BlueBattlePanelMagicStats" type="Sprite2D" parent="."]
+visible = false
+position = Vector2(1644, 902)
+texture = ExtResource("5_wxrqa")
+
+[node name="ActiveBattleCursor" parent="." instance=ExtResource("8_02dn7")]
+visible = false
+
+[node name="HandCursor" parent="." instance=ExtResource("3_qjlbk")]
+visible = false
+offset_right = 64.0
+offset_bottom = 64.0
+MenuParentPath = NodePath("../BlueBattlePanelPopUp/Control_ActionMenuBackground/MarginContainer/VBoxContainer")
+CursorOffset = Vector2(45, -15)
+
+[node name="Control_DebugOutput" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 1920.0
+offset_bottom = 64.0
+
+[node name="LabelDebugOutput" type="RichTextLabel" parent="Control_DebugOutput"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -316.0
+offset_top = -11.0
+offset_right = 742.0
+offset_bottom = 32.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_fonts/normal_font = SubResource("FontVariation_0wv0l")
+theme_override_font_sizes/normal_font_size = 45
+text = "Game State: 
+"

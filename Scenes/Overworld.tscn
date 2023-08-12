@@ -1,0 +1,56 @@
+[gd_scene load_steps=5 format=3 uid="uid://cvq5mjfr0eckg"]
+
+[ext_resource type="Script" path="res://Scripts/Overworld.cs" id="1_7gyjo"]
+[ext_resource type="AudioStream" uid="uid://cfjsg3bjwxfgc" path="res://Audio/Final_Fantasy_6_Terra_of_the_Bells_OC_ReMix.mp3" id="1_tvlcb"]
+[ext_resource type="Texture2D" uid="uid://dty3akxdlhqou" path="res://Graphics/Sprites/Overworld_4x.png" id="2_nfgtx"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_gycqw"]
+friction = 0.0
+
+[node name="Overworld" type="Node2D"]
+script = ExtResource("1_7gyjo")
+
+[node name="UI_CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("1_tvlcb")
+autoplay = true
+
+[node name="OverworldSprite" type="Sprite2D" parent="."]
+position = Vector2(5115, 9375)
+scale = Vector2(1.5, 1.5)
+texture = ExtResource("2_nfgtx")
+
+[node name="Collision_NarsheMountain1" type="StaticBody2D" parent="OverworldSprite"]
+position = Vector2(-3422, -6224)
+scale = Vector2(0.666667, 0.666667)
+physics_material_override = SubResource("PhysicsMaterial_gycqw")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="OverworldSprite/Collision_NarsheMountain1"]
+position = Vector2(838, 896.165)
+scale = Vector2(1.5, 1.49297)
+polygon = PackedVector2Array(29.3333, 13.9554, 55.3333, -10.6667, 72, -31.3333, 81.3333, -52.6667, 106.667, -62.6667, 126.667, -83.3333, 115.333, -107.333, 115.333, -129.333, 132.667, -152, 188, -101.333, 213.333, -66.6667, 214.667, -44, 177.333, 21.8815, 165.333, 38.0684, 143.333, 50.1249, 154, 72.2286, 148.667, 98.3511, 151.333, 126.483, 151.333, 155.955, 137.333, 170.021, 263.333, 293.935, 452.667, 282.548, 532.667, 218.916, 578, 219.586, 452, 543.103, 270, 452.679, 190.667, 371.633, 82, 324.746, -17.3333, 121.794, 7.33331, 21.3232)
+
+[node name="BattleArea_NarshePlains1" type="Area2D" parent="OverworldSprite" groups=["EncounterAreas"]]
+visible = false
+position = Vector2(-2863.33, -5627.33)
+collision_layer = 2
+collision_mask = 2
+monitorable = false
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="OverworldSprite/BattleArea_NarshePlains1"]
+polygon = PackedVector2Array(-303.333, 1114.67, -372, 1054, -367.333, 928.667, -301.333, 876, -80, 864, -53.3333, 789.333, -237.333, 617.333, -107.333, 500.667, -99.3333, 354, -41.3333, 262.667, -104, 163.333, -110, 34.6667, 0.666687, -66.6667, -60, -152, -56.6667, -282, 12, -332.667, 128.667, -351.333, 340.667, -153.333, 336, -89.3333, 276, -42.6667, 274.667, 102, 379.333, 199.333, 454, 190.667, 616, 36.6667, 650, 8, 770, 105.333, 457.333, 284.667, 259.333, 288, 128, 165.333, 142.667, 34.6667, 210, -58, 135.333, -149.333, 118.667, -128, 123.333, -86, -5.33331, 50, -8, 138, 66.6667, 217.333, 78.6667, 325.333, 512.667, 609.333, 430, 706.667, 445.333, 874.667, 376.667, 958.667, 416, 1115.33, 542.667, 1298.67, 271.333, 1980, -353.333, 1951.33, -32, 1618, 61.3333, 1613.33, 62, 1502.67, 18, 1498.67, -20.6667, 1423.33, 44.6667, 1423.33, 76, 1366, 133.333, 1328, 116, 1238, 78.6667, 1232.67, 54, 1186, 13.3333, 1180, -8.66669, 1120.67, -101.333, 1110.67, -126, 1180.67, -172, 1172.67, -194.667, 1301.33, -359.333, 1301.33, -385.333, 1371.33, -426, 1366.67, -447.333, 1498.67, -485.333, 1492, -508, 1554, -550.667, 1557.33, -571.333, 1658, -508, 1675.33, -495.333, 1722.67, -446, 1740.67, -438, 1787.33, -383.333, 1801.33, -376, 1857.33, -286, 1870, -357.333, 1938.67, -509.333, 1774.67, -561.333, 1829.33, -808.667, 1571.33, -617.333, 1367.33)
+
+[node name="BattleArea_NarsheForrest1" type="Area2D" parent="OverworldSprite" groups=["EncounterAreas"]]
+visible = false
+position = Vector2(-3059.33, -4092.67)
+collision_layer = 2
+collision_mask = 2
+monitorable = false
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="OverworldSprite/BattleArea_NarsheForrest1"]
+polygon = PackedVector2Array(-350, 27.3333, -308.667, 27.3333, -288, -36.6667, -252.667, -32, -243.333, -35.3334, -225.333, -161.333, -183.333, -155.333, -158.667, -226.667, 7.33337, -224, 18, -244.667, 8.66669, -262, 28.6667, -354.667, 72.6667, -348, 96.6667, -418, 176, -412, 194, -388, 201.333, -349.333, 244, -345.333, 270, -294.667, 309.333, -288.667, 320, -208.667, 260.667, -179.333, 238, -118.667, 139.333, -118.667, 140.667, -96, 178.667, -94.6667, 208.667, -28, 254.667, -26, 252, 72.6666, 137.333, 72.6666, 114.667, 138, 78.6667, 141.333, 40.6667, 204.667, 10, 209.333, -25.3333, 271.333, -55.3333, 271.333, -76.6666, 332.667, -176.667, 318.667, -181.333, 261.333, -236, 247.333, -244, 200, -295.333, 183.333, -306, 135.333, -368, 120)
+
+[node name="Narshe" type="Node2D" parent="."]
+unique_name_in_owner = true
+position = Vector2(975, 408)

@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3 uid="uid://dorgittjld61g"]
+
+[ext_resource type="Texture2D" uid="uid://boh5nq0sym0gs" path="res://Graphics/Sprites/Enemies/Rhinotaur_4x.png" id="1_yj7aj"]
+
+[node name="Rhinotaur" type="CharacterBody2D" groups=["Enemies"]]
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(0, -102)
+texture = ExtResource("1_yj7aj")
