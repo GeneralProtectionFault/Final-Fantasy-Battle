@@ -16,6 +16,7 @@ public partial class BattleController : Node
 	private static int CurrentMenuIndex = 0;  // When selecting a spell, item, etc..., store the index of the selected item here for cancelling and such
 
 	private static AudioStreamPlayer MenuSwitchSound;
+	private static AudioStreamPlayer EnemyDeathSound;
 
 	public static List<Character> Characters = new List<Character>();
 	public static List<Enemy> Enemies = new List<Enemy>();
@@ -83,6 +84,7 @@ public partial class BattleController : Node
 		DebugWindow = GetNode("BattleCanvas/Control_DebugOutput/LabelDebugOutput");
 		
 		MenuSwitchSound = GetNode<AudioStreamPlayer>("BattleTemplate/MenuSwitch");
+		EnemyDeathSound = GetNode<AudioStreamPlayer>("BattleTemplate/EnemyDeathSound");
 
 		// Tracks if a player is selecting something such as a spell, ability, etc... (will affect wait and all that)
 		Battle_UpdateGameState(Enums.GameState.Battle);
@@ -214,6 +216,11 @@ public partial class BattleController : Node
 
 		for (var i = 0; i < Characters.Count; i++)
 		{
+			// Let us not bother with battle gauges of wounded characters
+			// TODO:  Exclude appropriate statuses as well, like Stop
+			if (Characters[i].Hp <= 0)
+				continue;
+
 
 			var BattleTimerIncrement = 0;
 
@@ -524,6 +531,9 @@ public partial class BattleController : Node
 					{
 						Battle_UpdateGameState(Enums.GameState.Battle_Party_Action);
 
+						// Set this so it can be passed back to this class so we can damage the correct enemy
+						Enemies[HandCursor.GetCurrentCursorIndex()].BattleListIndex = HandCursor.GetCurrentCursorIndex();
+
 						// Damage & Damage Text
 						BattleAlgorithms.SetFightVariables(Characters[ActiveCharacterIndex], CharacterObjects[ActiveCharacterIndex],
 						Enemies[HandCursor.GetCurrentCursorIndex()], EnemyObjects[HandCursor.GetCurrentCursorIndex()]);
@@ -716,7 +726,29 @@ public partial class BattleController : Node
 		Globals.Battle_ActivePlayerExists = false;
 		SetActiveCharacter(-1);
 
-		
+		// Update the stats of the enemy 
+		var Enemy = Enemies[TheEnemy.BattleListIndex];
+		GD.Print($"Enemy HP before: {Enemy.Hp}");
+		GD.Print($"Enemy HP after: {TheEnemy.Hp}");
+
+		// Set it to the TheEnemy w/ the updated stats
+		Enemy = TheEnemy;
+
+		// Remove upon death!
+		if (TheEnemy.Hp <= 0)
+		{
+			Tween DelayTween = GetTree().CreateTween();
+			DelayTween.TweenCallback(Callable.From(() => {
+				EnemyDeathSound.Play();
+				EnemyObjects[TheEnemy.BattleListIndex].QueueFree();
+			}
+			)).SetDelay(1.0f);
+
+			
+		}
+
+
+
 		Battle_UpdateGameState(Enums.GameState.Battle);
 	}
 

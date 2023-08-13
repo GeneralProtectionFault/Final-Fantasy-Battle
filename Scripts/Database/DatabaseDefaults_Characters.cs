@@ -73,7 +73,9 @@ public static class DatabaseDefaults_Characters
             },
 
             RowPosition = Enums.BattleRowPositions.FrontRow,
-            IsPartyLead = false
+            IsPartyLead = false,
+
+            RightHandEquipped = "Lightbringer"
         };
 
         

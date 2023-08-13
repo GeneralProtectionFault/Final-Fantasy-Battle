@@ -1,9 +1,10 @@
 [gd_scene load_steps=7 format=3 uid="uid://bi6rcjfthbdwg"]
 
 [ext_resource type="Texture2D" uid="uid://c1o8fpp5eiecq" path="res://Graphics/Weapons/Lightbringer.png" id="1_8bo3w"]
+[ext_resource type="Texture2D" uid="uid://byriugvweal12" path="res://Graphics/Weapons/Lightbringer_Sash.png" id="2_5m7pj"]
 [ext_resource type="AudioStream" uid="uid://b30472uogsryu" path="res://Audio/WeaponSounds/A4SwordSlash.wav" id="3_r8x2e"]
 
-[sub_resource type="Animation" id="Animation_asnd8"]
+[sub_resource type="Animation" id="Animation_8tws7"]
 resource_name = "Attack"
 length = 0.6
 tracks/0/type = "value"
@@ -13,7 +14,7 @@ tracks/0/path = NodePath("SwordAnchor:position")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.1),
+"times": PackedFloat32Array(0, 0.2),
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
 "values": [Vector2(0, 0), Vector2(0, 0)]
@@ -25,78 +26,54 @@ tracks/1/path = NodePath("SwordAnchor:rotation")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
-"times": PackedFloat32Array(0, 0.1),
+"times": PackedFloat32Array(0, 0.2),
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
-"values": [0.785398, -0.785398]
+"values": [0.785397, -0.785397]
 }
 tracks/2/type = "value"
 tracks/2/imported = false
 tracks/2/enabled = true
-tracks/2/path = NodePath("SwordAnchor/Sprite2D_Lightbringer/SashAnchor:position")
+tracks/2/path = NodePath("SwordAnchor/Sprite2D/SashAnchor:position")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
-"times": PackedFloat32Array(0, 0.1),
+"times": PackedFloat32Array(0, 0.2),
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
-"values": [Vector2(3.53553, 57.4645), Vector2(-9.19239, 54.636)]
+"values": [Vector2(5.65686, 55.7574), Vector2(-8.48529, 51.5147)]
 }
 tracks/3/type = "value"
 tracks/3/imported = false
 tracks/3/enabled = true
-tracks/3/path = NodePath("SwordAnchor/Sprite2D_Lightbringer/SashAnchor:rotation")
+tracks/3/path = NodePath("SwordAnchor/Sprite2D/SashAnchor:rotation")
 tracks/3/interp = 1
 tracks/3/loop_wrap = true
 tracks/3/keys = {
-"times": PackedFloat32Array(0, 0.1),
+"times": PackedFloat32Array(0, 0.2),
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
-"values": [-0.785398, 0.785398]
+"values": [-0.785397, 0.785397]
 }
 tracks/4/type = "value"
 tracks/4/imported = false
 tracks/4/enabled = true
-tracks/4/path = NodePath("SwordAnchor/Sprite2D_Lightbringer/SashAnchor/Sprite2D_Sash:flip_h")
+tracks/4/path = NodePath("SwordAnchor/Sprite2D/SashAnchor/Sprite2D:flip_h")
 tracks/4/interp = 1
 tracks/4/loop_wrap = true
 tracks/4/keys = {
-"times": PackedFloat32Array(0.1),
-"transitions": PackedFloat32Array(1),
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(1, 1),
 "update": 1,
-"values": [true]
+"values": [false, true]
 }
-tracks/5/type = "value"
+tracks/5/type = "method"
 tracks/5/imported = false
 tracks/5/enabled = true
-tracks/5/path = NodePath("SwordAnchor/Sprite2D_Lightbringer/SashAnchor/Sprite2D_Sash:position")
+tracks/5/path = NodePath(".")
 tracks/5/interp = 1
 tracks/5/loop_wrap = true
 tracks/5/keys = {
-"times": PackedFloat32Array(0, 0.1),
-"transitions": PackedFloat32Array(1, 1),
-"update": 0,
-"values": [Vector2(4, 24), Vector2(4, 24)]
-}
-tracks/6/type = "value"
-tracks/6/imported = false
-tracks/6/enabled = true
-tracks/6/path = NodePath("SwordAnchor/Sprite2D_Lightbringer/SashAnchor/Sprite2D_Sash:rotation")
-tracks/6/interp = 1
-tracks/6/loop_wrap = true
-tracks/6/keys = {
-"times": PackedFloat32Array(0, 0.1),
-"transitions": PackedFloat32Array(1, 1),
-"update": 0,
-"values": [0.0, 0.0]
-}
-tracks/7/type = "method"
-tracks/7/imported = false
-tracks/7/enabled = true
-tracks/7/path = NodePath(".")
-tracks/7/interp = 1
-tracks/7/loop_wrap = true
-tracks/7/keys = {
 "times": PackedFloat32Array(0.6),
 "transitions": PackedFloat32Array(1),
 "values": [{
@@ -105,7 +82,7 @@ tracks/7/keys = {
 }]
 }
 
-[sub_resource type="Animation" id="Animation_o8qb3"]
+[sub_resource type="Animation" id="Animation_xgios"]
 length = 0.001
 tracks/0/type = "value"
 tracks/0/imported = false
@@ -129,104 +106,63 @@ tracks/1/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [0.785398]
+"values": [0.785397]
 }
 tracks/2/type = "value"
 tracks/2/imported = false
 tracks/2/enabled = true
-tracks/2/path = NodePath("SwordAnchor/Sprite2D_Lightbringer/SashAnchor:position")
+tracks/2/path = NodePath("SwordAnchor/Sprite2D/SashAnchor:position")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [Vector2(3.53553, 57.4645)]
+"values": [Vector2(5.65686, 55.7574)]
 }
 tracks/3/type = "value"
 tracks/3/imported = false
 tracks/3/enabled = true
-tracks/3/path = NodePath("SwordAnchor/Sprite2D_Lightbringer/SashAnchor:rotation")
+tracks/3/path = NodePath("SwordAnchor/Sprite2D/SashAnchor:rotation")
 tracks/3/interp = 1
 tracks/3/loop_wrap = true
 tracks/3/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [-0.785398]
-}
-tracks/4/type = "value"
-tracks/4/imported = false
-tracks/4/enabled = true
-tracks/4/path = NodePath("SwordAnchor/Sprite2D_Lightbringer/SashAnchor/Sprite2D_Sash:flip_h")
-tracks/4/interp = 1
-tracks/4/loop_wrap = true
-tracks/4/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [true]
-}
-tracks/5/type = "value"
-tracks/5/imported = false
-tracks/5/enabled = true
-tracks/5/path = NodePath("SwordAnchor/Sprite2D_Lightbringer/SashAnchor/Sprite2D_Sash:position")
-tracks/5/interp = 1
-tracks/5/loop_wrap = true
-tracks/5/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Vector2(4, 24)]
-}
-tracks/6/type = "value"
-tracks/6/imported = false
-tracks/6/enabled = true
-tracks/6/path = NodePath("SwordAnchor/Sprite2D_Lightbringer/SashAnchor/Sprite2D_Sash:rotation")
-tracks/6/interp = 1
-tracks/6/loop_wrap = true
-tracks/6/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [0.0]
+"values": [-0.785397]
 }
 
-[sub_resource type="AnimationLibrary" id="AnimationLibrary_mh4i4"]
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_6oikk"]
 _data = {
-"Attack": SubResource("Animation_asnd8"),
-"RESET": SubResource("Animation_o8qb3")
+"Attack": SubResource("Animation_8tws7"),
+"RESET": SubResource("Animation_xgios")
 }
-
-[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_yebab"]
-load_path = "res://.godot/imported/Lightbringer_Sash.png-6e76d8bea5687daf2d7269b7fd1c2005.ctex"
 
 [node name="Lightbringer" type="Node2D"]
+
+[node name="SwordAnchor" type="Node2D" parent="."]
+rotation = 0.785397
+
+[node name="Sprite2D" type="Sprite2D" parent="SwordAnchor"]
+position = Vector2(0, -60)
+texture = ExtResource("1_8bo3w")
+
+[node name="SashAnchor" type="Node2D" parent="SwordAnchor/Sprite2D"]
+position = Vector2(5.65686, 55.7574)
+rotation = -0.785397
+
+[node name="Sprite2D" type="Sprite2D" parent="SwordAnchor/Sprite2D/SashAnchor"]
+position = Vector2(3, 27)
+texture = ExtResource("2_5m7pj")
+flip_h = true
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("3_r8x2e")
+autoplay = true
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 autoplay = "Attack"
 libraries = {
-"": SubResource("AnimationLibrary_mh4i4")
+"": SubResource("AnimationLibrary_6oikk")
 }
-
-[node name="SwordAnchor" type="Node2D" parent="."]
-rotation = 0.785398
-
-[node name="Sprite2D_Lightbringer" type="Sprite2D" parent="SwordAnchor"]
-z_index = 2
-position = Vector2(0, -61)
-texture = ExtResource("1_8bo3w")
-
-[node name="SashAnchor" type="Node2D" parent="SwordAnchor/Sprite2D_Lightbringer"]
-position = Vector2(3.53553, 57.4645)
-rotation = -0.785398
-
-[node name="Sprite2D_Sash" type="Sprite2D" parent="SwordAnchor/Sprite2D_Lightbringer/SashAnchor"]
-z_index = 2
-position = Vector2(4, 24)
-texture = SubResource("CompressedTexture2D_yebab")
-flip_h = true
-
-[node name="WeaponSound" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("3_r8x2e")
-autoplay = true

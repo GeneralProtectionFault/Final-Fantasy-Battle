@@ -32,6 +32,7 @@ public static class BattleAlgorithms
     public static void PopulateDamageText()
     {
         DamageText(ObjectToDamage, DamageAmount);
+
         if (TargetCharacter != null)
             UpdateCharacterDamage();
         else if (TargetEnemy != null)
@@ -98,7 +99,7 @@ public static class BattleAlgorithms
         if (TargetEnemy != null)
         {
             // Damage the enemy object, etc...
-
+            TargetEnemy.Hp -= DamageAmount;
             DamagingEnemy?.Invoke(null, TargetEnemy);
         }
     }

@@ -1,9 +1,11 @@
-[gd_scene load_steps=5 format=3 uid="uid://dmw72wr1i311x"]
+[gd_scene load_steps=7 format=3 uid="uid://dmw72wr1i311x"]
 
 [ext_resource type="AudioStream" uid="uid://dtj5osbft0hyx" path="res://Audio/FF6_Normal_Battle.ogg" id="1_dr6ne"]
 [ext_resource type="AudioStream" uid="uid://ceplwl4jpmfdt" path="res://Audio/MenuSounds/FF6_MenuSwitch.ogg" id="2_aijfp"]
 [ext_resource type="PackedScene" uid="uid://cm17wfngxbks7" path="res://Scenes/Battle/ActiveBattleCursor.tscn" id="2_r3078"]
 [ext_resource type="Script" path="res://Scripts/AudioStreamPlayerIntro.cs" id="2_ws0ew"]
+[ext_resource type="AudioStream" uid="uid://c7glo7gj41qia" path="res://Audio/2DMonsterDeath.wav" id="4_e15ke"]
+[ext_resource type="Texture2D" uid="uid://bhw7c1j4lkckv" path="res://Graphics/Sprites/Locke_4x_nearest.png" id="5_dfpgn"]
 
 [node name="BattleTemplate" type="Node2D"]
 
@@ -16,6 +18,9 @@ HasIntro = true
 
 [node name="MenuSwitch" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("2_aijfp")
+
+[node name="EnemyDeathSound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("4_e15ke")
 
 [node name="FrontRow_Player1" type="Node2D" parent="."]
 position = Vector2(1611, 447)
@@ -46,3 +51,14 @@ position = Vector2(728, 634)
 
 [node name="ActiveBattleCursor" parent="." instance=ExtResource("2_r3078")]
 visible = false
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+z_index = 1
+position = Vector2(-1, -45)
+texture = ExtResource("5_dfpgn")
+hframes = 7
+vframes = 15
+frame = 14
+
+[node name="WeaponOrigin" type="Node2D" parent="Sprite2D"]
+position = Vector2(-23, -40)

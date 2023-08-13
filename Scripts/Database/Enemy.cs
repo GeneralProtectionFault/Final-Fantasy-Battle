@@ -85,4 +85,8 @@ public class Enemy
     // Items that can be stolen, and their probability of being stolen
     public IDictionary<string, float> StolenItems { get; set; }
 
+
+    // Use this to track the position in the list of enemies during battle,
+    // since we only want to affect the in-battle object, not the database
+    public int BattleListIndex { get; set; }
 }
