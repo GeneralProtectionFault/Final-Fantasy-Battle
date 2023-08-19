@@ -1,4 +1,4 @@
-[gd_scene load_steps=28 format=3 uid="uid://4eh46hjplvdo"]
+[gd_scene load_steps=31 format=3 uid="uid://4eh46hjplvdo"]
 
 [ext_resource type="Script" path="res://Scripts/CharacterController.cs" id="1_3x8ll"]
 [ext_resource type="Texture2D" uid="uid://dk4cmrekfapk8" path="res://Graphics/Sprites/Terra_4x_SpriteSheet.png" id="2_ohcxp"]
@@ -224,6 +224,105 @@ states/Walk_BlendSpace2D/position = Vector2(683, 93)
 transitions = ["Idle_BlendSpace2D", "Walk_BlendSpace2D", SubResource("AnimationNodeStateMachineTransition_nnjnt"), "Walk_BlendSpace2D", "Idle_BlendSpace2D", SubResource("AnimationNodeStateMachineTransition_tkyus")]
 graph_offset = Vector2(62, 11)
 
+[sub_resource type="Animation" id="Animation_lrirl"]
+resource_name = "Attack"
+length = 2.2
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1.1, 1.2, 1.9, 2, 2.1),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [27, 20, 18, 20, 19, 19]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Sprite2D:flip_h")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 1.9, 2.1),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 1,
+"values": [false, true, false]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Sprite2D:position")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 1, 1.1, 1.2, 1.9, 2.1),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(-1, -45), Vector2(-1, -45), Vector2(-82, -85), Vector2(-173, -45), Vector2(-173, -45), Vector2(-1, -45)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Sprite2D:rotation")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 1, 1.1, 1.2, 1.9, 2.1),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("Sprite2D/WeaponOrigin:position")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0, 1, 1.1, 1.2, 1.9, 2.1),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(-23, -40), Vector2(-23, -40), Vector2(-23, -40), Vector2(-23, -40), Vector2(-23, -40), Vector2(-23, -40)]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("Sprite2D/WeaponOrigin:rotation")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0, 1, 1.1, 1.2, 1.9, 2.1),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+}
+tracks/6/type = "method"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath(".")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(1.1),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"FightAnimation"
+}]
+}
+
+[sub_resource type="Animation" id="Animation_u12ma"]
+length = 0.001
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_wyqd4"]
+_data = {
+"Attack": SubResource("Animation_lrirl"),
+"RESET": SubResource("Animation_u12ma")
+}
+
 [node name="Tina" type="CharacterBody2D" groups=["Characters"]]
 z_index = 1
 script = ExtResource("1_3x8ll")
@@ -240,14 +339,14 @@ shape = SubResource("SegmentShape2D_pxwmr")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 z_index = 1
-position = Vector2(0, -46)
+position = Vector2(-1, -45)
 texture = ExtResource("2_ohcxp")
 hframes = 9
 vframes = 9
-frame = 37
+frame = 19
 
 [node name="WeaponOrigin" type="Node2D" parent="Sprite2D"]
-position = Vector2(-18, -33)
+position = Vector2(-23, -40)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 visible = false
@@ -262,6 +361,10 @@ libraries = {
 [node name="AnimationTree" type="AnimationTree" parent="."]
 tree_root = SubResource("AnimationNodeStateMachine_n1v41")
 anim_player = NodePath("../AnimationPlayer")
-active = true
 parameters/Idle_BlendSpace2D/blend_position = Vector2(-0.0205174, 0.0480349)
 parameters/Walk_BlendSpace2D/blend_position = Vector2(0.00802851, -0.0442477)
+
+[node name="Battle_AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_wyqd4")
+}

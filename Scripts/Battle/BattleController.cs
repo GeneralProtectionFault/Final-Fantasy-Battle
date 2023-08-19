@@ -285,7 +285,11 @@ public partial class BattleController : Node
 
 		// foreach (var Enemy in Enemies)
 		// {
-		// 	var EnemyBattleTimerIncrement = 0;
+		// 	if (Enemy.Hp > 0)
+		// 	{
+		// 		var EnemyBattleTimerIncrement = 0;
+		// 	}
+
 		// }
 
 		#endregion
@@ -728,6 +732,10 @@ public partial class BattleController : Node
 
 		// Update the stats of the enemy 
 		var Enemy = Enemies[TheEnemy.BattleListIndex];
+		
+		// NEW =D
+		var EnemyObject = EnemyObjects[TheEnemy.BattleListIndex];
+		
 		GD.Print($"Enemy HP before: {Enemy.Hp}");
 		GD.Print($"Enemy HP after: {TheEnemy.Hp}");
 
@@ -738,7 +746,13 @@ public partial class BattleController : Node
 		if (TheEnemy.Hp <= 0)
 		{
 			Tween DelayTween = GetTree().CreateTween();
+
 			DelayTween.TweenCallback(Callable.From(() => {
+				// foreach (var Child in EnemyObject.GetChildren())
+				// {
+				// 	Child.QueueFree();
+				// }
+
 				EnemyDeathSound.Play();
 				EnemyObjects[TheEnemy.BattleListIndex].QueueFree();
 			}

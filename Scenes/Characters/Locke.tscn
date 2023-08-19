@@ -1,4 +1,4 @@
-[gd_scene load_steps=32 format=3 uid="uid://ohf53ihjjx7h"]
+[gd_scene load_steps=34 format=3 uid="uid://ohf53ihjjx7h"]
 
 [ext_resource type="Script" path="res://Scripts/CharacterController.cs" id="1_di8uc"]
 [ext_resource type="Texture2D" uid="uid://bhw7c1j4lkckv" path="res://Graphics/Sprites/Locke_4x_nearest.png" id="2_2rkp6"]
@@ -288,7 +288,7 @@ _data = {
 "RESET": SubResource("Animation_x01et")
 }
 
-[sub_resource type="Animation" id="Animation_52qcf"]
+[sub_resource type="Animation" id="Animation_pcqtx"]
 resource_name = "Attack"
 length = 2.2
 tracks/0/type = "value"
@@ -301,7 +301,7 @@ tracks/0/keys = {
 "times": PackedFloat32Array(0, 1, 1.1, 1.2, 1.9, 2.1),
 "transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
 "update": 0,
-"values": [Vector2(-1, -45), Vector2(-1, -45), Vector2(-72.4139, -89.0497), Vector2(-134.484, -43.6652), Vector2(-134.484, -43.6652), Vector2(-1, -45)]
+"values": [Vector2(-1, -45), Vector2(-1, -45), Vector2(-82, -85), Vector2(-173, -45), Vector2(-173, -45), Vector2(-1, -45)]
 }
 tracks/1/type = "value"
 tracks/1/imported = false
@@ -322,10 +322,10 @@ tracks/2/path = NodePath("Sprite2D/WeaponOrigin:position")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
-"times": PackedFloat32Array(0, 1, 1.1),
-"transitions": PackedFloat32Array(1, 1, 1),
+"times": PackedFloat32Array(0, 1, 1.1, 1.2, 1.9, 2.1),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
 "update": 0,
-"values": [Vector2(-16.2576, -31.0102), Vector2(-14.7593, -32.1339), Vector2(-15.1339, -32.5085)]
+"values": [Vector2(-23, -40), Vector2(-23, -40), Vector2(-23, -40), Vector2(-23, -40), Vector2(-23, -40), Vector2(-23, -40)]
 }
 tracks/3/type = "value"
 tracks/3/imported = false
@@ -334,10 +334,10 @@ tracks/3/path = NodePath("Sprite2D/WeaponOrigin:rotation")
 tracks/3/interp = 1
 tracks/3/loop_wrap = true
 tracks/3/keys = {
-"times": PackedFloat32Array(0, 1, 1.1),
-"transitions": PackedFloat32Array(1, 1, 1),
+"times": PackedFloat32Array(0, 1, 1.1, 1.2, 1.9, 2.1),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
 "update": 0,
-"values": [0.0, 0.0, 0.0]
+"values": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 }
 tracks/4/type = "value"
 tracks/4/imported = false
@@ -366,24 +366,24 @@ tracks/5/keys = {
 }]
 }
 
-[sub_resource type="Animation" id="Animation_osg6g"]
+[sub_resource type="Animation" id="Animation_x7lv1"]
 length = 0.001
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("Sprite2D/WeaponOrigin:position")
+tracks/0/path = NodePath("Sprite2D:position")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [Vector2(-16.2576, -32.1339)]
+"values": [Vector2(-1, -45)]
 }
 tracks/1/type = "value"
 tracks/1/imported = false
 tracks/1/enabled = true
-tracks/1/path = NodePath("Sprite2D/WeaponOrigin:rotation")
+tracks/1/path = NodePath("Sprite2D:rotation")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
@@ -395,19 +395,19 @@ tracks/1/keys = {
 tracks/2/type = "value"
 tracks/2/imported = false
 tracks/2/enabled = true
-tracks/2/path = NodePath("Sprite2D:position")
+tracks/2/path = NodePath("Sprite2D/WeaponOrigin:position")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [Vector2(-1, -45)]
+"values": [Vector2(-23, -40)]
 }
 tracks/3/type = "value"
 tracks/3/imported = false
 tracks/3/enabled = true
-tracks/3/path = NodePath("Sprite2D:rotation")
+tracks/3/path = NodePath("Sprite2D/WeaponOrigin:rotation")
 tracks/3/interp = 1
 tracks/3/loop_wrap = true
 tracks/3/keys = {
@@ -417,10 +417,69 @@ tracks/3/keys = {
 "values": [0.0]
 }
 
-[sub_resource type="AnimationLibrary" id="AnimationLibrary_tc0bb"]
+[sub_resource type="Animation" id="Animation_qcykk"]
+resource_name = "Spin"
+length = 0.4
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 1,
+"values": [5, 37, 12, 37]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Sprite2D:flip_h")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 1,
+"values": [false, true, false]
+}
+
+[sub_resource type="Animation" id="Animation_i083o"]
+resource_name = "Fanfare"
+length = 0.6
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [14, 37]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Sprite2D:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [Vector2(-1, -45), Vector2(-1, -49)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_qig4r"]
 _data = {
-"Attack": SubResource("Animation_52qcf"),
-"RESET": SubResource("Animation_osg6g")
+"Attack": SubResource("Animation_pcqtx"),
+"Fanfare": SubResource("Animation_i083o"),
+"RESET": SubResource("Animation_x7lv1"),
+"Spin": SubResource("Animation_qcykk")
 }
 
 [node name="Locke" type="CharacterBody2D" groups=["Characters"]]
@@ -446,7 +505,7 @@ vframes = 15
 frame = 14
 
 [node name="WeaponOrigin" type="Node2D" parent="Sprite2D"]
-position = Vector2(-16.2576, -32.1339)
+position = Vector2(-23, -40)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 visible = false
@@ -465,7 +524,7 @@ libraries = {
 "": SubResource("AnimationLibrary_v6h3v")
 }
 
-[node name="BattleAnimationPlayer" type="AnimationPlayer" parent="."]
+[node name="Battle_AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {
-"": SubResource("AnimationLibrary_tc0bb")
+"": SubResource("AnimationLibrary_qig4r")
 }

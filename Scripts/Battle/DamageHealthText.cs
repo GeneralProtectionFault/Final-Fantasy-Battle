@@ -14,8 +14,8 @@ public partial class DamageHealthText : Node
 		DamageText.Text = Amount.ToString();
 
 
-		GD.Print($"Dmg Obj: {DamageObject}");
-		GD.Print($"Dmg Obj Position: {DamageObject.Position}");
+		// GD.Print($"Dmg Obj: {DamageObject}");
+		// GD.Print($"Dmg Obj Position: {DamageObject.Position}");
 
 		Vector2 OriginalPosition = DamageObject.Position;
         Vector2 HighApex = DamageObject.Position - new Vector2(0, 85);

@@ -49,7 +49,7 @@ public partial class BattleAnimations : Node
 
 		// Play character's animation, which is the little hop forward.
 		// The weapon will instantiate on the positional node on the player and play its own animation
-		var Player = CharacterObj.GetNode<AnimationPlayer>("BattleAnimationPlayer");
+		var Player = CharacterObj.GetNode<AnimationPlayer>("Battle_AnimationPlayer");
 		Player.Play("Attack");
 	}
 
@@ -65,7 +65,7 @@ public partial class BattleAnimations : Node
 
 		// Play character's animation, which is the little hop forward.
 		// The weapon will instantiate on the positional node on the player and play its own animation
-		var Player = CharacterObj.GetNode<AnimationPlayer>("BattleAnimationPlayer");
+		var Player = CharacterObj.GetNode<AnimationPlayer>("Battle_AnimationPlayer");
 		Player.Play("Attack");
 	}
 }
