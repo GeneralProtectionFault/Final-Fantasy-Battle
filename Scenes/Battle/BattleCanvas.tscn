@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3 uid="uid://duurx868s7wwb"]
+[gd_scene load_steps=22 format=3 uid="uid://duurx868s7wwb"]
 
 [ext_resource type="Texture2D" uid="uid://boyu1583uosno" path="res://Graphics/BattleBackgrounds/BlueBattlePanel_Large.png" id="1_b8ug6"]
 [ext_resource type="Texture2D" uid="uid://dl3e4c8n2d8t8" path="res://Graphics/BattleBackgrounds/BlueBattlePanel_PopUp.png" id="3_ose23"]
@@ -7,6 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://lkmqiply0br" path="res://Graphics/MenuStuff/TimerBarFull.png" id="4_mrho2"]
 [ext_resource type="FontFile" uid="uid://c6xlpvnmwmyja" path="res://Fonts/final_fantasy_36_font.ttf" id="4_vwoqx"]
 [ext_resource type="Texture2D" uid="uid://b7st235pj7mq" path="res://Graphics/BattleBackgrounds/BlueBattlePanel_Small.png" id="5_wxrqa"]
+[ext_resource type="Texture2D" uid="uid://lda5qeayqpct" path="res://Graphics/BattleBackgrounds/FF6_VictoryPanel.png" id="7_wryvx"]
 [ext_resource type="PackedScene" uid="uid://cm17wfngxbks7" path="res://Scenes/Battle/ActiveBattleCursor.tscn" id="8_02dn7"]
 
 [sub_resource type="FontVariation" id="FontVariation_cgk2u"]
@@ -48,6 +49,9 @@ spacing_glyph = 4
 [sub_resource type="LabelSettings" id="LabelSettings_hc2dw"]
 line_spacing = 5.0
 font_size = 60
+
+[sub_resource type="FontVariation" id="FontVariation_21vep"]
+base_font = ExtResource("4_vwoqx")
 
 [sub_resource type="FontVariation" id="FontVariation_0wv0l"]
 base_font = ExtResource("4_vwoqx")
@@ -366,6 +370,37 @@ size_flags_horizontal = 3
 theme_override_constants/h_separation = 130
 columns = 2
 
+[node name="BlueBattleVictoryPanel" type="Sprite2D" parent="."]
+visible = false
+position = Vector2(961, 64)
+texture = ExtResource("7_wryvx")
+
+[node name="Control_VictoryText" type="Control" parent="BlueBattleVictoryPanel"]
+layout_direction = 2
+layout_mode = 3
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = -960.0
+offset_top = -105.0
+offset_right = 960.0
+offset_bottom = -25.0
+grow_vertical = 2
+
+[node name="Label_VictoryText" type="Label" parent="BlueBattleVictoryPanel/Control_VictoryText"]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 37.0
+offset_top = -28.0
+offset_right = 135.0
+offset_bottom = 29.0
+grow_vertical = 2
+theme_override_fonts/font = SubResource("FontVariation_21vep")
+theme_override_font_sizes/font_size = 60
+text = "TEST"
+
 [node name="BlueBattlePanelMagicStats" type="Sprite2D" parent="."]
 visible = false
 position = Vector2(1644, 902)
@@ -375,7 +410,6 @@ texture = ExtResource("5_wxrqa")
 visible = false
 
 [node name="HandCursor" parent="." instance=ExtResource("3_qjlbk")]
-visible = false
 offset_right = 64.0
 offset_bottom = 64.0
 MenuParentPath = NodePath("../BlueBattlePanelPopUp/Control_ActionMenuBackground/MarginContainer/VBoxContainer")
@@ -384,8 +418,9 @@ CursorOffset = Vector2(45, -15)
 [node name="Control_DebugOutput" type="Control" parent="."]
 layout_mode = 3
 anchors_preset = 0
+offset_top = 128.0
 offset_right = 1920.0
-offset_bottom = 64.0
+offset_bottom = 192.0
 
 [node name="LabelDebugOutput" type="RichTextLabel" parent="Control_DebugOutput"]
 layout_mode = 1

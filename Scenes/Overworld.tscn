@@ -54,3 +54,5 @@ polygon = PackedVector2Array(-350, 27.3333, -308.667, 27.3333, -288, -36.6667, -
 [node name="Narshe" type="Node2D" parent="."]
 unique_name_in_owner = true
 position = Vector2(975, 408)
+
+[connection signal="tree_entered" from="." to="." method="ReInitialize"]

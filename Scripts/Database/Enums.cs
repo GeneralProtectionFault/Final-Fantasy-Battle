@@ -61,7 +61,8 @@ public static class Enums
 		Battle_Enemy_Action,
 
 		Battle_Won,
-		Battle_Lost
+		Battle_Lost,
+		Battle_End // Use this to distinguish between won/lost.  We will set to this in Process, but not run Process once @ Battle_End
 		
 	}
 }

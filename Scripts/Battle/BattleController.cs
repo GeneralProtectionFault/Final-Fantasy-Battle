@@ -17,6 +17,7 @@ public partial class BattleController : Node
 
 	private static AudioStreamPlayer MenuSwitchSound;
 	private static AudioStreamPlayer EnemyDeathSound;
+	private static AudioStreamPlayerIntro Fanfare;
 
 	public static List<Character> Characters = new List<Character>();
 	public static List<Enemy> Enemies = new List<Enemy>();
@@ -44,6 +45,14 @@ public partial class BattleController : Node
 
 	private static Control CharacterGrid;
 
+	private static Sprite2D VictoryTextSprite;
+	private static Label VictoryTextLabel;
+
+	// The "bounty" from the battle is displayed incrementally as the player presses the button
+	// Use this to store which one we're on when handling the button press (End of the Process method)
+	private static int BattleWonTextIndex = 0;
+	// This will be populated when the battle is won, and contain each thing that will get displayed @ the top of the screen after the battle.
+	List<string> VictoryTextList = new List<string>();
 
 	// Keep track of what is selected when picking the target
 	// private Ability AbilitySelected;
@@ -71,6 +80,18 @@ public partial class BattleController : Node
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
+		// Reset stuff...
+		ActiveCharacterIndex = -1;
+		CurrentMenuIndex = 0;
+
+		CharacterObjects.Clear();
+		EnemyObjects.Clear();
+		Enemies.Clear();
+		BattleTimers.Clear();
+		VictoryTextList.Clear();
+		BattleWonTextIndex = 0;
+
+
 		// Subscribe to the cursor event and handle whenever it's pressed
 		HandCursor.CursorSelected += CursorPressed;
 		// This event will fire when a character attacks another character
@@ -85,6 +106,7 @@ public partial class BattleController : Node
 		
 		MenuSwitchSound = GetNode<AudioStreamPlayer>("BattleTemplate/MenuSwitch");
 		EnemyDeathSound = GetNode<AudioStreamPlayer>("BattleTemplate/EnemyDeathSound");
+		Fanfare = GetNode<AudioStreamPlayerIntro>("BattleTemplate/Fanfare");
 
 		// Tracks if a player is selecting something such as a spell, ability, etc... (will affect wait and all that)
 		Battle_UpdateGameState(Enums.GameState.Battle);
@@ -102,6 +124,9 @@ public partial class BattleController : Node
 		EnemyMenu = GetNode<Sprite2D>("BattleCanvas/BlueBattlePanelLeft");
 		EnemyMenuContainer = EnemyMenu.GetNode<VBoxContainer>("Control_EnemyMenuBackground/MarginContainer/VBoxContainer");
 
+		VictoryTextSprite = GetNode<Sprite2D>("BattleCanvas/BlueBattleVictoryPanel");
+		VictoryTextLabel = VictoryTextSprite.GetNode<Label>("Control_VictoryText/Label_VictoryText");
+
 		// Spawn the players in the party
 		Characters = DatabaseHandler.GetCharactersInParty().ToList();
 		
@@ -111,6 +136,8 @@ public partial class BattleController : Node
 
 
 		#region CharacterSpawn
+
+		
 
 		for (var i = 0; i < Characters.Count(); i++)
 		{
@@ -124,6 +151,10 @@ public partial class BattleController : Node
 
 			var CharacterObject = GD.Load<PackedScene>($"{CharacterScenePath}{CharacterName}.tscn").Instantiate() as Node2D;
 			AddChild(CharacterObject);
+
+			// The animation player used on the overworld will eff with the animations in a different animation player, so disable it here
+			// (and re-enable it upon going back to the overworld)
+			CharacterObject.GetNode<AnimationTree>("AnimationTree").Active = false;
 
 			// Used in this script
 			CharacterObjects.Add(CharacterObject);
@@ -178,9 +209,6 @@ public partial class BattleController : Node
 
 			EnemyObjects.Add(EnemyObject as Node2D);
 
-			// Used in HandCursor script
-			//CharactersAndEnemies.Add(EnemyObject as Node2D);
-
 			// Add the enemy label to the list on the left side of the screen
 			var EnemyLabel = new Label();
 
@@ -207,10 +235,60 @@ public partial class BattleController : Node
 
 
 
+	private void EndBattle()
+	{
+		Globals.OverworldInputEnabled = true;
+		Globals.InBattle = false;
+
+		HandCursor.CursorSelected -= CursorPressed;
+		BattleAlgorithms.DamagingCharacter -= UpdateCharacterAfterAttack;
+		BattleAlgorithms.DamagingEnemy -= UpdateAfterEnemyDamage;
+
+
+		GetTree().Root.AddChild(Globals.Overworld);
+		EncounterController.ResetEncounter();
+		this.QueueFree();
+	}
+
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
 	{
+		#region BattleWon!
+		if (Globals.GameState == Enums.GameState.Battle_Won)
+		{
+			if (Input.IsActionJustPressed("ui_accept"))
+			{
+				// If we've reached the end of the list of text stuff to display after the battle...
+				// END THE BATTLE IN THIS CASE =D (Tween out, whatever...)
+				if (BattleWonTextIndex == VictoryTextList.Count)
+				{
+					GD.Print("Battle over!");
+					Globals.GameState = Enums.GameState.Battle_End;
+					EndBattle();
+				}
+				else
+				{
+					// Change the text to the next "thing"
+					VictoryTextLabel.Text = VictoryTextList[BattleWonTextIndex];
+					BattleWonTextIndex += 1;
+				}
+			}
+		}
+
+		#endregion
+
+		// Set to this from Process so as to not be "processing" when changing the scene out of battle
+		if (Globals.GameState == Enums.GameState.Battle_End)
+			return;
+
+		if (Globals.BattleMode == Enums.BattleMode.Wait)
+		{
+			if (Globals.BattleWaitStates.Contains(Globals.GameState))
+			{
+				return;
+			}
+		}
 		
 		#region CharacterBattleTimers
 
@@ -293,6 +371,9 @@ public partial class BattleController : Node
 		// }
 
 		#endregion
+
+
+		
 
 	}
 
@@ -709,6 +790,9 @@ public partial class BattleController : Node
 	/// <param name="TheCharacter"></param>
 	private void UpdateCharacterAfterAttack(object sender, Character TheCharacter)
 	{
+		FightMenu.Visible = false;
+		HandCursorObject.Visible = false;
+
 		BattleTimers[ActiveCharacterIndex].Value = 0;
 		CharactersWithFullTimerBar.Remove(ActiveCharacterIndex);
 		// The process method will set this right back appropriately if another character has a full battle gauge
@@ -723,6 +807,12 @@ public partial class BattleController : Node
 
 	private void UpdateAfterEnemyDamage(object sender, Enemy TheEnemy)
 	{
+		FightMenu.Visible = false;
+		HandCursorObject.Visible = false;
+
+		GD.Print($"Size: {BattleTimers.Count}");
+		GD.Print($"Active Character Index: {ActiveCharacterIndex}");
+
 		// Down the Enemy's HP on the object and whatnot
 		BattleTimers[ActiveCharacterIndex].Value = 0;
 		CharactersWithFullTimerBar.Remove(ActiveCharacterIndex);
@@ -748,22 +838,115 @@ public partial class BattleController : Node
 			Tween DelayTween = GetTree().CreateTween();
 
 			DelayTween.TweenCallback(Callable.From(() => {
-				// foreach (var Child in EnemyObject.GetChildren())
-				// {
-				// 	Child.QueueFree();
-				// }
-
 				EnemyDeathSound.Play();
 				EnemyObjects[TheEnemy.BattleListIndex].QueueFree();
+				
+				// Remove enemy from the list (UI on the left)
+				foreach (Label EnemyLabel in EnemyMenuContainer.GetChildren())
+				{
+					if (EnemyLabel.Text == TheEnemy.Name)
+					{
+						EnemyLabel.QueueFree();
+						break;
+					}
+				}
+
 			}
 			)).SetDelay(1.0f);
-
-			
 		}
 
 
+		// If all enemies have <= 0 HP
+		if (Enemies.Where(x => x.Hp > 0).Count() <= 0)
+		{
+			Battle_UpdateGameState(Enums.GameState.Battle_Won);
+			ActiveCharacterIcon.Visible = false;
 
-		Battle_UpdateGameState(Enums.GameState.Battle);
+			Tween BattleEndTween = GetTree().CreateTween();
+
+			BattleEndTween.TweenCallback(Callable.From(()=> {
+				GetNode<AudioStreamPlayer>("BattleTemplate/BattleTheme").Stop();
+				Fanfare.Play();
+
+				// Play victory animation if the character is still standing :)
+				foreach (Character Character in Characters.Where(x => x.Hp > 0))
+				{
+					// Get the list index so we can get the Node2D from that list (indices will be the same)
+					var Index = Characters.FindIndex(x => x == Character);
+
+					var Player = CharacterObjects[Index].GetNode<AnimationPlayer>("Battle_AnimationPlayer");
+					Player.Queue("Spin");
+					Player.Queue("Fanfare");
+				}
+
+
+				// Experience ********************************
+				var Exp = 0;
+				foreach(var Enemy in Enemies)
+				{
+					Exp += Enemy.Experience;
+				}
+
+				// I THINK the experience in FF6 is displaying PER CHARACTER, ergo...
+				Exp = Exp / Characters.Count;
+				VictoryTextList.Add($"Got {Exp} Exp. point(s)");
+
+				// Espers / Magic points
+
+
+				// Items **************************************
+				// Create this as a dictionary to account for cases in which there's more than 1 of a particular item.
+				// The dictionary will yield the number of items to display
+				var ItemList = new Dictionary<string, int>();
+				foreach (var Enemy in Enemies)
+				{
+					foreach(KeyValuePair<string,float> Item in Enemy.DroppedItems)
+					{
+						GD.Print($"Iterating over {Enemy} dropped item: {Item.Key}");
+
+						Random gen = new Random();
+						double TriggerValue = gen.NextDouble();
+						double ItemProbability = Item.Value;
+
+						GD.Print($"Trigger: {TriggerValue}");
+						GD.Print($"Prob. of Item: {ItemProbability}");
+
+						// If the random value (between 0 and 1) is greater than the stored %, they get the item
+						if (TriggerValue <= ItemProbability)
+						{
+							GD.Print($"{Item.Key} dropped");
+
+							// Check if we already have this item
+							if (ItemList.ContainsKey(Item.Key))
+								ItemList[Item.Key] += 1;
+							else
+								ItemList.Add(Item.Key, 1);
+						}
+					}
+				}
+
+				foreach (var Item in ItemList)
+					VictoryTextList.Add($"Got {Item.Key} x {Item.Value}");
+
+				// GP ********************************************
+				var GP = 0;
+				foreach (var Enemy in Enemies)
+				{
+					GP += Enemy.Gil;
+				}
+
+				VictoryTextList.Add($"Got {GP} GP");
+
+				VictoryTextSprite.Visible = true;
+				VictoryTextLabel.Text = VictoryTextList[0];
+				BattleWonTextIndex += 1;
+ 
+			})).SetDelay(2.0f);
+
+
+		}
+		else
+			Battle_UpdateGameState(Enums.GameState.Battle);
 	}
 
 

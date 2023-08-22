@@ -3,8 +3,10 @@ using Godot;
 
 public static class Globals
 {
+    public static Node Overworld;
+
+    public static Vector2 EnteredBattlePosition;
     public static bool OverworldInputEnabled = true;
-    
     public static bool InBattle = false;
 
     public static bool CursorLocked = false;
@@ -56,7 +58,8 @@ public static class Globals
         Enums.GameState.Battle_Menu_Tool,
         
         Enums.GameState.Battle_Won,
-        Enums.GameState.Battle_Lost
+        Enums.GameState.Battle_Lost,
+        Enums.GameState.Battle_End
     };
 
     public static readonly List<Enums.GameState> BattleSelectingObjectStates = new List<Enums.GameState>() {
@@ -118,6 +121,11 @@ public static class Globals
     };
 
 
+
+    
+
+
+
     // When switching between targetting of characters vs. enemies, use this to simplify switching to the appropriate battle state
     public static readonly Dictionary<Enums.GameState, Enums.GameState> SelectingStateOpposites = new Dictionary<Enums.GameState, Enums.GameState> () {
         {Enums.GameState.Battle_Fight_Selecting_Target_Characters, Enums.GameState.Battle_Fight_Selecting_Target_Enemies},
@@ -145,5 +153,31 @@ public static class Globals
         {Enums.GameState.Battle_Tool_Selecting_Target_Multiple, Enums.GameState.Battle_Tool_Selecting_Target_Multiple}
     };
 
-    // public static Enums.HandCursorMode HandCursorMode;
+
+
+    public static readonly List<Enums.GameState> BattleWaitStates = new List<Enums.GameState>();
+
+
+
+    /// <summary>
+    /// Globals Constructor
+    /// </summary>
+    static Globals ()
+    {
+        // Use other lists to simplify making any states in which "wait" applies (as opposed to "active")
+        BattleWaitStates.AddRange(BattleSelectingObjectStates);
+        BattleWaitStates.AddRange(BattleSelectingMenuStates);
+        // Timer bars should still increment in the vanilla "Fight, etc..." menu
+        BattleWaitStates.Remove(Enums.GameState.Battle_Menu_Normal);
+        BattleWaitStates.AddRange(BattleSelectingEnemyStates);
+        BattleWaitStates.Add(Enums.GameState.Battle_Won);
+        BattleWaitStates.Add(Enums.GameState.Battle_Lost);
+
+        BattleWaitStates.Add(Enums.GameState.Battle_Party_Action);
+        BattleWaitStates.Add(Enums.GameState.Battle_Enemy_Action);
+
+
+        // Store the Overworld in memory here.  The sprite is huge, so it will hang if we have to load it every time
+        Overworld = ResourceLoader.Load<PackedScene>("res://Scenes/Overworld.tscn").Instantiate();
+    }
 }

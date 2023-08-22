@@ -27,7 +27,10 @@ public partial class DamageHealthText : Node
 		BounceTween.Chain().TweenProperty(DamageObject, "position", LowApex, .12f).SetEase(Tween.EaseType.Out);
 		BounceTween.Chain().TweenProperty(DamageObject, "position", OriginalPosition, .12f).SetTrans(Tween.TransitionType.Bounce).SetEase(Tween.EaseType.In);
 
-		BounceTween.TweenCallback(Callable.From(() => this.QueueFree())).SetDelay(1f);
+		BounceTween.TweenCallback(Callable.From(() => { 
+			if (IsInstanceValid(this))
+				this.QueueFree();
+		})).SetDelay(1f);
 	}
 
 

@@ -100,23 +100,25 @@ public partial class EncounterController : Node
         Globals.OverworldInputEnabled = false;
 
         Sprite2D BlackImage = new Sprite2D();
+        Sprite2D Sprite = new Sprite2D();
 
         // Make character(s) invisible
         var Characters = GetTree().GetNodesInGroup("Characters");
         foreach (var Character in Characters)
         {
-            // Make invisible
-            // (Character as CanvasItem).Visible = false;
-
             // Left as deafult name
-            var Sprite = Character.GetNode<Sprite2D>("Sprite2D");
+            Sprite = Character.GetNode<Sprite2D>("Sprite2D");
             BlackImage = Character.GetNode<Sprite2D>("Black");
 
+            // Make character invisible
             Sprite.Visible = false;
         }
 
         var Camera = GetViewport().GetCamera2D();
         
+        // Store the location battle was entered at for re-entry
+        Globals.EnteredBattlePosition = Sprite.GlobalPosition;
+
         // Camera zoom/shake
         // Putting this in the camera tween causes it to happen instantaneously, epic fail
         // Fade/Dim screen
@@ -129,14 +131,39 @@ public partial class EncounterController : Node
         CameraTween.Chain().TweenProperty(Camera, "zoom", new Vector2(4,4), .2f);
 
         // Call the scene change after the tween finishes
-        CameraTween.TweenCallback(Callable.From(() => LoadBattleScene($"res://Scenes/Battle/{BattleArea}.tscn"))).SetDelay(.15f);
+        CameraTween.TweenCallback(Callable.From(() => 
+            LoadBattleScene($"res://Scenes/Battle/{BattleArea}.tscn", Characters)
+        )).SetDelay(.15f);
     }
 
 
 
-    private void LoadBattleScene(string SceneFile)
+    private void LoadBattleScene(string SceneFile, Godot.Collections.Array<Node> Characters)
     {
-        GetTree().ChangeSceneToFile(SceneFile);
+        Globals.GameState = Enums.GameState.Battle;
+        // GetTree().ChangeSceneToFile(SceneFile);
+
+        Node BattleScene = ResourceLoader.Load<PackedScene>(SceneFile).Instantiate();
+        GetTree().Root.AddChild(BattleScene);
+
+        var OverworldScene = GetTree().Root.GetNode("Overworld");
+        
+        // Remove added objects
+        // Since the scene will remain in memory, the existing code to add the lead character to the scene
+        // would create duplicates
+        // foreach loop is to maintain flexibility as above, in case there was desire to have multiple characters on screen
+        foreach(var Character in Characters)
+            OverworldScene.RemoveChild(Character);
+        
+        GetTree().Root.RemoveChild(OverworldScene);
     }
  
+
+    public static void ResetEncounter()
+    {
+        Counter = 0;
+        RandomNumber = 0;
+        SecondsCounter = 0;
+    }
+
 }

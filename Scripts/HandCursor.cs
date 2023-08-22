@@ -75,15 +75,23 @@ public partial class HandCursor : TextureRect
 
 		
 		SetCursorFromIndex(CursorIndex);
+		// This sucky piece of code is here because putting it in _Ready borks if this cursor starts off invisible :(
+		if (FingerSoundPlayer is null || !IsInstanceValid(FingerSoundPlayer))
+			FingerSoundPlayer = GetNode<AudioStreamPlayer>("FingerSound");
+
+		(this as TextureRect).Visible = false;
 	}
 
-
+	public void TreeExiting()
+	{
+		GD.Print("HandCursor Exiting...");
+		BattleController.SelectingTarget -= EnableObjectSelectMode;
+		BattleController.NotSelectingTarget -= EnableMenuSelectMode;
+	}
 
 	public override void _Process(double delta)
 	{
-		// This sucky piece of code is here because putting it in _Ready borks if this cursor starts off invisible :(
-		if (FingerSoundPlayer is null)
-			FingerSoundPlayer = GetNode<AudioStreamPlayer>("FingerSound");
+		
 
 
 		var Input = Vector2.Zero;

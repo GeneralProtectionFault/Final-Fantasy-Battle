@@ -3,9 +3,26 @@ using System;
 
 public partial class Overworld : Node
 {
+	private static bool FirstLoad = true;
+
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
+		Initialize();
+		FirstLoad = false;
+	}
+
+
+	public void ReInitialize()
+	{
+		if (!FirstLoad)
+			Initialize();
+	} 
+
+	public void Initialize()
+	{
+		GD.Print("Overworld method running...");
+
 		// Get the location where the character will spawn
 		var SpawnObject = GetNode<Node2D>($"%{Globals.OverworldSpawnNode}");
 
@@ -13,7 +30,18 @@ public partial class Overworld : Node
 		GD.Print($"Party Leader: {Leader.Name}");
 		var LeadCharacter = GD.Load<PackedScene>($"res://Scenes/Characters/{Leader.Name}.tscn").Instantiate();
 		
-		(LeadCharacter as Node2D).GlobalPosition = SpawnObject.GlobalPosition;
+		// This will have been disabled going into a battle
+		LeadCharacter.GetNode<AnimationTree>("AnimationTree").Active = true;
+
+
+		// Spawn the character according to the previous game state **************
+		// If we were just in battle, spawn at the stored location
+		if (Globals.BattleStates.Contains(Globals.GameState))
+			(LeadCharacter as Node2D).GlobalPosition = Globals.EnteredBattlePosition;
+		else
+			(LeadCharacter as Node2D).GlobalPosition = SpawnObject.GlobalPosition;
+
+
 
 		var Camera = new Camera2D();
 		Camera.Name = "Camera2D";
@@ -34,11 +62,8 @@ public partial class Overworld : Node
 
 
 		AddChild(LeadCharacter);
-
+		
 	}
 
-	// Called every frame. 'delta' is the elapsed time since the previous frame.
-	public override void _Process(double delta)
-	{
-	}
+	
 }

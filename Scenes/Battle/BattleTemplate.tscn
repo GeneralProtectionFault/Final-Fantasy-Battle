@@ -1,10 +1,11 @@
-[gd_scene load_steps=6 format=3 uid="uid://dmw72wr1i311x"]
+[gd_scene load_steps=7 format=3 uid="uid://dmw72wr1i311x"]
 
 [ext_resource type="AudioStream" uid="uid://dtj5osbft0hyx" path="res://Audio/FF6_Normal_Battle.ogg" id="1_dr6ne"]
 [ext_resource type="AudioStream" uid="uid://ceplwl4jpmfdt" path="res://Audio/MenuSounds/FF6_MenuSwitch.ogg" id="2_aijfp"]
 [ext_resource type="PackedScene" uid="uid://cm17wfngxbks7" path="res://Scenes/Battle/ActiveBattleCursor.tscn" id="2_r3078"]
 [ext_resource type="Script" path="res://Scripts/AudioStreamPlayerIntro.cs" id="2_ws0ew"]
 [ext_resource type="AudioStream" uid="uid://c7glo7gj41qia" path="res://Audio/2DMonsterDeath.wav" id="4_e15ke"]
+[ext_resource type="AudioStream" uid="uid://bgmip74i2fdoq" path="res://Audio/FFVI_Victory_Fanfare_Trimmed.ogg" id="5_bb5c8"]
 
 [node name="BattleTemplate" type="Node2D"]
 
@@ -20,6 +21,12 @@ stream = ExtResource("2_aijfp")
 
 [node name="EnemyDeathSound" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("4_e15ke")
+
+[node name="Fanfare" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("5_bb5c8")
+script = ExtResource("2_ws0ew")
+IntroSeconds = 4.086
+HasIntro = true
 
 [node name="FrontRow_Player1" type="Node2D" parent="."]
 position = Vector2(1611, 447)
