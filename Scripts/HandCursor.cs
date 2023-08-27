@@ -84,7 +84,7 @@ public partial class HandCursor : TextureRect
 
 	public void TreeExiting()
 	{
-		GD.Print("HandCursor Exiting...");
+		// GD.Print("HandCursor Exiting...");
 		BattleController.SelectingTarget -= EnableObjectSelectMode;
 		BattleController.NotSelectingTarget -= EnableMenuSelectMode;
 	}

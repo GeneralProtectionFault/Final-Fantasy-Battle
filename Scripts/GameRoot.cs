@@ -7,6 +7,7 @@ public partial class GameRoot : Node
 	public override void _Ready()
 	{
 		GetTree().Root.CallDeferred("add_child", Globals.Overworld);
+		// GetTree().Root.AddChild(Globals.Overworld);
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.

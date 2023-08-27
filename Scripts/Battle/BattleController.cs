@@ -239,6 +239,7 @@ public partial class BattleController : Node
 	{
 		Globals.OverworldInputEnabled = true;
 		Globals.InBattle = false;
+		Globals.ReturningFromBattle = true;
 
 		HandCursor.CursorSelected -= CursorPressed;
 		BattleAlgorithms.DamagingCharacter -= UpdateCharacterAfterAttack;
@@ -868,6 +869,8 @@ public partial class BattleController : Node
 				GetNode<AudioStreamPlayer>("BattleTemplate/BattleTheme").Stop();
 				Fanfare.Play();
 
+				var UnwoundedCharacters = Characters.Where(x => x.Hp > 0).ToList();
+
 				// Play victory animation if the character is still standing :)
 				foreach (Character Character in Characters.Where(x => x.Hp > 0))
 				{
@@ -888,9 +891,15 @@ public partial class BattleController : Node
 				}
 
 				// I THINK the experience in FF6 is displaying PER CHARACTER, ergo...
-				Exp = Exp / Characters.Count;
+				Exp = Exp / UnwoundedCharacters.Count;
 				VictoryTextList.Add($"Got {Exp} Exp. point(s)");
 
+				foreach	(var Character in UnwoundedCharacters)
+				{
+					Character.Experience += Exp;
+					DatabaseHandler.UpdateCharacter(Character);
+				}
+				
 				// Espers / Magic points
 
 
@@ -898,6 +907,7 @@ public partial class BattleController : Node
 				// Create this as a dictionary to account for cases in which there's more than 1 of a particular item.
 				// The dictionary will yield the number of items to display
 				var ItemList = new Dictionary<string, int>();
+
 				foreach (var Enemy in Enemies)
 				{
 					foreach(KeyValuePair<string,float> Item in Enemy.DroppedItems)
@@ -915,6 +925,11 @@ public partial class BattleController : Node
 						if (TriggerValue <= ItemProbability)
 						{
 							GD.Print($"{Item.Key} dropped");
+
+							var ItemData = DatabaseHandler.ItemCollection.FindOne(x => x.Name == Item.Key);
+							ItemData.InventoryCount += 1;
+							DatabaseHandler.UpdateItem(ItemData);
+
 
 							// Check if we already have this item
 							if (ItemList.ContainsKey(Item.Key))

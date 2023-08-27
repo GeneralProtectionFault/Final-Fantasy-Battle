@@ -119,6 +119,20 @@ public partial class DatabaseHandler : Node
 		GD.Print($"Database update result: {UpdateResult}");
 	}
 
+	public static void UpdateItem(Item Item)
+	{
+		var ItemToUpdate = ItemCollection.FindOne(x => x.Name == Item.Name);
+		BsonValue ItemID = ItemToUpdate._id;
+
+		ItemToUpdate = Item;
+		ItemToUpdate._id = ItemID;
+
+		var UpdateResult = ItemCollection.Update(ItemToUpdate);
+		GD.Print($"Item updated, {Item.Name} quantity: {ItemToUpdate.InventoryCount}");
+		
+	}
+
+
 
 	public static Character GetPartyLeader()
 	{

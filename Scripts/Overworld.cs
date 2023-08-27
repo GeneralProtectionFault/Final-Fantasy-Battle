@@ -3,25 +3,25 @@ using System;
 
 public partial class Overworld : Node
 {
-	private static bool FirstLoad = true;
+	private bool ReadyCompleted = false;
 
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
+		ReadyCompleted = true;
 		Initialize();
-		FirstLoad = false;
 	}
 
 
 	public void ReInitialize()
-	{
-		if (!FirstLoad)
-			Initialize();
-	} 
+	{		
+		if (ReadyCompleted)
+			Initialize();	
+	}  
 
 	public void Initialize()
 	{
-		GD.Print("Overworld method running...");
+		// GD.Print("Overworld method running...");
 
 		// Get the location where the character will spawn
 		var SpawnObject = GetNode<Node2D>($"%{Globals.OverworldSpawnNode}");
@@ -36,8 +36,11 @@ public partial class Overworld : Node
 
 		// Spawn the character according to the previous game state **************
 		// If we were just in battle, spawn at the stored location
-		if (Globals.BattleStates.Contains(Globals.GameState))
+		if (Globals.ReturningFromBattle)
+		{
 			(LeadCharacter as Node2D).GlobalPosition = Globals.EnteredBattlePosition;
+			Globals.ReturningFromBattle = false;
+		}
 		else
 			(LeadCharacter as Node2D).GlobalPosition = SpawnObject.GlobalPosition;
 

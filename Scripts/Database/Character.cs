@@ -73,6 +73,8 @@ public class Character
     public string BodyEquipped { get; set; }
     public string RelicEquipped { get; set; }
 
+    public int Experience { get; set; }
+
 
 
 }

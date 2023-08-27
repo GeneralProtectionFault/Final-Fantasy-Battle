@@ -8,6 +8,7 @@ public static class Globals
     public static Vector2 EnteredBattlePosition;
     public static bool OverworldInputEnabled = true;
     public static bool InBattle = false;
+    public static bool ReturningFromBattle = false;
 
     public static bool CursorLocked = false;
 
