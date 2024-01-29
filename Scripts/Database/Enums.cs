@@ -23,9 +23,7 @@ public static class Enums
 	public enum HandCursorMode {Menu, Object}
 
 	public enum GameState {
-		Overworld,
-		Party_Menu,
-
+		
 		Battle,
 		Battle_Menu_Normal,
 		Battle_Menu_Magic,
@@ -64,6 +62,10 @@ public static class Enums
 		Battle_Lost,
 		Battle_End // Use this to distinguish between won/lost.  We will set to this in Process, but not run Process once @ Battle_End
 		
+		// NON-BATTLE STATES
+		,Overworld,
+		Town,
+		Party_Menu
 	}
 }
 

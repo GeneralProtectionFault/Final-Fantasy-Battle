@@ -27,7 +27,6 @@ public partial class EncounterController : Node
         RandomEncounterSound = new AudioStreamPlayer();
         AddChild(RandomEncounterSound);
         RandomEncounterSound.Stream = ResourceLoader.Load("res://Audio/random_encounter.mp3") as AudioStream;
-
     }
 
 
@@ -35,56 +34,68 @@ public partial class EncounterController : Node
     {
         // base._Process(delta);
         
-        SecondsCounter += delta;
-
-        // 0.2 seconds is akin to a frame of the walk animations created
-        // Use 0.1 for Sprint Shoes :)
-        if (IsWalking && SecondsCounter >= .2)
+        if (Globals.GameState == Enums.GameState.Overworld)
         {
-            SecondsCounter = 0;
-            Counter += CounterIncrement;
-            
-            RandomNumber = RandomGenerator.Next(0,256);
-            // GD.Print($"Random Number: {RandomNumber}");
 
-            // *** FIGHT! *** 
-            if (RandomNumber < (Counter / 256) && !Globals.InBattle)
+            SecondsCounter += delta;
+
+            // 0.2 seconds is akin to a frame of the walk animations created
+            // Use 0.1 for Sprint Shoes :)
+            if (IsWalking && SecondsCounter >= .2)
             {
-                GD.Print("FIGHT!");
-                Globals.InBattle = true;
-                Counter = 0;
+                SecondsCounter = 0;
+                Counter += CounterIncrement;
+                
+                RandomNumber = RandomGenerator.Next(0,256);
+                // GD.Print($"Random Number: {RandomNumber}");
 
-                // Get all of the battle area nodes (polygons) 
-                var AreaNodes = GetTree().GetNodesInGroup("EncounterAreas");
-                string BattleArea = "";
-
-                foreach(var Area in AreaNodes)
+                // *** FIGHT! *** 
+                if (RandomNumber < (Counter / 256) && !Globals.InBattle)
                 {
-                    // Check if the Area is overlapping any CHARACTER bodies
-                    // GetType returns "CharacterController" here, which is the script name...meh.
-                    var OverlappingBodies = (Area as Area2D).GetOverlappingBodies();
+                    GD.Print("FIGHT!");
                     
-                    // Loop in case the character is touching 2 areas...
-                    // foreach(var OverlappingBody in OverlappingBodies)
-                    // {
-                    //     GD.Print($"{Area.Name} is overlapping: {OverlappingBody.Name}");
-                    //     GD.Print($"Type: {OverlappingBody.GetType()}");
-                    // }
 
-                    // This will be null except for the area that has overlaps :)
-                    if (OverlappingBodies.Count > 0)
-                        BattleArea = Area.Name;
+                    // Get all of the battle area nodes (polygons) 
+                    var AreaNodes = GetTree().GetNodesInGroup("EncounterAreas");
+                    string BattleArea = "";
+
+                    foreach(var Area in AreaNodes)
+                    {
+                        // Check if the Area is overlapping any CHARACTER bodies
+                        // GetType returns "CharacterController" here, which is the script name...meh.
+                        var OverlappingBodies = (Area as Area2D).GetOverlappingBodies();
+                        
+                        // Loop in case the character is touching 2 areas...
+                        // foreach(var OverlappingBody in OverlappingBodies)
+                        // {
+                        //     GD.Print($"{Area.Name} is overlapping: {OverlappingBody.Name}");
+                        //     GD.Print($"Type: {OverlappingBody.GetType()}");
+                        // }
+
+                        // This will be null except for the area that has overlaps :)
+                        if (OverlappingBodies.Count > 0)
+                            BattleArea = Area.Name;
+                    }
+                    
+
+                    if (BattleArea.Count() > 0)
+                    {
+                        Globals.InBattle = true;
+                        Counter = 0;
+                        BattleStart(BattleArea);
+                    }
+                    else
+                    {
+                        ResetEncounter();
+                    }
+                    
+                    // Take the 1st node and pass that to a method to switch to the respective battle scene
+                    
+
                 }
-                
-
-                BattleStart(BattleArea);
-                
-                // Take the 1st node and pass that to a method to switch to the respective battle scene
-                
 
             }
-
-        }
+        } // End of if game state is overworld, etc...
     }
     
 
@@ -117,7 +128,7 @@ public partial class EncounterController : Node
         var Camera = GetViewport().GetCamera2D();
         
         // Store the location battle was entered at for re-entry
-        Globals.EnteredBattlePosition = Sprite.GlobalPosition;
+        Globals.OverworldPosition = Sprite.GlobalPosition;
 
         // Camera zoom/shake
         // Putting this in the camera tween causes it to happen instantaneously, epic fail
@@ -141,21 +152,10 @@ public partial class EncounterController : Node
     private void LoadBattleScene(string SceneFile, Godot.Collections.Array<Node> Characters)
     {
         Globals.GameState = Enums.GameState.Battle;
-        // GetTree().ChangeSceneToFile(SceneFile);
 
+        GameRoot.Instance.RemoveOverworldScene();
         Node BattleScene = ResourceLoader.Load<PackedScene>(SceneFile).Instantiate();
         GetTree().Root.AddChild(BattleScene);
-
-        var OverworldScene = GetTree().Root.GetNode("Overworld");
-        
-        // Remove added objects
-        // Since the scene will remain in memory, the existing code to add the lead character to the scene
-        // would create duplicates
-        // foreach loop is to maintain flexibility as above, in case there was desire to have multiple characters on screen
-        foreach(var Character in Characters)
-            OverworldScene.RemoveChild(Character);
-        
-        GetTree().Root.RemoveChild(OverworldScene);
     }
  
 

@@ -1,13 +1,18 @@
 using Godot;
 using System;
+using System.Diagnostics;
 
 public partial class Overworld : Node
 {
 	private bool ReadyCompleted = false;
+	public static Node OverworldPhantomCamera;
 
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
+		var PhantomScript = GD.Load<GDScript>("res://addons/phantom_camera/scripts/phantom_camera/phantom_camera_2D.gd");
+		OverworldPhantomCamera = (GodotObject)PhantomScript.New() as Node;
+
 		ReadyCompleted = true;
 		Initialize();
 	}
@@ -19,12 +24,10 @@ public partial class Overworld : Node
 			Initialize();	
 	}  
 
-	public void Initialize()
+	public async void Initialize()
 	{
-		// GD.Print("Overworld method running...");
-
 		// Get the location where the character will spawn
-		var SpawnObject = GetNode<Node2D>($"%{Globals.OverworldSpawnNode}");
+		// var SpawnObject = GetNode<Node2D>($"%{Globals.OverworldSpawnNode}");
 
 		var Leader = DatabaseHandler.GetPartyLeader();
 		GD.Print($"Party Leader: {Leader.Name}");
@@ -38,17 +41,14 @@ public partial class Overworld : Node
 		// If we were just in battle, spawn at the stored location
 		if (Globals.ReturningFromBattle)
 		{
-			(LeadCharacter as Node2D).GlobalPosition = Globals.EnteredBattlePosition;
+			(LeadCharacter as Node2D).GlobalPosition = Globals.OverworldPosition;
 			Globals.ReturningFromBattle = false;
 		}
 		else
-			(LeadCharacter as Node2D).GlobalPosition = SpawnObject.GlobalPosition;
-
-
-
-		var Camera = new Camera2D();
-		Camera.Name = "Camera2D";
-		LeadCharacter.AddChild(Camera);
+		{
+			// (LeadCharacter as Node2D).GlobalPosition = SpawnObject.GlobalPosition;
+			(LeadCharacter as Node2D).GlobalPosition = Globals.OverworldPosition;
+		}
 
 
 		// Add the black image as a child of the character.
@@ -62,11 +62,13 @@ public partial class Overworld : Node
 		FadeoutSprite.Set("modulate", new Color(1f,1f,1f,0f));
 
 		LeadCharacter.AddChild(FadeoutSprite);
-
-
-		AddChild(LeadCharacter);
 		
+		CallDeferred("add_child", LeadCharacter);
+		await ToSignal(LeadCharacter, "tree_entered");
+
+		GameRoot.Instance.AddPhantomCamera(this, LeadCharacter, null);
 	}
+
 
 	
 }

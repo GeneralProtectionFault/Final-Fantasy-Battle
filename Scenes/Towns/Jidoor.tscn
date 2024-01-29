@@ -1,0 +1,172 @@
+[gd_scene load_steps=18 format=3 uid="uid://c3nprmq5ixitc"]
+
+[ext_resource type="Script" path="res://Scripts/Town.cs" id="1_2dc4w"]
+[ext_resource type="Texture2D" uid="uid://bju85lt2uxrmn" path="res://Graphics/Towns/Jidoor/Jidoor_MainTown_4x.png" id="1_sp8ol"]
+[ext_resource type="AudioStream" uid="uid://6ewjtb3ee7ye" path="res://Audio/Town/The_Magic_House (Jidoor).ogg" id="1_vlp6y"]
+[ext_resource type="Script" path="res://Scripts/NPC_Controller.cs" id="2_2ndfm"]
+[ext_resource type="Script" path="res://addons/phantom_camera/scripts/phantom_camera_host/phantom_camera_host.gd" id="2_ci30o"]
+[ext_resource type="Texture2D" uid="uid://17j20huqne4q" path="res://Graphics/Sprites/NPCs/Jidoor_NPC1_4x.png" id="2_oucrh"]
+[ext_resource type="Texture2D" uid="uid://boyu1583uosno" path="res://Graphics/BattleBackgrounds/BlueBattlePanel_Large.png" id="3_55ddn"]
+[ext_resource type="FontFile" uid="uid://c6xlpvnmwmyja" path="res://Fonts/final_fantasy_36_font.ttf" id="4_02ukl"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wop03"]
+size = Vector2(1972, 3987)
+
+[sub_resource type="FontVariation" id="FontVariation_h87xf"]
+base_font = ExtResource("4_02ukl")
+
+[sub_resource type="NavigationPolygon" id="NavigationPolygon_5ibyj"]
+vertices = PackedVector2Array(1270, 950, 906, 950, 906, 650, 1270, 650)
+polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3)])
+outlines = Array[PackedVector2Array]([PackedVector2Array(896, 640, 1280, 640, 1280, 960, 896, 960)])
+source_geometry_group_name = &"navigation_polygon_source_group"
+
+[sub_resource type="Animation" id="Animation_t07ib"]
+resource_name = "WalkDown"
+length = 1.6
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.4, 0.8, 1.2),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 1,
+"values": [0, 5, 0, 10]
+}
+
+[sub_resource type="Animation" id="Animation_cirpd"]
+resource_name = "WalkLeft"
+length = 1.6
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.4, 0.8, 1.2),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 1,
+"values": [2, 7, 2, 12]
+}
+
+[sub_resource type="Animation" id="Animation_84fav"]
+resource_name = "WalkRight"
+length = 1.6
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.4, 0.8, 1.2),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 1,
+"values": [3, 8, 3, 13]
+}
+
+[sub_resource type="Animation" id="Animation_6bxqb"]
+resource_name = "WalkUp"
+length = 1.6
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.4, 0.8, 1.2),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 1,
+"values": [1, 6, 1, 11]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_ufjbg"]
+_data = {
+"WalkDown": SubResource("Animation_t07ib"),
+"WalkLeft": SubResource("Animation_cirpd"),
+"WalkRight": SubResource("Animation_84fav"),
+"WalkUp": SubResource("Animation_6bxqb")
+}
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_5s385"]
+size = Vector2(44, 76)
+
+[node name="Jidoor" type="Node2D"]
+script = ExtResource("1_2dc4w")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(976, 559)
+
+[node name="PhantomCameraHost" type="Node" parent="Camera2D"]
+script = ExtResource("2_ci30o")
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("1_vlp6y")
+autoplay = true
+
+[node name="TownSpawnNode2D" type="Node2D" parent="."]
+position = Vector2(902, 1025)
+
+[node name="TownSpriteBackground" type="Sprite2D" parent="."]
+position = Vector2(971, -885)
+texture = ExtResource("1_sp8ol")
+metadata/_edit_lock_ = true
+
+[node name="Area2D_Border" type="Area2D" parent="."]
+metadata/_edit_lock_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D_Border"]
+position = Vector2(976, -883.5)
+shape = SubResource("RectangleShape2D_wop03")
+metadata/_edit_lock_ = true
+
+[node name="DialogueSprite" type="Sprite2D" parent="."]
+visible = false
+z_index = 2
+position = Vector2(928, 176)
+texture = ExtResource("3_55ddn")
+metadata/_edit_lock_ = true
+
+[node name="RichTextLabel" type="RichTextLabel" parent="DialogueSprite"]
+offset_left = -472.0
+offset_top = -144.0
+offset_right = 472.0
+offset_bottom = 144.0
+theme_override_fonts/normal_font = SubResource("FontVariation_h87xf")
+theme_override_font_sizes/normal_font_size = 60
+text = "MAN: You mean, THIS young woman...?!"
+scroll_following = true
+
+[node name="Jidoor_NPC1_NavigationRegion2D" type="NavigationRegion2D" parent="."]
+navigation_polygon = SubResource("NavigationPolygon_5ibyj")
+
+[node name="Jidoor_NPC1" type="CharacterBody2D" parent="."]
+position = Vector2(1029, 748)
+script = ExtResource("2_2ndfm")
+CharacterID = 1
+
+[node name="Sprite2D" type="Sprite2D" parent="Jidoor_NPC1"]
+texture = ExtResource("2_oucrh")
+hframes = 5
+vframes = 3
+frame = 1
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Jidoor_NPC1"]
+libraries = {
+"": SubResource("AnimationLibrary_ufjbg")
+}
+
+[node name="NavigationAgent2D" type="NavigationAgent2D" parent="Jidoor_NPC1"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Jidoor_NPC1"]
+position = Vector2(0, 7)
+shape = SubResource("RectangleShape2D_5s385")

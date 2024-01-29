@@ -92,8 +92,6 @@ public partial class HandCursor : TextureRect
 	public override void _Process(double delta)
 	{
 		
-
-
 		var Input = Vector2.Zero;
 
 

@@ -5,7 +5,8 @@ public static class Globals
 {
     public static Node Overworld;
 
-    public static Vector2 EnteredBattlePosition;
+
+    public static Vector2 OverworldPosition;
     public static bool OverworldInputEnabled = true;
     public static bool InBattle = false;
     public static bool ReturningFromBattle = false;
@@ -15,7 +16,7 @@ public static class Globals
     // Use to determine if the handcursor should show up & process input
     public static bool Battle_ActivePlayerExists = false;
 
-    public static string OverworldSpawnNode = "Narshe";
+    // public static string OverworldSpawnNode = "Narshe";
 
     public static Enums.BattleMode BattleMode = Enums.BattleMode.Wait;
     
@@ -181,4 +182,5 @@ public static class Globals
         // Store the Overworld in memory here.  The sprite is huge, so it will hang if we have to load it every time
         Overworld = ResourceLoader.Load<PackedScene>("res://Scenes/Overworld.tscn").Instantiate();
     }
+
 }

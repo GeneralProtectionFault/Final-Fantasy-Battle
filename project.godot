@@ -12,11 +12,12 @@ config_version=5
 
 config/name="Final Fantasy Battle"
 run/main_scene="res://Scenes/GameRoot.tscn"
-config/features=PackedStringArray("4.1", "C#", "Forward Plus")
+config/features=PackedStringArray("4.2", "C#", "Forward Plus")
 config/icon="res://icon.svg"
 
 [autoload]
 
+GameRoot="*res://Scripts/GameRoot.cs"
 EncounterController="*res://Scripts/Battle/EncounterController.cs"
 DatabaseHandler="*res://Scripts/Database/DatabaseHandler.cs"
 BattleAnimations="*res://Scripts/Battle/BattleAnimations.cs"
@@ -31,6 +32,10 @@ window/size/transparent=true
 [dotnet]
 
 project/assembly_name="Final Fantasy Battle"
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/anthonyec.camera_preview/plugin.cfg", "res://addons/phantom_camera/plugin.cfg")
 
 [input]
 

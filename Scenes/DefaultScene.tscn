@@ -1,4 +1,7 @@
-[gd_scene load_steps=6 format=3 uid="uid://g5hfwdvild1u"]
+[gd_scene load_steps=8 format=3 uid="uid://g5hfwdvild1u"]
+
+[ext_resource type="Texture2D" uid="uid://dl74xwitfevof" path="res://Graphics/BattleBackgrounds/Forrest_4x.png" id="1_a555a"]
+[ext_resource type="PackedScene" uid="uid://ohf53ihjjx7h" path="res://Scenes/Characters/Locke.tscn" id="2_o3t4f"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_hhvuj"]
 
@@ -29,3 +32,11 @@ environment = SubResource("Environment_q2xh5")
 [node name="MeshInstance3D" type="MeshInstance3D" parent="RootNode3D/Player"]
 mesh = SubResource("CapsuleMesh_xxfvu")
 surface_material_override/0 = SubResource("StandardMaterial3D_ku3fb")
+
+[node name="Forrest4x" type="Sprite2D" parent="."]
+position = Vector2(958, 548.5)
+scale = Vector2(1.99583, 1.84184)
+texture = ExtResource("1_a555a")
+
+[node name="Locke" parent="." instance=ExtResource("2_o3t4f")]
+position = Vector2(962, 549)
