@@ -5,13 +5,16 @@ using System.Diagnostics;
 public partial class Overworld : Node
 {
 	private bool ReadyCompleted = false;
+
+	// These camera objects will be stored here so they can be removed using this variable during transitioning to a different scene.
 	public static Node OverworldPhantomCamera;
+	public static Node OverworldPhantomCameraHost;
 
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
-		var PhantomScript = GD.Load<GDScript>("res://addons/phantom_camera/scripts/phantom_camera/phantom_camera_2D.gd");
-		OverworldPhantomCamera = (GodotObject)PhantomScript.New() as Node;
+		// var PhantomScript = GD.Load<GDScript>("res://addons/phantom_camera/scripts/phantom_camera/phantom_camera_2D.gd");
+		// OverworldPhantomCamera = (GodotObject)PhantomScript.New() as Node;
 
 		ReadyCompleted = true;
 		Initialize();
@@ -28,6 +31,7 @@ public partial class Overworld : Node
 	{
 		// Get the location where the character will spawn
 		// var SpawnObject = GetNode<Node2D>($"%{Globals.OverworldSpawnNode}");
+		Globals.GameState = Enums.GameState.Overworld;
 
 		var Leader = DatabaseHandler.GetPartyLeader();
 		GD.Print($"Party Leader: {Leader.Name}");
@@ -66,7 +70,8 @@ public partial class Overworld : Node
 		CallDeferred("add_child", LeadCharacter);
 		await ToSignal(LeadCharacter, "tree_entered");
 
-		GameRoot.Instance.AddPhantomCamera(this, LeadCharacter, null);
+		OverworldPhantomCameraHost = GameRoot.Instance.AddPhantomCameraHost(GetViewport().GetCamera2D()) as Node;
+		OverworldPhantomCamera = GameRoot.Instance.AddPhantomCamera(this, LeadCharacter, null) as Node;
 	}
 
 

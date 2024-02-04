@@ -1,24 +1,20 @@
-[gd_scene load_steps=8 format=3 uid="uid://cvq5mjfr0eckg"]
+[gd_scene load_steps=7 format=3 uid="uid://cvq5mjfr0eckg"]
 
 [ext_resource type="Script" path="res://Scripts/Overworld/Overworld.cs" id="1_7gyjo"]
 [ext_resource type="AudioStream" uid="uid://cfjsg3bjwxfgc" path="res://Audio/Final_Fantasy_6_Terra_of_the_Bells_OC_ReMix.mp3" id="1_tvlcb"]
 [ext_resource type="Texture2D" uid="uid://dty3akxdlhqou" path="res://Graphics/Sprites/Overworld_4x.png" id="2_nfgtx"]
-[ext_resource type="Script" path="res://addons/phantom_camera/scripts/phantom_camera_host/phantom_camera_host.gd" id="2_sg1d8"]
 [ext_resource type="Script" path="res://Scripts/Overworld/OverworldTown.cs" id="4_ttvrv"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_gycqw"]
 friction = 0.0
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_v6bjw"]
-size = Vector2(165, 137)
+size = Vector2(84, 62)
 
 [node name="Overworld" type="Node2D"]
 script = ExtResource("1_7gyjo")
 
 [node name="Camera2D" type="Camera2D" parent="."]
-
-[node name="PhantomCameraHost" type="Node" parent="Camera2D"]
-script = ExtResource("2_sg1d8")
 
 [node name="UI_CanvasLayer" type="CanvasLayer" parent="."]
 
@@ -74,7 +70,7 @@ collision_layer = 2
 collision_mask = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Jidoor/Area2D"]
-position = Vector2(0.5, 1.5)
+position = Vector2(5, 0)
 shape = SubResource("RectangleShape2D_v6bjw")
 
 [connection signal="tree_entered" from="." to="." method="ReInitialize"]

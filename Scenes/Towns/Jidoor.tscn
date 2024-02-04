@@ -1,10 +1,9 @@
-[gd_scene load_steps=18 format=3 uid="uid://c3nprmq5ixitc"]
+[gd_scene load_steps=17 format=3 uid="uid://c3nprmq5ixitc"]
 
 [ext_resource type="Script" path="res://Scripts/Town.cs" id="1_2dc4w"]
 [ext_resource type="Texture2D" uid="uid://bju85lt2uxrmn" path="res://Graphics/Towns/Jidoor/Jidoor_MainTown_4x.png" id="1_sp8ol"]
 [ext_resource type="AudioStream" uid="uid://6ewjtb3ee7ye" path="res://Audio/Town/The_Magic_House (Jidoor).ogg" id="1_vlp6y"]
 [ext_resource type="Script" path="res://Scripts/NPC_Controller.cs" id="2_2ndfm"]
-[ext_resource type="Script" path="res://addons/phantom_camera/scripts/phantom_camera_host/phantom_camera_host.gd" id="2_ci30o"]
 [ext_resource type="Texture2D" uid="uid://17j20huqne4q" path="res://Graphics/Sprites/NPCs/Jidoor_NPC1_4x.png" id="2_oucrh"]
 [ext_resource type="Texture2D" uid="uid://boyu1583uosno" path="res://Graphics/BattleBackgrounds/BlueBattlePanel_Large.png" id="3_55ddn"]
 [ext_resource type="FontFile" uid="uid://c6xlpvnmwmyja" path="res://Fonts/final_fantasy_36_font.ttf" id="4_02ukl"]
@@ -106,9 +105,6 @@ script = ExtResource("1_2dc4w")
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(976, 559)
 
-[node name="PhantomCameraHost" type="Node" parent="Camera2D"]
-script = ExtResource("2_ci30o")
-
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("1_vlp6y")
 autoplay = true
@@ -122,6 +118,8 @@ texture = ExtResource("1_sp8ol")
 metadata/_edit_lock_ = true
 
 [node name="Area2D_Border" type="Area2D" parent="."]
+collision_layer = 2
+collision_mask = 2
 metadata/_edit_lock_ = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D_Border"]
@@ -170,3 +168,5 @@ libraries = {
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Jidoor_NPC1"]
 position = Vector2(0, 7)
 shape = SubResource("RectangleShape2D_5s385")
+
+[connection signal="body_exited" from="Area2D_Border" to="." method="LeaveTown"]
