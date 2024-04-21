@@ -1,20 +1,36 @@
-[gd_scene load_steps=7 format=3 uid="uid://cvq5mjfr0eckg"]
+[gd_scene load_steps=12 format=3 uid="uid://cvq5mjfr0eckg"]
 
 [ext_resource type="Script" path="res://Scripts/Overworld/Overworld.cs" id="1_7gyjo"]
 [ext_resource type="AudioStream" uid="uid://cfjsg3bjwxfgc" path="res://Audio/Final_Fantasy_6_Terra_of_the_Bells_OC_ReMix.mp3" id="1_tvlcb"]
-[ext_resource type="Texture2D" uid="uid://dty3akxdlhqou" path="res://Graphics/Sprites/Overworld_4x.png" id="2_nfgtx"]
+[ext_resource type="Texture2D" uid="uid://bk81q85bil8pk" path="res://Graphics/Sprites/Overworld_4x_boundaries.png" id="3_tad1c"]
 [ext_resource type="Script" path="res://Scripts/Overworld/OverworldTown.cs" id="4_ttvrv"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_q5x4i"]
+size = Vector2(16272, 56)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_6ibmy"]
+size = Vector2(16272, 24)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_vqcxk"]
+size = Vector2(56, 16272)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_23oxn"]
+size = Vector2(32, 16273.3)
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_gycqw"]
 friction = 0.0
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_oduof"]
+
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_v6bjw"]
-size = Vector2(84, 62)
+size = Vector2(55, 33)
 
 [node name="Overworld" type="Node2D"]
 script = ExtResource("1_7gyjo")
+metadata/_edit_lock_ = true
 
 [node name="Camera2D" type="Camera2D" parent="."]
+visible = false
 
 [node name="UI_CanvasLayer" type="CanvasLayer" parent="."]
 
@@ -23,11 +39,55 @@ stream = ExtResource("1_tvlcb")
 autoplay = true
 
 [node name="OverworldSprite" type="Sprite2D" parent="."]
-position = Vector2(5217, 7920)
-scale = Vector2(1.5, 1.5)
-texture = ExtResource("2_nfgtx")
+texture = ExtResource("3_tad1c")
+offset = Vector2(8128, 8127.5)
+metadata/_edit_lock_ = true
+
+[node name="Area2D_Top" type="Area2D" parent="OverworldSprite"]
+collision_layer = 2
+collision_mask = 2
+metadata/_edit_lock_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="OverworldSprite/Area2D_Top"]
+position = Vector2(8128, 28)
+shape = SubResource("RectangleShape2D_q5x4i")
+metadata/_edit_lock_ = true
+
+[node name="Area2D_Bottom" type="Area2D" parent="OverworldSprite"]
+position = Vector2(0, 16255.3)
+collision_layer = 2
+collision_mask = 2
+metadata/_edit_lock_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="OverworldSprite/Area2D_Bottom"]
+position = Vector2(8128, -11.2998)
+shape = SubResource("RectangleShape2D_6ibmy")
+metadata/_edit_lock_ = true
+
+[node name="Area2D_Left" type="Area2D" parent="OverworldSprite"]
+position = Vector2(0, 16255.3)
+collision_layer = 2
+collision_mask = 2
+metadata/_edit_lock_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="OverworldSprite/Area2D_Left"]
+position = Vector2(28, -8127.3)
+shape = SubResource("RectangleShape2D_vqcxk")
+metadata/_edit_lock_ = true
+
+[node name="Area2D_Right" type="Area2D" parent="OverworldSprite"]
+position = Vector2(16256, 16255.3)
+collision_layer = 2
+collision_mask = 2
+metadata/_edit_lock_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="OverworldSprite/Area2D_Right"]
+position = Vector2(-16, -8126.65)
+shape = SubResource("RectangleShape2D_23oxn")
+metadata/_edit_lock_ = true
 
 [node name="Collision_NarsheMountain1" type="StaticBody2D" parent="OverworldSprite"]
+visible = false
 position = Vector2(-3422, -6224)
 scale = Vector2(0.666667, 0.666667)
 physics_material_override = SubResource("PhysicsMaterial_gycqw")
@@ -45,7 +105,7 @@ collision_mask = 2
 monitorable = false
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="OverworldSprite/BattleArea_NarshePlains1"]
-polygon = PackedVector2Array(-303.333, 1114.67, -372, 1054, -367.333, 928.667, -301.333, 876, -80, 864, -53.3333, 789.333, -237.333, 617.333, -107.333, 500.667, -99.3333, 354, -41.3333, 262.667, -104, 163.333, -110, 34.6667, 0.666687, -66.6667, -60, -152, -56.6667, -282, 12, -332.667, 128.667, -351.333, 340.667, -153.333, 336, -89.3333, 276, -42.6667, 274.667, 102, 379.333, 199.333, 454, 190.667, 616, 36.6667, 650, 8, 770, 105.333, 457.333, 284.667, 259.333, 288, 128, 165.333, 142.667, 34.6667, 210, -58, 135.333, -149.333, 118.667, -128, 123.333, -86, -5.33331, 50, -8, 138, 66.6667, 217.333, 78.6667, 325.333, 512.667, 609.333, 430, 706.667, 445.333, 874.667, 376.667, 958.667, 416, 1115.33, 542.667, 1298.67, 271.333, 1980, -353.333, 1951.33, -32, 1618, 61.3333, 1613.33, 62, 1502.67, 18, 1498.67, -20.6667, 1423.33, 44.6667, 1423.33, 76, 1366, 133.333, 1328, 116, 1238, 78.6667, 1232.67, 54, 1186, 13.3333, 1180, -8.66669, 1120.67, -101.333, 1110.67, -126, 1180.67, -172, 1172.67, -194.667, 1301.33, -359.333, 1301.33, -385.333, 1371.33, -426, 1366.67, -447.333, 1498.67, -485.333, 1492, -508, 1554, -550.667, 1557.33, -571.333, 1658, -508, 1675.33, -495.333, 1722.67, -446, 1740.67, -438, 1787.33, -383.333, 1801.33, -376, 1857.33, -286, 1870, -357.333, 1938.67, -509.333, 1774.67, -561.333, 1829.33, -808.667, 1571.33, -617.333, 1367.33)
+polygon = PackedVector2Array(-303.333, 1114.67, -372, 1054, -367.333, 928.667, -301.333, 876, -80, 864, -53.3333, 789.333, -237.333, 617.333, -107.333, 500.667, -99.3333, 354, -41.3333, 262.667, -104, 163.333, -110, 34.6667, 0.666687, -66.6667, -60, -152, -56.6667, -282, 12, -332.667, 135.997, -338.003, 340.667, -153.333, 336, -89.3333, 276, -42.6667, 274.667, 102, 379.333, 199.333, 454, 190.667, 616, 36.6667, 650, 8, 770, 105.333, 457.333, 284.667, 259.333, 288, 128, 165.333, 142.667, 34.6667, 210, -58, 135.333, -149.333, 118.667, -128, 123.333, -86, -5.33331, 50, -8, 138, 66.6667, 217.333, 78.6667, 325.333, 512.667, 609.333, 430, 706.667, 445.333, 874.667, 376.667, 958.667, 416, 1115.33, 542.667, 1298.67, 271.333, 1980, -353.333, 1951.33, -32, 1618, 61.3333, 1613.33, 62, 1502.67, 18, 1498.67, -20.6667, 1423.33, 44.6667, 1423.33, 76, 1366, 133.333, 1328, 116, 1238, 78.6667, 1232.67, 54, 1186, 13.3333, 1180, -8.66669, 1120.67, -101.333, 1110.67, -126, 1180.67, -172, 1172.67, -194.667, 1301.33, -359.333, 1301.33, -385.333, 1371.33, -426, 1366.67, -447.333, 1498.67, -485.333, 1492, -508, 1554, -550.667, 1557.33, -571.333, 1658, -508, 1675.33, -495.333, 1722.67, -446, 1740.67, -438, 1787.33, -383.333, 1801.33, -376, 1857.33, -286, 1870, -357.333, 1938.67, -509.333, 1774.67, -561.333, 1829.33, -808.667, 1571.33, -617.333, 1367.33)
 
 [node name="BattleArea_NarsheForrest1" type="Area2D" parent="OverworldSprite" groups=["EncounterAreas"]]
 visible = false
@@ -58,11 +118,16 @@ monitorable = false
 polygon = PackedVector2Array(-350, 27.3333, -308.667, 27.3333, -288, -36.6667, -252.667, -32, -243.333, -35.3334, -225.333, -161.333, -183.333, -155.333, -158.667, -226.667, 7.33337, -224, 18, -244.667, 8.66669, -262, 28.6667, -354.667, 72.6667, -348, 96.6667, -418, 176, -412, 194, -388, 201.333, -349.333, 244, -345.333, 270, -294.667, 309.333, -288.667, 320, -208.667, 260.667, -179.333, 238, -118.667, 139.333, -118.667, 140.667, -96, 178.667, -94.6667, 208.667, -28, 254.667, -26, 252, 72.6666, 137.333, 72.6666, 114.667, 138, 78.6667, 141.333, 40.6667, 204.667, 10, 209.333, -25.3333, 271.333, -55.3333, 271.333, -76.6666, 332.667, -176.667, 318.667, -181.333, 261.333, -236, 247.333, -244, 200, -295.333, 183.333, -306, 135.333, -368, 120)
 
 [node name="Narshe" type="Node2D" parent="."]
-unique_name_in_owner = true
-position = Vector2(1081, -1058)
+position = Vector2(8056, 3212.5)
+script = ExtResource("4_ttvrv")
+
+[node name="Area2D" type="Area2D" parent="Narshe"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Narshe/Area2D"]
+shape = SubResource("RectangleShape2D_oduof")
 
 [node name="Jidoor" type="Node2D" parent="."]
-position = Vector2(-4378, 8223)
+position = Vector2(2597, 12493.5)
 script = ExtResource("4_ttvrv")
 
 [node name="Area2D" type="Area2D" parent="Jidoor"]
@@ -70,8 +135,13 @@ collision_layer = 2
 collision_mask = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Jidoor/Area2D"]
-position = Vector2(5, 0)
+position = Vector2(-0.5, 1.5)
 shape = SubResource("RectangleShape2D_v6bjw")
 
 [connection signal="tree_entered" from="." to="." method="ReInitialize"]
+[connection signal="body_exited" from="OverworldSprite/Area2D_Top" to="." method="WarpCharacterTop"]
+[connection signal="body_exited" from="OverworldSprite/Area2D_Bottom" to="." method="WarpCharacterBottom"]
+[connection signal="body_exited" from="OverworldSprite/Area2D_Left" to="." method="WarpCharacterLeft"]
+[connection signal="body_exited" from="OverworldSprite/Area2D_Right" to="." method="WarpCharacterRight"]
+[connection signal="body_entered" from="Narshe/Area2D" to="Narshe" method="EnterTown"]
 [connection signal="body_entered" from="Jidoor/Area2D" to="Jidoor" method="EnterTown"]

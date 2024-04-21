@@ -4,12 +4,13 @@ using Godot;
 public static class Globals
 {
     public static Node Overworld;
-
-
     public static Vector2 OverworldPosition;
     public static bool OverworldInputEnabled = true;
     public static bool InBattle = false;
     public static bool ReturningFromBattle = false;
+
+
+
 
     public static bool CursorLocked = false;
 

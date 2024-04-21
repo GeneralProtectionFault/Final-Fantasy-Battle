@@ -14,7 +14,7 @@ public partial class OverworldTown : Node
         Node TownScene = ResourceLoader.Load<PackedScene>(TownSceneFile).Instantiate();
 
         // Set the position to the town so this is where the character reappears upon exit
-        Globals.OverworldPosition = EnteringBody.GlobalPosition + new Vector2(0,-35); // Offset to make sure we don't immediately re-enter the town when exiting
+        Globals.OverworldPosition = EnteringBody.GlobalPosition + new Vector2(0,75); // Offset to make sure we don't immediately re-enter the town when exiting
 
         // GetTree().Root.AddChild(TownScene);
         GameRoot.Instance.RemoveOverworldScene();

@@ -58,3 +58,10 @@ ui_cancel={
 
 2d_physics/layer_1="Default"
 2d_physics/layer_2="Encounters"
+
+[physics]
+
+2d/run_on_separate_thread=true
+3d/run_on_separate_thread=true
+common/physics_jitter_fix=1.0
+3d/physics_engine="JoltPhysics3D"

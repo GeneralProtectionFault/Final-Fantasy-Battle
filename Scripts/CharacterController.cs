@@ -1,9 +1,10 @@
 using Godot;
 using System;
+using System.Diagnostics;
 
 public partial class CharacterController : CharacterBody2D
 {
-	public const float Speed = 300.0f;
+	public const float Speed = 500.0f;
 	public const float JumpVelocity = -400.0f;
 
 	// Get the gravity from the project settings to be synced with RigidBody nodes.
@@ -69,7 +70,7 @@ public partial class CharacterController : CharacterBody2D
 
 			Velocity = velocity;
 			MoveAndSlide();
-
+			// Debug.WriteLine($"Velocity: {velocity}");
 		}
 	}
 

@@ -21,11 +21,13 @@ public partial class GameRoot : Node
 
 		// Set overworld start position
 		// Near Jidoor
-		// Globals.OverworldPosition = new Vector2(-4800,8000);
+		// Globals.OverworldPosition = new Vector2(2300,12400);
 		// Near Narshe
-		Globals.OverworldPosition = new Vector2(1100,-900);
+		Globals.OverworldPosition = new Vector2(8000,3500);
 		GetTree().Root.CallDeferred("add_child", Globals.Overworld);
 	}
+
+
 
 
 	public void AddOverworldScene()
@@ -58,7 +60,8 @@ public partial class GameRoot : Node
 
 		// Get the Overworld camera so we can remove the host
 		var Camera = Globals.Overworld.GetNode<Camera2D>("Camera2D");
-		Camera.CallDeferred("remove_child", Overworld.OverworldPhantomCameraHost);
+		//Camera.CallDeferred("remove_child", Overworld.OverworldPhantomCameraHost);
+		Overworld.OverworldPhantomCameraHost.CallDeferred("free");
 
 		Overworld.OverworldPhantomCamera.CallDeferred("free");
 		GetTree().Root.CallDeferred("remove_child", Globals.Overworld);
@@ -110,4 +113,6 @@ public partial class GameRoot : Node
 		AddPhantomCamera.CallDeferred();
 		return PhantomCamera;
 	}
+
+
 }

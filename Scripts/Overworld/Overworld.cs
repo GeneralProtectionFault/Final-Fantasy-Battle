@@ -2,7 +2,7 @@ using Godot;
 using System;
 using System.Diagnostics;
 
-public partial class Overworld : Node
+public partial class Overworld : Node2D
 {
 	private bool ReadyCompleted = false;
 
@@ -10,11 +10,34 @@ public partial class Overworld : Node
 	public static Node OverworldPhantomCamera;
 	public static Node OverworldPhantomCameraHost;
 
+
+
+	// Get sprite into variable in order to draw at the edges/simulate for wrapping
+	private static Sprite2D OverworldSprite;
+
+	private static float UpperLeftX;
+	private static float UpperLeftY;
+	private static float LowerRightX;
+	private static float LowerRightY;
+	private static float SpriteWidth;
+	private static float SpriteHeight;
+
+	// When warping to the other side of the map, we have to account for the character's movement,
+	// which will be the velocity divided by this number (frames per second)
+	// (float)Engine.GetFramesPerSecond()
+	// ...can be used, but this didn't seem to yield any improvement
+	private static float WarpMovementOffset = 60.0f;
+
+
+
+
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
-		// var PhantomScript = GD.Load<GDScript>("res://addons/phantom_camera/scripts/phantom_camera/phantom_camera_2D.gd");
-		// OverworldPhantomCamera = (GodotObject)PhantomScript.New() as Node;
+		OverworldSprite = GetNode<Sprite2D>("OverworldSprite");
+		Debug.WriteLine($"Sprite position: {OverworldSprite.GlobalPosition}");
+		Debug.WriteLine($"Sprite X size:{OverworldSprite.Texture.GetWidth()}");
+		Debug.WriteLine($"Sprite Y size:{OverworldSprite.Texture.GetHeight()}");
 
 		ReadyCompleted = true;
 		Initialize();
@@ -24,7 +47,7 @@ public partial class Overworld : Node
 	public void ReInitialize()
 	{		
 		if (ReadyCompleted)
-			Initialize();	
+			Initialize();
 	}  
 
 	public async void Initialize()
@@ -76,4 +99,96 @@ public partial class Overworld : Node
 
 
 	
+	public override void _Draw()
+	{	
+		SpriteWidth = OverworldSprite.Texture.GetWidth();
+		SpriteHeight = OverworldSprite.Texture.GetHeight();
+
+		// Top-left corner of image
+		UpperLeftX = OverworldSprite.GlobalPosition.X;
+		UpperLeftY = OverworldSprite.GlobalPosition.Y;
+		LowerRightX = UpperLeftX + SpriteWidth;
+		LowerRightY = UpperLeftY + SpriteHeight;
+
+		// Debug.WriteLine($"Sprite bottom: {LowerRightY}");
+
+		// Top-left corner NW duplicate
+		DrawTexture(OverworldSprite.Texture, new Vector2(UpperLeftX - SpriteWidth,  UpperLeftY - SpriteHeight));
+		// Top-left corner N duplicate
+		DrawTexture(OverworldSprite.Texture, new Vector2(UpperLeftX, UpperLeftY - SpriteHeight));
+		// Top-left corner NE duplicate
+		DrawTexture(OverworldSprite.Texture, new Vector2(LowerRightX, UpperLeftY - SpriteHeight));
+		// Top-left corner W duplicate
+		DrawTexture(OverworldSprite.Texture, new Vector2(UpperLeftX - SpriteWidth, UpperLeftY));
+		// Top-left corner E duplicate
+		DrawTexture(OverworldSprite.Texture, new Vector2(LowerRightX, UpperLeftY));
+		// Top-left corner SW duplicate
+		DrawTexture(OverworldSprite.Texture, new Vector2(UpperLeftX - SpriteWidth, LowerRightY));
+		// Top-left corner S duplicate
+		DrawTexture(OverworldSprite.Texture, new Vector2(UpperLeftX, LowerRightY));
+		// Top-left corner SE duplicate
+		DrawTexture(OverworldSprite.Texture, new Vector2(LowerRightX, LowerRightY));
+
+	}
+
+
+	public void WarpCharacterTop(Node2D CharacterNode)
+	{
+		var Character = CharacterNode.Owner as Node2D;
+		var CharacterVelocity = (Character as CharacterBody2D).Velocity;
+		var Position = Character.GlobalPosition;
+
+		if (CharacterVelocity.Y < 0)
+		{
+			Debug.WriteLine($"Character Velocity @ crossing: {CharacterVelocity}");
+			Debug.WriteLine($"Character Position: {CharacterNode.GlobalPosition}");
+			Debug.WriteLine("Crossed Top Border");
+			Character.GlobalPosition = new Vector2(Position.X, LowerRightY + (CharacterVelocity.Y / WarpMovementOffset));
+		}
+	}
+
+	public void WarpCharacterBottom(Node2D CharacterNode)
+	{	
+		var Character = CharacterNode.Owner as Node2D;
+		var CharacterVelocity = (Character as CharacterBody2D).Velocity;
+		var Position = Character.GlobalPosition;
+
+		if (CharacterVelocity.Y > 0)
+		{
+			Debug.WriteLine($"Character Velocity @ crossing: {CharacterVelocity}");
+			Debug.WriteLine($"Character Position: {CharacterNode.GlobalPosition}");
+			Debug.WriteLine("Crossed Bottom Border");
+			Character.GlobalPosition = new Vector2(Position.X, UpperLeftY + (CharacterVelocity.Y / WarpMovementOffset));
+		}
+	}
+
+	public void WarpCharacterLeft(Node2D CharacterNode)
+	{	
+		var Character = CharacterNode.Owner as Node2D;
+		var CharacterVelocity = (Character as CharacterBody2D).Velocity;
+		var Position = Character.GlobalPosition;
+
+		if (CharacterVelocity.X < 0)
+		{
+			Debug.WriteLine($"Character Velocity @ crossing: {CharacterVelocity}");
+			Debug.WriteLine($"Character Position: {CharacterNode.GlobalPosition}");
+			Debug.WriteLine("Crossed Left Border");
+			Character.GlobalPosition = new Vector2(UpperLeftX + (CharacterVelocity.X / WarpMovementOffset) + SpriteWidth, Position.Y);
+		}
+	}
+
+	public void WarpCharacterRight(Node2D CharacterNode)
+	{
+		var Character = CharacterNode.Owner as Node2D;
+		var CharacterVelocity = (Character as CharacterBody2D).Velocity;
+		var Position = Character.GlobalPosition;
+		
+		if (CharacterVelocity.X > 0)
+		{
+			Debug.WriteLine($"Character Velocity @ crossing: {CharacterVelocity}");
+			Debug.WriteLine($"Character Position: {CharacterNode.GlobalPosition}");
+			Debug.WriteLine("Crossed Right Border");
+			Character.GlobalPosition = new Vector2(UpperLeftX + (CharacterVelocity.X / WarpMovementOffset), Position.Y);
+		}
+	}
 }
