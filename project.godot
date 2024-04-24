@@ -21,6 +21,7 @@ GameRoot="*res://Scripts/GameRoot.cs"
 EncounterController="*res://Scripts/Battle/EncounterController.cs"
 DatabaseHandler="*res://Scripts/Database/DatabaseHandler.cs"
 BattleAnimations="*res://Scripts/Battle/BattleAnimations.cs"
+GitIgnoreList="*res://Scripts/GitIgnoreList.cs"
 
 [display]
 
