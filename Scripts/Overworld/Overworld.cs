@@ -27,8 +27,15 @@ public partial class Overworld : Node2D
 	// (float)Engine.GetFramesPerSecond()
 	// ...can be used, but this didn't seem to yield any improvement
 	private static float WarpMovementOffset = 60.0f;
+	
+	// Variables will get used alot...defined here to avoid creating them each time
+	private static float NewXPosition = 0f;
+	private static float NewYPosition = 0f;
+	private static Node2D Character;
+	private static Vector2 CharacterVelocity = new Vector2();
+	private static Vector2 CharacterPosition = new Vector2();
 
-
+	[Export] public bool WarpWaitForPhysics = true;
 
 
 	// Called when the node enters the scene tree for the first time.
@@ -43,8 +50,13 @@ public partial class Overworld : Node2D
 		Initialize();
 	}
 
+    public override void _Process(double delta)
+    {
+        WarpMovementOffset = (float)Engine.GetFramesPerSecond();
+    }
 
-	public void ReInitialize()
+
+    public void ReInitialize()
 	{		
 		if (ReadyCompleted)
 			Initialize();
@@ -132,63 +144,84 @@ public partial class Overworld : Node2D
 	}
 
 
-	public void WarpCharacterTop(Node2D CharacterNode)
+	public async void WarpCharacterTop(Node2D CharacterNode)
 	{
-		var Character = CharacterNode.Owner as Node2D;
-		var CharacterVelocity = (Character as CharacterBody2D).Velocity;
-		var Position = Character.GlobalPosition;
+		if (WarpWaitForPhysics)
+			await ToSignal(GetTree(), "physics_frame");
+
+		Character = CharacterNode.Owner as Node2D;
+		CharacterVelocity = (Character as CharacterBody2D).Velocity;
+		CharacterPosition = Character.GlobalPosition;
+		NewXPosition = CharacterPosition.X; //+ (CharacterVelocity.X / WarpMovementOffset);
+		NewYPosition = LowerRightY + (CharacterVelocity.Y / WarpMovementOffset);
 
 		if (CharacterVelocity.Y < 0)
 		{
 			Debug.WriteLine($"Character Velocity @ crossing: {CharacterVelocity}");
 			Debug.WriteLine($"Character Position: {CharacterNode.GlobalPosition}");
 			Debug.WriteLine("Crossed Top Border");
-			Character.GlobalPosition = new Vector2(Position.X, LowerRightY + (CharacterVelocity.Y / WarpMovementOffset));
+			Character.GlobalPosition = new Vector2(NewXPosition, NewYPosition);
 		}
 	}
 
-	public void WarpCharacterBottom(Node2D CharacterNode)
+	public async void WarpCharacterBottom(Node2D CharacterNode)
 	{	
-		var Character = CharacterNode.Owner as Node2D;
-		var CharacterVelocity = (Character as CharacterBody2D).Velocity;
-		var Position = Character.GlobalPosition;
+		if (WarpWaitForPhysics)
+			await ToSignal(GetTree(), "physics_frame");
+
+		Character = CharacterNode.Owner as Node2D;
+		CharacterVelocity = (Character as CharacterBody2D).Velocity;
+		CharacterPosition = Character.GlobalPosition;
+		NewXPosition = CharacterPosition.X; // + (CharacterVelocity.X / WarpMovementOffset);
+		NewYPosition = UpperLeftY + (CharacterVelocity.Y / WarpMovementOffset);
 
 		if (CharacterVelocity.Y > 0)
 		{
 			Debug.WriteLine($"Character Velocity @ crossing: {CharacterVelocity}");
 			Debug.WriteLine($"Character Position: {CharacterNode.GlobalPosition}");
 			Debug.WriteLine("Crossed Bottom Border");
-			Character.GlobalPosition = new Vector2(Position.X, UpperLeftY + (CharacterVelocity.Y / WarpMovementOffset));
+			Character.GlobalPosition = new Vector2(NewXPosition, NewYPosition);
 		}
 	}
 
-	public void WarpCharacterLeft(Node2D CharacterNode)
+	public async void WarpCharacterLeft(Node2D CharacterNode)
 	{	
-		var Character = CharacterNode.Owner as Node2D;
-		var CharacterVelocity = (Character as CharacterBody2D).Velocity;
-		var Position = Character.GlobalPosition;
+		if (WarpWaitForPhysics)
+			await ToSignal(GetTree(), "physics_frame");
+
+		Character = CharacterNode.Owner as Node2D;
+		CharacterVelocity = (Character as CharacterBody2D).Velocity;
+		CharacterPosition = Character.GlobalPosition;
+		NewXPosition = UpperLeftX + (CharacterVelocity.X / WarpMovementOffset) + SpriteWidth;
+		NewYPosition = CharacterPosition.Y; // + (CharacterVelocity.Y / WarpMovementOffset);
+
 
 		if (CharacterVelocity.X < 0)
 		{
 			Debug.WriteLine($"Character Velocity @ crossing: {CharacterVelocity}");
 			Debug.WriteLine($"Character Position: {CharacterNode.GlobalPosition}");
 			Debug.WriteLine("Crossed Left Border");
-			Character.GlobalPosition = new Vector2(UpperLeftX + (CharacterVelocity.X / WarpMovementOffset) + SpriteWidth, Position.Y);
+			Character.GlobalPosition = new Vector2(NewXPosition, NewYPosition);
 		}
 	}
 
-	public void WarpCharacterRight(Node2D CharacterNode)
+	public async void WarpCharacterRight(Node2D CharacterNode)
 	{
-		var Character = CharacterNode.Owner as Node2D;
-		var CharacterVelocity = (Character as CharacterBody2D).Velocity;
-		var Position = Character.GlobalPosition;
+		if (WarpWaitForPhysics)
+			await ToSignal(GetTree(), "physics_frame");
 		
+		Character = CharacterNode.Owner as Node2D;
+		CharacterVelocity = (Character as CharacterBody2D).Velocity;
+		CharacterPosition = Character.GlobalPosition;
+		NewXPosition = UpperLeftX + (CharacterVelocity.X / WarpMovementOffset);
+		NewYPosition = CharacterPosition.Y; // + (CharacterVelocity.Y / WarpMovementOffset);
+
 		if (CharacterVelocity.X > 0)
 		{
 			Debug.WriteLine($"Character Velocity @ crossing: {CharacterVelocity}");
 			Debug.WriteLine($"Character Position: {CharacterNode.GlobalPosition}");
 			Debug.WriteLine("Crossed Right Border");
-			Character.GlobalPosition = new Vector2(UpperLeftX + (CharacterVelocity.X / WarpMovementOffset), Position.Y);
+			Character.GlobalPosition = new Vector2(NewXPosition, NewYPosition);
 		}
 	}
 }

@@ -64,5 +64,5 @@ ui_cancel={
 
 2d/run_on_separate_thread=true
 3d/run_on_separate_thread=true
-common/physics_jitter_fix=1.0
+common/physics_ticks_per_second=120
 3d/physics_engine="JoltPhysics3D"

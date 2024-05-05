@@ -21,9 +21,9 @@ public partial class GameRoot : Node
 
 		// Set overworld start position
 		// Near Jidoor
-		// Globals.OverworldPosition = new Vector2(2300,12400);
+		// Globals.OverworldPosition = new Vector2(1576,8216);
 		// Near Narshe
-		Globals.OverworldPosition = new Vector2(8000,3500);
+		Globals.OverworldPosition = new Vector2(5368,2256);
 		GetTree().Root.CallDeferred("add_child", Globals.Overworld);
 	}
 

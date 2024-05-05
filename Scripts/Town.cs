@@ -30,8 +30,15 @@ public partial class Town : Node
 
     public void LeaveTown(Node2D EnteringBody)
     {
-        GameRoot.Instance.AddOverworldScene();
-        CallDeferred("free");
+        // TODO:  Segment collider unreliable, replaced w/ rectangle.
+        // Create a town dictionary that holds a list of exit directions which are acceptable,
+        // so each town will detect the exit in only the acceptable direction.
+        // This currently only treats a south exit as valid.
+        if ((EnteringBody.Owner as CharacterBody2D).Velocity.Y > 0)
+        {
+            GameRoot.Instance.AddOverworldScene();
+            CallDeferred("free");
+        }
     }
 
 

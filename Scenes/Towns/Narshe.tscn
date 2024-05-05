@@ -10,9 +10,8 @@ size = Vector2(4082, 4081)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_xjqip"]
 size = Vector2(2002, 3387)
 
-[sub_resource type="SegmentShape2D" id="SegmentShape2D_rruce"]
-a = Vector2(3015, 2865)
-b = Vector2(-1065, 2865)
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_x0nqc"]
+size = Vector2(4095, 21)
 
 [node name="Narshe" type="Node2D"]
 script = ExtResource("1_uq53g")
@@ -33,6 +32,7 @@ texture = ExtResource("2_awutv")
 metadata/_edit_lock_ = true
 
 [node name="Area2D_Border" type="Area2D" parent="." groups=["TownAreas"]]
+visible = false
 collision_layer = 2
 collision_mask = 2
 
@@ -41,6 +41,7 @@ position = Vector2(976, 813.5)
 shape = SubResource("RectangleShape2D_yt4cx")
 
 [node name="Area2D_Area2" type="Area2D" parent="." groups=["TownAreas"]]
+visible = false
 collision_layer = 2
 collision_mask = 2
 
@@ -49,11 +50,13 @@ position = Vector2(1657, -2937.5)
 shape = SubResource("RectangleShape2D_xjqip")
 
 [node name="Area2D_ExitBorder" type="Area2D" parent="." groups=["TownAreas"]]
+position = Vector2(1405, 2860)
 collision_layer = 2
 collision_mask = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D_ExitBorder"]
-shape = SubResource("SegmentShape2D_rruce")
+position = Vector2(-434.5, -11.5)
+shape = SubResource("RectangleShape2D_x0nqc")
 
 [connection signal="body_entered" from="Area2D_Border" to="." method="ChangeCameraArea"]
 [connection signal="body_entered" from="Area2D_Area2" to="." method="ChangeCameraArea"]
