@@ -66,7 +66,6 @@ public partial class Town : Node
             }
         }
 
-
-        TownPhantomCamera.Call("set_limit_node", CurrentArea.GetNode<CollisionShape2D>("CollisionShape2D"));
+        TownPhantomCamera.Call("set_limit_target", CurrentArea.GetNode<CollisionShape2D>("CollisionShape2D").GetPath());
     }
 }

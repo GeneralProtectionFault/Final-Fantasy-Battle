@@ -1,9 +1,11 @@
-[gd_scene load_steps=12 format=3 uid="uid://cvq5mjfr0eckg"]
+[gd_scene load_steps=13 format=3 uid="uid://cvq5mjfr0eckg"]
 
 [ext_resource type="Script" path="res://Scripts/Overworld/Overworld.cs" id="1_7gyjo"]
 [ext_resource type="AudioStream" uid="uid://cfjsg3bjwxfgc" path="res://Audio/Final_Fantasy_6_Terra_of_the_Bells_OC_ReMix.mp3" id="1_tvlcb"]
 [ext_resource type="Texture2D" uid="uid://dty3akxdlhqou" path="res://Graphics/Sprites/Overworld_4x.png" id="3_0x7n2"]
 [ext_resource type="Script" path="res://Scripts/Overworld/OverworldTown.cs" id="4_ttvrv"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ig7ru"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_q5x4i"]
 size = Vector2(16272, 56)
@@ -39,6 +41,7 @@ stream = ExtResource("1_tvlcb")
 autoplay = true
 
 [node name="OverworldSprite" type="Sprite2D" parent="."]
+material = SubResource("ShaderMaterial_ig7ru")
 texture = ExtResource("3_0x7n2")
 offset = Vector2(8128, 8127.5)
 metadata/_edit_lock_ = true

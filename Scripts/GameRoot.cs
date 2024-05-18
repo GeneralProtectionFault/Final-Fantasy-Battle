@@ -1,6 +1,7 @@
 using Godot;
 using System;
 using System.Diagnostics;
+using System.Threading.Tasks;
 
 public partial class GameRoot : Node
 {
@@ -79,7 +80,7 @@ public partial class GameRoot : Node
 	}
 
 
-	public GodotObject AddPhantomCamera(Node Parent, Node Target, Node2D LimitTarget)
+	public Node AddPhantomCamera(Node Parent, Node Target, Node2D LimitTarget)
 	{
 		// Set the camera zoom to default, because it will remain zoomed in if after a battle
 		var Camera = GetViewport().GetCamera2D();
@@ -87,30 +88,25 @@ public partial class GameRoot : Node
 		Camera.Zoom = new Vector2(1f,1f);
 		Camera.GlobalPosition = (Target as Node2D).GlobalPosition;	
 
-		var PhantomScript = GD.Load<GDScript>("res://addons/phantom_camera/scripts/phantom_camera/phantom_camera_2D.gd");
+		var PhantomScript = GD.Load<GDScript>("res://addons/phantom_camera/scripts/phantom_camera/phantom_camera_2d.gd");
 		var PhantomCamera = (GodotObject)PhantomScript.New() as Node;
 
-		var AddPhantomCamera = Callable.From(() => {
-			
-			PhantomCamera.Set("follow_mode", 1); // 1 - GLUED, 2 - SIMPLE
-			PhantomCamera.Set("pixel_perfect", true);
-			PhantomCamera.Set("tween_on_load", false);
-			
-			// For setting boundaries to keep the camera from showing anything outside the background, for example.
-			if (LimitTarget is not null)
-			{
-				// Debug.WriteLine($"Setting limit target: {LimitTarget}");
-				PhantomCamera.Call("set_limit_node", LimitTarget);
-			}
+		PhantomCamera.Set("follow_mode", 1); // 1 - GLUED, 2 - SIMPLE
+		PhantomCamera.Set("pixel_perfect", true);
+		PhantomCamera.Set("tween_on_load", false);
+		
+		// For setting boundaries to keep the camera from showing anything outside the background, for example.
+		if (LimitTarget is not null)
+		{
+			// Debug.WriteLine($"Setting limit target: {LimitTarget}");
+			PhantomCamera.Call("set_limit_target", LimitTarget.GetPath());
+		}
 
-			// Set the target - MUST be after adding the camera to the tree, or GetPathTo will not work 
-			// because Godot checks that both nodes have a common parent.
-			Parent.AddChild(PhantomCamera);
-			var RelativePath = PhantomCamera.GetPathTo(Target);
-			PhantomCamera.Set("follow_target", RelativePath);	
-		});
-
-		AddPhantomCamera.CallDeferred();
+		Parent.AddChild(PhantomCamera);
+		
+		// Set the target - MUST be after adding the camera to the tree, or GetPathTo will not work
+		PhantomCamera.Call("set_follow_target", Target);
+		
 		return PhantomCamera;
 	}
 
