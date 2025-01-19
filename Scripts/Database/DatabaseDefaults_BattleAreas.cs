@@ -16,6 +16,8 @@ public static class DatabaseDefaults_BattleAreas
 		DatabaseHandler.BattleAreaCollection.Insert(BattleArea);
 		DatabaseHandler.BattleAreaCollection.EnsureIndex("Name", true);
 
+		DatabaseHandler.GameDatabase.Commit();
+
 		GD.Print($"{BattleArea.Name} added to database.");
 	}
 

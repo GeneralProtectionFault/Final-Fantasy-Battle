@@ -57,7 +57,7 @@ public partial class DatabaseHandler : Node
 		GD.Print("Initializing database...");
 
 		var current_directory = System.IO.Directory.GetCurrentDirectory();
-		var database_path = Path.Combine(current_directory, @"Scripts\Database\", "game_database.db");
+		var database_path = Path.Combine(current_directory, "Scripts", "Database", "game_database.db");
 
 		var connection_string = $"Filename = {database_path}; Password = xyz123; Connection Type = Shared;";
 		GameDatabase = new LiteDatabase(connection_string);

@@ -19,6 +19,8 @@ public static class DatabaseDefaults_Enemies
 		DatabaseHandler.EnemyCollection.Insert(Enemy);
 		DatabaseHandler.EnemyCollection.EnsureIndex("Name", true);
 
+        DatabaseHandler.GameDatabase.Commit();
+
 		GD.Print($"{Enemy.Name} added to database.");
 	}
 
@@ -221,7 +223,9 @@ public static class DatabaseDefaults_Enemies
                 // {"Dried Meat", .25f},
                 // {"Dried Meat", .25f},
                 // {"Dried Meat", .25f}
-            }
+            },
+
+            Statuses = new List<Enums.Status>()
         };
 
         AddEnemy(Rhinotaur);

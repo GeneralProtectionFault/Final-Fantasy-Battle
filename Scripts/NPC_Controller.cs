@@ -125,7 +125,7 @@ public partial class NPC_Controller : CharacterBody2D
             { X: -1 } and { Y: 0 } => "WalkLeft",
             { X: 1 } and { Y: 0 }  => "WalkRight",
             { X: 0 } and { Y: 1 } => "WalkDown",
-            { X: 0 } and { Y: -1} => "WalkUp",
+            { X: 0 } and { Y: -1 } => "WalkUp",
             _ => "None"
         };
 

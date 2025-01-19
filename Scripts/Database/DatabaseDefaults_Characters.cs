@@ -17,6 +17,8 @@ public static class DatabaseDefaults_Characters
 		DatabaseHandler.CharacterCollection.Insert(Character);
 		DatabaseHandler.CharacterCollection.EnsureIndex("Name", true);
 
+        DatabaseHandler.GameDatabase.Commit();
+
 		GD.Print($"{Character.Name} added to database.");
 	}
 

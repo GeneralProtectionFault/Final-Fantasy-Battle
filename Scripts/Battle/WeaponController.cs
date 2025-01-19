@@ -5,6 +5,6 @@ public partial class WeaponController : Node
 {
 	public void TriggerDamageText()
 	{
-		BattleAlgorithms.PopulateDamageText();
+		BattleAlgorithms.PopulateDamageText(Enums.BattleTurn.Party);
 	}
 }

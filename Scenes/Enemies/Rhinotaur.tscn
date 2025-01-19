@@ -1,9 +1,17 @@
-[gd_scene load_steps=2 format=3 uid="uid://dorgittjld61g"]
+[gd_scene load_steps=5 format=3 uid="uid://dorgittjld61g"]
 
+[ext_resource type="Script" path="res://Scripts/Enemies/Rhinotaur.cs" id="1_ph763"]
 [ext_resource type="Texture2D" uid="uid://boh5nq0sym0gs" path="res://Graphics/Sprites/Enemies/Rhinotaur_4x.png" id="1_yj7aj"]
+[ext_resource type="Shader" path="res://Graphics/Shaders/attack_flash.gdshader" id="2_otgpx"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_hku6q"]
+shader = ExtResource("2_otgpx")
+shader_parameter/attack_flash = false
 
 [node name="Rhinotaur" type="CharacterBody2D" groups=["Enemies"]]
+script = ExtResource("1_ph763")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-position = Vector2(0, -102)
+material = SubResource("ShaderMaterial_hku6q")
+position = Vector2(-2, -102)
 texture = ExtResource("1_yj7aj")

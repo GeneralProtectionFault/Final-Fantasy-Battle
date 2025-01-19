@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using System.IO;
 
 public partial class BattleAnimations : Node
 {
@@ -13,6 +14,10 @@ public partial class BattleAnimations : Node
 	private static Node2D CharacterObj;
 	private static Node2D TargetObj;
 
+
+
+
+	#region CharacterBattleAnimation
 
 	public static void FightAnimation()
 	{
@@ -35,9 +40,7 @@ public partial class BattleAnimations : Node
 
 	}
 
-
 	
-
 	public static void TriggerFightAnimation(Character Character, Node2D CharacterObject, Enemy Target, Node2D TargetObject)
 	{
 		// TODO::Need check for Genji Glove, Offering, Gauntlet...
@@ -68,4 +71,22 @@ public partial class BattleAnimations : Node
 		var Player = CharacterObj.GetNode<AnimationPlayer>("Battle_AnimationPlayer");
 		Player.Play("Attack");
 	}
+
+	#endregion
+
+
+	#region EnemyBattleAnimation
+
+	public static void SpawnEnemyAttackEffect(Node2D Target, Ability Attack)
+	{
+		var ScenePath = "res://Scenes/AttackEffects";
+		var AttackEffectScene = GD.Load<PackedScene>(Path.Combine(ScenePath, $"{Attack.Name}.tscn")).Instantiate();
+		Target.AddChild(AttackEffectScene);
+	}
+
+	#endregion
+
+
+
+
 }

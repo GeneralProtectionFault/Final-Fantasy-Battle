@@ -15,6 +15,8 @@ public static class DatabaseDefaults_Weapons
 		DatabaseHandler.WeaponCollection.Insert(Weapon);
 		DatabaseHandler.WeaponCollection.EnsureIndex("Name", true);
 
+        DatabaseHandler.GameDatabase.Commit();
+        
 		GD.Print($"{Weapon.Name} added to database.");
     }
 

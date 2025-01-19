@@ -19,6 +19,8 @@ public static class DatabaseDefaults_Abilities
 		DatabaseHandler.AbilityCollection.Insert(Ability);
 		DatabaseHandler.AbilityCollection.EnsureIndex("Name", true);
 
+        DatabaseHandler.GameDatabase.Commit();
+
 		GD.Print($"{Ability.Name} added to database.");
 	}
 

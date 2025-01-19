@@ -1,3 +1,4 @@
 {
-    "dotnet.defaultSolution": "Final Fantasy Battle.sln"
+    "dotnet.defaultSolution": "Final Fantasy Battle.sln",
+    "godotTools.editorPath.godot4": "/usr/bin/godot-mono"
 }

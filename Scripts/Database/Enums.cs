@@ -3,6 +3,8 @@ using System;
 
 public static class Enums
 {
+	public enum BattleTurn {Party, Enemy}
+
     public enum AbilityType {Spell, Unique, SwordTech, Blitz, Dance, Rage, Lore, Tool, Magitek, Desperation, EnemyNormal, EnemySpecial}
 	
 	// Magitek "status" will change the available battle options (fire beam, etc...)

@@ -15,6 +15,8 @@ public static class DatabaseDefaults_Items
 		DatabaseHandler.ItemCollection.Insert(Item);
 		DatabaseHandler.ItemCollection.EnsureIndex("Name", true);
 
+		DatabaseHandler.GameDatabase.Commit();
+
 		GD.Print($"{Item.Name} added to database.");
 	}
 

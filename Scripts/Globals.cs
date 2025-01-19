@@ -16,6 +16,7 @@ public static class Globals
 
     // Use to determine if the handcursor should show up & process input
     public static bool Battle_ActivePlayerExists = false;
+    public static bool Battle_ActiveEnemyExists = false;
 
     // public static string OverworldSpawnNode = "Narshe";
 
@@ -23,6 +24,7 @@ public static class Globals
     
 
     public static Enums.GameState GameState;
+    public static Enums.GameState PreviousGameState;
 
     // Use this to test if "in battle," etc...
     public static readonly List<Enums.GameState> BattleStates = new List<Enums.GameState>() {
@@ -160,6 +162,29 @@ public static class Globals
 
     public static readonly List<Enums.GameState> BattleWaitStates = new List<Enums.GameState>();
 
+
+
+    /// <summary>
+	/// Literally update the game state
+	/// </summary>
+	/// <param name="State"></param>
+	public static void UpdateGameState(Enums.GameState State)
+	{
+		Globals.PreviousGameState = Globals.GameState;
+		Globals.GameState = State;
+	}
+
+	/// <summary>
+	/// Update the game state if in battle.
+	/// This will also update the debug information on the battle screen
+	/// </summary>
+	/// <param name="State"></param>
+	public static void Battle_UpdateGameState(Enums.GameState State)
+	{
+		UpdateGameState(State);
+		// var DebugWindow = GetNode("BattleCanvas/Control_DebugOutput/LabelDebugOutput");
+		BattleController.DebugWindow.Set("text", $"Game State: {Globals.GameState.ToString()}");
+	}
 
 
     /// <summary>

@@ -220,7 +220,7 @@ public partial class HandCursor : TextureRect
 
 						FingerSoundPlayer.Play();
 						// If we're targetting characters, switch to enemies & vice versa
-						BattleController.Battle_UpdateGameState(Globals.SelectingStateOpposites[Globals.GameState]);
+						Globals.Battle_UpdateGameState(Globals.SelectingStateOpposites[Globals.GameState]);
 						TargetCurrent();
 					};
 

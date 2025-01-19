@@ -16,6 +16,8 @@ public static class DatabaseDefaults_Armor
 		DatabaseHandler.ArmorCollection.Insert(Armor);
 		DatabaseHandler.ArmorCollection.EnsureIndex("Name", true);
 
+        DatabaseHandler.GameDatabase.Commit();
+
 		GD.Print($"{Armor.Name} added to database.");
     }
 
