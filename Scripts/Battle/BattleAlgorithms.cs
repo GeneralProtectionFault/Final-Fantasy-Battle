@@ -9,19 +9,20 @@ using Godot;
 public static class BattleAlgorithms
 {
     
-    private static Node2D ObjectToDamage;
-    private static int DamageAmount;
-    // private static PackedScene DamageHealText = GD.Load<PackedScene>("res://Scenes/Battle/DamageHealText.tscn");
-
-
-    // Store for state updates
-    private static Character TargetCharacter;
-    private static Enemy TargetEnemy;
-
-
-
     public static event EventHandler<Character> DamagingCharacter;
     public static event EventHandler<Enemy> DamagingEnemy;
+
+
+    // // Store for state updates
+    // private static Character TargetCharacter;
+    // private static Enemy TargetEnemy;
+
+    // Store the (databse) object to be damaged - will be either a character or an enemy
+    private static IBattleEntity Target;
+    private static Node2D ObjectToDamage;
+    private static int DamageAmount;
+
+
 
 
     public static void SetDamage(int Value)
@@ -39,63 +40,34 @@ public static class BattleAlgorithms
 
         if (Attacker == Enums.BattleTurn.Party)
         {
-            if (TargetCharacter != null)
+            if (Target is Character)
                 UpdateCharacterDamage();
-            else if (TargetEnemy != null)
+            else if (Target is Enemy)
                 DamageEnemy();
         }
+        // Enemy is attacking character
         else // This doesn't fire off the event back to the BattleController, which would re-enable the fight menu, etc...
         {
             GD.Print("Chipping the HP off the character");
-            var CurrentHP = DatabaseHandler.GetCharacterStatAsString(TargetCharacter.Name, "Hp");
+            var CurrentHP = DatabaseHandler.GetCharacterStatAsString(Target.Name, "Hp");
             var HP = CurrentHP.ToInt() - DamageAmount;
+
+            // Reset variable
             DamageAmount = 0;
 
-            TargetCharacter.Hp = HP;
-            DatabaseHandler.UpdateCharacter(TargetCharacter);
+            Target.Hp = HP;
+            DatabaseHandler.UpdateCharacter(Target as Character);
         }
     }
 
 
 
-    /// <summary>
-    /// Set the character attacking both class object & Node2D
-    /// Set the target, both class object & Node2D
-    /// </summary>
-    /// <param name="Fighter">The database/class object that's going to attack</param>
-    /// <param name="FighterObject">The Node2D of the attacker</param>
-    /// <param name="Target">The database/class object of the target</param>
-    /// <param name="FighterObject">The Node2D of the target</param>
-
-    public static void SetFightVariables(Character Fighter, Node2D FighterObject, Character Target, Node2D TargetObject)
+    public static void SetFightVariables(IBattleEntity TargetDBObject, Node2D TargetObject)
     {
-        // GD.Print("FIGHTING CHARACTER!");
         ObjectToDamage = TargetObject;
-        TargetEnemy = null;
-        TargetCharacter = Target;
+        Target = TargetDBObject;
         DamageAmount = 19;
     }
-
-    public static void SetFightVariables(Character Fighter, Node2D FighterObject, Enemy Target, Node2D TargetObject)
-    {
-        // GD.Print("FIGHTING ENEMY!");
-        ObjectToDamage = TargetObject;
-        TargetCharacter = null;
-        TargetEnemy = Target;
-        DamageAmount = 31;
-    }
-
-    /// <summary>
-    /// Use this when the enemy is attacking - no character
-    /// </summary>
-    // public static void EnemySetFightVariables(Enemy Attacker, Node2D AttackerObject, Character Target, Node2D TargetObject, int Damage)
-    // {
-    //     ObjectToDamage = TargetObject;
-    //     TargetCharacter = Target;
-    //     TargetEnemy = null;
-    //     DamageAmount = Damage;
-    // }
-
 
 
 
@@ -113,31 +85,30 @@ public static class BattleAlgorithms
     
 
 
-
     private static void UpdateCharacterDamage()
     {
-        if (TargetCharacter != null)
+        if (Target != null)
         {
-            var CurrentHP = DatabaseHandler.GetCharacterStatAsString(TargetCharacter.Name, "Hp");
+            var CurrentHP = DatabaseHandler.GetCharacterStatAsString(Target.Name, "Hp");
             var HP = CurrentHP.ToInt() - DamageAmount;
             DamageAmount = 0;
 
-            TargetCharacter.Hp = HP;
-            DatabaseHandler.UpdateCharacter(TargetCharacter);
+            Target.Hp = HP;
+            DatabaseHandler.UpdateCharacter(Target as Character);
 
             // Picked up in BattleController.cs
-            DamagingCharacter?.Invoke(null, TargetCharacter);
+            DamagingCharacter?.Invoke(null, Target as Character);
         }
     }
 
 
     private static void DamageEnemy()
     {
-        if (TargetEnemy != null)
+        if (Target != null)
         {
             // Damage the enemy object, etc...
-            TargetEnemy.Hp -= DamageAmount;
-            DamagingEnemy?.Invoke(null, TargetEnemy);
+            Target.Hp -= DamageAmount;
+            DamagingEnemy?.Invoke(null, Target as Enemy);
         }
     }
 
@@ -148,7 +119,7 @@ public static class BattleAlgorithms
     /// </summary>
     public static Node2D EnemyPickCharacterTarget()
     {
-        List<Node2D> ValidCharacterTargets = new List<Node2D>();
+        List<Node2D> ValidCharacterTargets = new();
         foreach (Character Character in BattleController.Characters.Where(x => x.Hp > 0))
         {
             // Get the list index so we can get the Node2D from that list (indices will be the same)
@@ -165,10 +136,9 @@ public static class BattleAlgorithms
         // The valid targets, excluding wounded characters might have different indices, so this will "translate"
         // back to the original so we can get both the Character (database) object and the Node2D
         var SharedIndex = BattleController.CharacterObjects.FindIndex(x => x == PickedCharacter);
-        TargetCharacter = BattleController.Characters[SharedIndex];
-
+        Target = BattleController.Characters[SharedIndex];
         ObjectToDamage = PickedCharacter;
-        TargetEnemy = null;
+        
         return PickedCharacter;
     }
 
@@ -176,7 +146,7 @@ public static class BattleAlgorithms
     
     public static int GetRandomEnemyVigor()
     {
-        Random r = new Random();
+        Random r = new();
         return r.Next(53, 63);
     }
 

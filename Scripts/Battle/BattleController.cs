@@ -677,8 +677,7 @@ public partial class BattleController : Node
 						Globals.Battle_UpdateGameState(Enums.GameState.Battle_Party_Action);				
 
 						Character SelectedTarget = Characters[HandCursor.GetCurrentCursorIndex()];
-						BattleAlgorithms.SetFightVariables(Characters[ActiveCharacterIndex], CharacterObjects[ActiveCharacterIndex],
-						Characters[HandCursor.GetCurrentCursorIndex()], CharacterObjects[HandCursor.GetCurrentCursorIndex()]);
+						BattleAlgorithms.SetFightVariables(Characters[HandCursor.GetCurrentCursorIndex()], CharacterObjects[HandCursor.GetCurrentCursorIndex()]);
 
 						// Animation plays regardless of if targeting enemies or characters.
 						BattleAnimations.TriggerFightAnimation(Characters[ActiveCharacterIndex], CharacterObjects[ActiveCharacterIndex],
@@ -694,8 +693,7 @@ public partial class BattleController : Node
 						Enemies[HandCursor.GetCurrentCursorIndex()].BattleListIndex = HandCursor.GetCurrentCursorIndex();
 
 						// Damage & Damage Text
-						BattleAlgorithms.SetFightVariables(Characters[ActiveCharacterIndex], CharacterObjects[ActiveCharacterIndex],
-						Enemies[HandCursor.GetCurrentCursorIndex()], EnemyObjects[HandCursor.GetCurrentCursorIndex()]);
+						BattleAlgorithms.SetFightVariables(Enemies[HandCursor.GetCurrentCursorIndex()], EnemyObjects[HandCursor.GetCurrentCursorIndex()]);
 
 						// Animation plays regardless of if targeting enemies or characters.
 						BattleAnimations.TriggerFightAnimation(Characters[ActiveCharacterIndex], CharacterObjects[ActiveCharacterIndex],
@@ -961,7 +959,7 @@ public partial class BattleController : Node
 				var Exp = 0;
 				foreach(var Enemy in Enemies)
 				{
-					Exp += Enemy.Experience;
+					Exp += Enemy.ExperienceGiven;
 				}
 
 				// I THINK the experience in FF6 is displaying PER CHARACTER, ergo...

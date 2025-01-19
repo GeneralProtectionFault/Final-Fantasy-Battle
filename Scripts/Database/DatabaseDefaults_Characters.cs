@@ -56,7 +56,6 @@ public static class DatabaseDefaults_Characters
             InitialLevelOffset = 0,
 
             InParty = true,
-            IsWounded = false,
 
             Statuses = new List<Enums.Status>(),
 
@@ -133,7 +132,6 @@ public static class DatabaseDefaults_Characters
                     InitialLevelOffset = 2,
 
                     InParty = true,
-                    IsWounded = false,
 
                     Statuses = new List<Enums.Status>(),
 
@@ -183,7 +181,6 @@ public static class DatabaseDefaults_Characters
                     InitialLevelOffset = 2,
 
                     InParty = false,
-                    IsWounded = false,
 
                     Statuses = new List<Enums.Status>(),
 
@@ -250,7 +247,6 @@ public static class DatabaseDefaults_Characters
                     InitialLevelOffset = 0,
 
                     InParty = false,
-                    IsWounded = false,
 
                     Statuses = new List<Enums.Status>(),
 
@@ -299,7 +295,6 @@ public static class DatabaseDefaults_Characters
                 InitialLevelOffset = 0,
 
                 InParty = false,
-                IsWounded = false,
 
                 Statuses = new List<Enums.Status>(),
 
@@ -376,7 +371,6 @@ public static class DatabaseDefaults_Characters
             InitialLevelOffset = 2,
 
             InParty = false,
-            IsWounded = false,
 
             Statuses = new List<Enums.Status>(),
 
@@ -440,8 +434,6 @@ public static class DatabaseDefaults_Characters
             InitialLevelOffset = 0,
 
             InParty = false,
-            IsWounded = false,
-
             Statuses = new List<Enums.Status>(),
 
             MagicList = new List<Ability>(),
@@ -509,7 +501,6 @@ public static class DatabaseDefaults_Characters
             InitialLevelOffset = 2,
 
             InParty = false,
-            IsWounded = false,
 
             Statuses = new List<Enums.Status>(),
 
@@ -604,7 +595,6 @@ public static class DatabaseDefaults_Characters
             InitialLevelOffset = 0,
 
             InParty = false,
-            IsWounded = false,
 
             Statuses = new List<Enums.Status>(),
 
@@ -653,7 +643,6 @@ public static class DatabaseDefaults_Characters
             InitialLevelOffset = 0,
 
             InParty = false,
-            IsWounded = false,
 
             Statuses = new List<Enums.Status>(),
 
@@ -702,7 +691,6 @@ public static class DatabaseDefaults_Characters
             InitialLevelOffset = 5,
 
             InParty = false,
-            IsWounded = false,
 
             Statuses = new List<Enums.Status>(),
 
@@ -757,7 +745,6 @@ public static class DatabaseDefaults_Characters
             InitialLevelOffset = 0,
 
             InParty = false,
-            IsWounded = false,
 
             Statuses = new List<Enums.Status>(),
 
@@ -1057,8 +1044,6 @@ public static class DatabaseDefaults_Characters
             InitialLevelOffset = 4,
 
             InParty = false,
-            IsWounded = false,
-
             Statuses = new List<Enums.Status>(),
 
             MagicList = new List<Ability>(),
@@ -1105,7 +1090,6 @@ public static class DatabaseDefaults_Characters
             InitialLevelOffset = 4,
 
             InParty = false,
-            IsWounded = false,
 
             Statuses = new List<Enums.Status>(),
 

@@ -43,7 +43,7 @@ public static class DatabaseDefaults_Enemies
             Agility = 30,
             HitRate = 100,
             Evasion = 0,
-            Experience = 48,
+            ExperienceGiven = 48,
             Gil = 48,
 
             ElementsWeak = new Dictionary<Enums.Elemental, float> () 
@@ -104,7 +104,7 @@ public static class DatabaseDefaults_Enemies
             Agility = 35,
             HitRate = 100,
             Evasion = 0,
-            Experience = 37,
+            ExperienceGiven = 37,
             Gil = 30,
 
             ElementsWeak = new Dictionary<Enums.Elemental, float> () 
@@ -179,7 +179,7 @@ public static class DatabaseDefaults_Enemies
             Agility = 35,
             HitRate = 100,
             Evasion = 0,
-            Experience = 246,
+            ExperienceGiven = 246,
             Gil = 186,
 
             Hp = 232,
