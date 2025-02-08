@@ -304,9 +304,8 @@ public partial class BattleController : Node
 		#region CharacterBattleTimers
 		for (var i = 0; i < Characters.Count; i++)
 		{
-			// Let us not bother with battle gauges of wounded characters
-			// TODO:  Exclude appropriate statuses as well, like Stop
-			if (Characters[i].Hp <= 0)
+			// Let us not bother with battle gauges of wounded/screwed characters
+			if (Characters[i].Statuses.Intersect(Globals.BattleInactiveStates).Any())
 				continue;
 
 
@@ -333,7 +332,6 @@ public partial class BattleController : Node
 			// Actually set the value
 			var CurrentTimerValue = CharacterBattleTimers[i].Value;
 			CharacterBattleTimers[i].Value += System.Math.Min(65536 - CurrentTimerValue, BattleTimerIncrement);
-
 
 
 			// If this player's bar is full...
@@ -856,6 +854,8 @@ public partial class BattleController : Node
 
 
 
+	#region MethodsFromEvents
+	
 	/// <summary>
 	/// Method to update character stats on the UI, etc...
 	/// This needs to be done in the BattleController for access to the UI elements
@@ -877,7 +877,8 @@ public partial class BattleController : Node
 		Globals.Battle_UpdateGameState(Enums.GameState.Battle);
 	}
 
-	#region MethodsFromEvents
+
+
 	private void UpdateAfterEnemyDamage(object sender, Enemy TheEnemy)
 	{
 		FightMenu.Visible = false;
@@ -1064,6 +1065,7 @@ public partial class BattleController : Node
 			}
 		}
 	}
+
 	#endregion
 
 

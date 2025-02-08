@@ -125,7 +125,14 @@ public static class Globals
 
     };
 
-
+    public static readonly List<Enums.Status> BattleInactiveStates = new() {
+        Enums.Status.Wounded,
+        Enums.Status.Petrified,
+        Enums.Status.Zombie,
+        Enums.Status.InstantDeath,
+        Enums.Status.Seizure,
+        Enums.Status.Stop
+    };
 
     
 

@@ -90,10 +90,15 @@ public static class BattleAlgorithms
         if (Target != null)
         {
             var CurrentHP = DatabaseHandler.GetCharacterStatAsString(Target.Name, "Hp");
-            var HP = CurrentHP.ToInt() - DamageAmount;
+            var HP = Mathf.Min(CurrentHP.ToInt() - DamageAmount, 0);
+
+            // Reset variable
             DamageAmount = 0;
 
             Target.Hp = HP;
+            if (HP == 0)
+                Target.Statuses.Add(Enums.Status.Wounded);
+                
             DatabaseHandler.UpdateCharacter(Target as Character);
 
             // Picked up in BattleController.cs
