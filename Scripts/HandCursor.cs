@@ -1,5 +1,7 @@
 using Godot;
 using System;
+using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 
 public partial class HandCursor : TextureRect
@@ -53,6 +55,7 @@ public partial class HandCursor : TextureRect
 		TargetCurrent();
 	}
 
+
 	private void EnableMenuSelectMode(object sender, EventArgs args)
 	{
 		HandCursorMode = Enums.HandCursorMode.Menu;
@@ -82,6 +85,7 @@ public partial class HandCursor : TextureRect
 		(this as TextureRect).Visible = false;
 	}
 
+
 	public void TreeExiting()
 	{
 		// GD.Print("HandCursor Exiting...");
@@ -89,15 +93,13 @@ public partial class HandCursor : TextureRect
 		BattleController.NotSelectingTarget -= EnableMenuSelectMode;
 	}
 
+
 	public override void _Process(double delta)
 	{
-		
 		var Input = Vector2.Zero;
-
-
 		
 		// If in a battle and if there ought be a menu...
-		if (!Globals.CursorLocked && Globals.Battle_ActivePlayerExists)
+		if (!Globals.CursorLocked && BattleController.Characters.Where(x => x.IsActiveCharacter).Any())
 		{
 			#region Universal Selection
 
@@ -147,9 +149,7 @@ public partial class HandCursor : TextureRect
 				}
 				
 
-
 				// *** Confirming any choice ***
-				
 				else if (Godot.Input.IsActionJustPressed("ui_accept"))
 				{
 					var CurrentMenuItem = GetMenuItemAtIndex(CursorIndex);
@@ -220,7 +220,7 @@ public partial class HandCursor : TextureRect
 
 						FingerSoundPlayer.Play();
 						// If we're targetting characters, switch to enemies & vice versa
-						Globals.Battle_UpdateGameState(Globals.SelectingStateOpposites[Globals.GameState]);
+						Globals.Battle_UpdateGameState(this, Globals.SelectingStateOpposites[Globals.GameState]);
 						TargetCurrent();
 					};
 
@@ -259,11 +259,13 @@ public partial class HandCursor : TextureRect
 
 		if (Globals.BattleSelectingEnemyStates.Contains(Globals.GameState))
 		{
-			NextObject = BattleController.EnemyObjects[CursorIndex];
+			// NextObject = BattleController.EnemyObjects[CursorIndex];
+			NextObject = BattleController.Enemies.Where(x => x.Index == CursorIndex).First().EntityNode;
 		}
 		else if (Globals.BattleSelectingCharactersStates.Contains(Globals.GameState))
 		{
-			NextObject = BattleController.CharacterObjects[CursorIndex];
+			// NextObject = BattleController.CharacterObjects[CursorIndex];
+			NextObject = BattleController.Characters.Where(x => x.Index == CursorIndex).First().EntityNode;
 		}
 
 		// Node2D NextObject = BattleController.CharactersAndEnemies[CursorIndex];
@@ -285,7 +287,8 @@ public partial class HandCursor : TextureRect
 			else
 				CursorIndex += 1;
 
-			NextObject = BattleController.EnemyObjects[CursorIndex];
+			// NextObject = BattleController.EnemyObjects[CursorIndex];
+			NextObject = BattleController.Enemies.Where(x => x.Index == CursorIndex).First().EntityNode;
 		}
 		else if (Globals.BattleSelectingCharactersStates.Contains(Globals.GameState))
 		{
@@ -294,7 +297,8 @@ public partial class HandCursor : TextureRect
 			else
 				CursorIndex += 1;
 
-			NextObject = BattleController.CharacterObjects[CursorIndex];
+			// NextObject = BattleController.CharacterObjects[CursorIndex];
+			NextObject = BattleController.Characters.Where(x => x.Index == CursorIndex).First().EntityNode;
 		}
 
 		
@@ -316,7 +320,8 @@ public partial class HandCursor : TextureRect
 			else
 				CursorIndex += 1;
 
-			PrevObject = BattleController.EnemyObjects[CursorIndex];
+			// PrevObject = BattleController.EnemyObjects[CursorIndex];
+			PrevObject = BattleController.Enemies.Where(x => x.Index == CursorIndex).First().EntityNode;
 		}
 		else if (Globals.BattleSelectingCharactersStates.Contains(Globals.GameState))
 		{
@@ -325,7 +330,8 @@ public partial class HandCursor : TextureRect
 			else
 				CursorIndex += 1;
 
-			PrevObject = BattleController.CharacterObjects[CursorIndex];
+			// PrevObject = BattleController.CharacterObjects[CursorIndex];
+			PrevObject = BattleController.Characters.Where(x => x.Index == CursorIndex).First().EntityNode;
 		}
 
 

@@ -22,19 +22,21 @@ public partial class BattleController : Node
 	private static AudioStreamPlayer EnemyDeathSound;
 	private static AudioStreamPlayerIntro Fanfare;
 
-	// These are the objects with the character/enemy stats
-	public static List<Character> Characters = new List<Character>();
-	public static List<Enemy> Enemies = new List<Enemy>();
-	
-	// These are the Godot objects
-	public static List<Node2D> CharacterObjects = new List<Node2D>();
-	public static List<Node2D> EnemyObjects = new List<Node2D>();
 
-	private static List<AnimationPlayer> CharacterAnimations = new List<AnimationPlayer>();
-	private static List<int> CharactersWithFullTimerBar = new List<int>();
-	private static List<int> EnemiesWithFullTimerBar = new List<int>();
-	private static List<TextureProgressBar> CharacterBattleTimers = new List<TextureProgressBar>();
-	private static List<TextureProgressBar> EnemyBattleTimers = new List<TextureProgressBar>();
+	public static List<BattleGameObject> Characters = new();
+	public static List<BattleGameObject> Enemies = new();
+	// // These are the objects with the character/enemy stats
+	// public static List<Character> Characters = new List<Character>();
+	// public static List<Enemy> Enemies = new List<Enemy>();
+	
+	// // These are the Godot objects
+	// public static List<Node2D> CharacterObjects = new List<Node2D>();
+	// public static List<Node2D> EnemyObjects = new List<Node2D>();
+
+	// private static List<int> CharactersWithFullTimerBar = new List<int>();
+	// private static List<int> EnemiesWithFullTimerBar = new List<int>();
+	// private static List<TextureProgressBar> CharacterBattleTimers = new List<TextureProgressBar>();
+	// private static List<TextureProgressBar> EnemyBattleTimers = new List<TextureProgressBar>();
 
 	private static Sprite2D ActiveCharacterIcon; // The icon that appears over the head of the active character
 	private static TextureRect HandCursorObject;
@@ -84,22 +86,21 @@ public partial class BattleController : Node
 	{
 		// Reset stuff...
 		ActiveCharacterIndex = -1;
-		CurrentMenuIndex = 0;
+		// CharacterObjects.Clear();
+		// EnemyObjects.Clear();
+		// Enemies.Clear();
+		// CharacterBattleTimers.Clear();
 
-		CharacterObjects.Clear();
-		EnemyObjects.Clear();
-		Enemies.Clear();
-		CharacterBattleTimers.Clear();
+		CurrentMenuIndex = 0;
 		VictoryTextList.Clear();
 		BattleWonTextIndex = 0;
-
 
 		// Subscribe to the cursor event and handle whenever it's pressed
 		HandCursor.CursorSelected += CursorPressed;
 		// This event will fire when a character attacks another character
 		// (Needs to be decoupled from generally damaging because of timer bars/turns/etc...)
-		BattleAlgorithms.DamagingCharacter += UpdateCharacterAfterAttack;
-		BattleAlgorithms.DamagingEnemy += UpdateAfterEnemyDamage;
+		BattleTurn.DamagingCharacter += UpdateCharacterAfterAttack;
+		BattleTurn.DamagingEnemy += UpdateAfterEnemyDamage;
 
 		FF6Font = new FontVariation();
 		FF6Font.Set("base_font", ResourceLoader.Load<FontFile>("res://Fonts/final_fantasy_36_font.ttf"));
@@ -111,7 +112,7 @@ public partial class BattleController : Node
 		Fanfare = GetNode<AudioStreamPlayerIntro>("BattleTemplate/Fanfare");
 
 		// Tracks if a player is selecting something such as a spell, ability, etc... (will affect wait and all that)
-		Globals.Battle_UpdateGameState(Enums.GameState.Battle);
+		Globals.Battle_UpdateGameState(this, Enums.GameState.Battle);
 
 		// Store the hand & active cursors for controlling visibility, etc...
 		HandCursorObject = GetNode<TextureRect>("BattleCanvas/HandCursor");
@@ -129,20 +130,21 @@ public partial class BattleController : Node
 		VictoryTextSprite = GetNode<Sprite2D>("BattleCanvas/BlueBattleVictoryPanel");
 		VictoryTextLabel = VictoryTextSprite.GetNode<Label>("Control_VictoryText/Label_VictoryText");
 
-		// Spawn the players in the party
-		Characters = DatabaseHandler.GetCharactersInParty().ToList();
-		
 		// This will be used as the parent of the label stuff we need to populate in the loop below for each character.
 		CharacterGrid = GetNode<Control>("BattleCanvas/BlueBattlePanelRight/Control_PartyMenuBackground/MarginContainer/GridContainer");
 		// GD.Print($"Character Grid; {CharacterGrid}");
 
+
+		// Spawn the players in the party
+		var CharactersDatabase = DatabaseHandler.GetCharactersInParty().ToList();
+	
 		#region CharacterSpawn
-		for (var i = 0; i < Characters.Count(); i++)
+		for (var i = 0; i < CharactersDatabase.Count; i++)
 		{
 			// Get if the character is in the front or back
 			// NAMING IMPORTANT! :D
-			var RowPosition = Characters[i].RowPosition;
-			var CharacterName = Characters[i].Name;
+			var RowPosition = CharactersDatabase[i].RowPosition;
+			var CharacterName = CharactersDatabase[i].Name;
 
 			// i + 1 because the object is not named "FrontRow_Player0" for example...
 			var SpawnObject = GetNode<Node2D>($"BattleTemplate/{RowPosition}_Player{i + 1}");
@@ -153,21 +155,13 @@ public partial class BattleController : Node
 			// The animation player used on the overworld will eff with the animations in a different animation player, so disable it here
 			// (and re-enable it upon going back to the overworld)
 			CharacterObject.GetNode<AnimationTree>("AnimationTree").Active = false;
-
-			// Used in this script
-			CharacterObjects.Add(CharacterObject);
-			// Used for HandCursor script
-			//CharactersAndEnemies.Add(CharacterObject as Node2D);
-
 			(CharacterObject as Node2D).GlobalPosition = SpawnObject.GlobalPosition;
 
 			// During spawning, store the animation player for each character so we can grab it from the list by an order/index :)
 			var AnimPlayer = CharacterObject.GetNode<AnimationPlayer>("AnimationPlayer");
-			CharacterAnimations.Add(AnimPlayer);
-
+			
 			// Play the battle idle animation so they each start appropriately
 			AnimPlayer.Play($"{CharacterName}_IdleBattle");
-
 
 			// Dynamically populate the menu crap
 			var HBox = CharacterGrid.GetNode<HBoxContainer>($"HBoxContainer{i + 1}");
@@ -177,7 +171,6 @@ public partial class BattleController : Node
 			var HPNode = CharacterGrid.GetNode<Label>($"HBoxContainer{i + 1}/HPLabel{i + 1}");
 			
 			var ProgressBarNode = CharacterGrid.GetNode<TextureProgressBar>($"HBoxContainer{i + 1}/TextureProgressBar{i + 1}");
-			CharacterBattleTimers.Add(ProgressBarNode);
 
 			NameNode.Text = CharacterName;
 			NameNode.Visible = true;
@@ -185,6 +178,20 @@ public partial class BattleController : Node
 			var HP = DatabaseHandler.GetCharacterStatAsString(CharacterName, "Hp");
 			HPNode.Text = HP;
 			HPNode.Visible = true;	
+
+
+			// Create the "super" all-knowing object
+			Characters.Add(new BattleGameObject() {
+				Index = i,
+				EntityNode = CharacterObject,
+				EntityData = CharactersDatabase[i],
+				EntityType = Enums.BattleObjectType.Character,
+				FullTimerBar = false,
+				IsActiveCharacter = false,
+				ProgressBar = ProgressBarNode,
+				IsValidTarget = CharactersDatabase[i].Statuses.Contains(Enums.Status.Wounded) ? false : true,
+			});
+
 		}
 
 		#endregion
@@ -202,7 +209,7 @@ public partial class BattleController : Node
 			var EnemyObject = GD.Load<PackedScene>($"{EnemyScenePath}{EnemyName}.tscn").Instantiate();
 			MainNode.AddChild(EnemyObject);
 
-			EnemyObjects.Add(EnemyObject as Node2D);
+			// EnemyObjects.Add(EnemyObject as Node2D);
 
 			// Add the enemy label to the list on the left side of the screen
 			var EnemyLabel = new Label();
@@ -222,7 +229,7 @@ public partial class BattleController : Node
 			// Add actual object to list for access to the stats, etc...
 			var Enemy = DatabaseHandler.EnemyCollection.FindOne(x => x.Name == EnemyName);
 			GD.Print($"Adding enemy to enemy list: {Enemy.Name}");
-			Enemies.Add(Enemy);
+			// Enemies.Add(Enemy);
 
 			// Dynamically create enemy progress bar that will track & available for debugging
 			var Bar = new TextureProgressBar();
@@ -237,8 +244,20 @@ public partial class BattleController : Node
 			// This would default to invisible, but on for debugging
 			// Bar.Visible = false;
 
-			EnemyBattleTimers.Add(Bar);
+			// EnemyBattleTimers.Add(Bar);
 			EnemyObject.AddChild(Bar);
+
+
+			Enemies.Add(new BattleGameObject {
+				Index = i,
+				EntityNode = EnemyObject as Node2D,
+				EntityData = Enemy,
+				EntityType = Enums.BattleObjectType.Enemy,
+				FullTimerBar = false,
+				IsActiveCharacter = false,
+				ProgressBar = Bar,
+				IsValidTarget = true
+			});
 		}
 		#endregion
 	}
@@ -252,8 +271,8 @@ public partial class BattleController : Node
 		Globals.ReturningFromBattle = true;
 
 		HandCursor.CursorSelected -= CursorPressed;
-		BattleAlgorithms.DamagingCharacter -= UpdateCharacterAfterAttack;
-		BattleAlgorithms.DamagingEnemy -= UpdateAfterEnemyDamage;
+		BattleTurn.DamagingCharacter -= UpdateCharacterAfterAttack;
+		BattleTurn.DamagingEnemy -= UpdateAfterEnemyDamage;
 
 
 		GetTree().Root.AddChild(Globals.Overworld);
@@ -275,7 +294,7 @@ public partial class BattleController : Node
 				if (BattleWonTextIndex == VictoryTextList.Count)
 				{
 					GD.Print("Battle over!");
-					Globals.GameState = Enums.GameState.Battle_End;
+					Globals.Battle_UpdateGameState(this, Enums.GameState.Battle_End);
 					EndBattle();
 				}
 				else
@@ -285,13 +304,16 @@ public partial class BattleController : Node
 					BattleWonTextIndex += 1;
 				}
 			}
+
+			return;
 		}
 
-		#endregion
 
+		#endregion
 		// Set to this from Process so as to not be "processing" when changing the scene out of battle
 		if (Globals.GameState == Enums.GameState.Battle_End)
 			return;
+
 
 		if (Globals.BattleMode == Enums.BattleMode.Wait)
 		{
@@ -305,56 +327,42 @@ public partial class BattleController : Node
 		for (var i = 0; i < Characters.Count; i++)
 		{
 			// Let us not bother with battle gauges of wounded/screwed characters
-			if (Characters[i].Statuses.Intersect(Globals.BattleInactiveStates).Any())
+			if (Characters[i].EntityData.Statuses.Intersect(Globals.BattleInactiveStatuses).Any())
 				continue;
 
 
 			var BattleTimerIncrement = 0;
 
 			// HASTE
-			if (Characters[i].Statuses.Contains(Enums.Status.Haste))
+			if (Characters[i].EntityData.Statuses.Contains(Enums.Status.Haste))
 			{
-				BattleTimerIncrement += (126 * (Characters[i].Agility + 20)) / 16;
+				BattleTimerIncrement += (126 * (Characters[i].EntityData.Agility + 20)) / 16;
 			}
 			// SLOW
-			else if (Characters[i].Statuses.Contains(Enums.Status.Slow))
+			else if (Characters[i].EntityData.Statuses.Contains(Enums.Status.Slow))
 			{
-				BattleTimerIncrement += (48 * (Characters[i].Agility + 20)) / 16;
+				BattleTimerIncrement += (48 * (Characters[i].EntityData.Agility + 20)) / 16;
 			}
 
 			// (NORMAL)
 			else
 			{
-				BattleTimerIncrement += (96 * (Characters[i].Agility + 20)) / 16;
+				BattleTimerIncrement += (96 * (Characters[i].EntityData.Agility + 20)) / 16;
 			}
 			// Debug.WriteLine($"CHARACTER INCREMENT: {BattleTimerIncrement}");
 
 			// Actually set the value
-			var CurrentTimerValue = CharacterBattleTimers[i].Value;
-			CharacterBattleTimers[i].Value += System.Math.Min(65536 - CurrentTimerValue, BattleTimerIncrement);
+			var CurrentTimerValue = Characters[i].ProgressBar.Value;
+			Characters[i].ProgressBar.Value += System.Math.Min(65536 - CurrentTimerValue, BattleTimerIncrement);
 
 
-			// If this player's bar is full...
-			if (CharacterBattleTimers[i].Value == 65536)
+			// If this player's bar is full and not already queued to attack...
+			if (Characters[i].ProgressBar.Value == 65536 && !Characters[i].IsQueued)
 			{
-				// Active player logic
-				// If there are no active players, make this the active player
-				if (CharactersWithFullTimerBar.Count() == 0 || ActiveCharacterIndex == -1)
-				{
-					MenuSwitchSound.Play();
-					SetActiveCharacter(i);
-					HandCursor.AssignCursorParent(FightMenuContainer);
-				}
-
-				// Store which character is full
-				// Only add this in if it isn't there, or it will get added every tick that the bar is full :-P
-				if (!CharactersWithFullTimerBar.Contains(i))
-					CharactersWithFullTimerBar.Add(i);
-				
-				Globals.Battle_ActivePlayerExists = true;
 				if (Globals.GameState == Enums.GameState.Battle)
 				{
-					Globals.Battle_UpdateGameState(Enums.GameState.Battle_Menu_Normal);
+					Globals.Battle_UpdateGameState(this, Enums.GameState.Battle_Menu_Normal);
+					Debug.WriteLine("Setting Menu Normal from 365!");
 				
 					// Reveal the menu!
 					if (FightMenu.Visible == false)
@@ -362,6 +370,18 @@ public partial class BattleController : Node
 					if (HandCursorObject.Visible == false)
 						HandCursorObject.Visible = true;
 				}
+
+				Characters[i].FullTimerBar = true;
+
+				// Active player logic
+				// If there are no active players, make this the active player
+				if (!Characters.Where(x => x.IsActiveCharacter).Any())
+				{
+					MenuSwitchSound.Play();
+					SetActiveCharacter(Characters[i]);
+					Characters[i].IsActiveCharacter = true;
+					HandCursor.AssignCursorParent(FightMenuContainer);
+				}				
 			}
 		}
 
@@ -371,78 +391,67 @@ public partial class BattleController : Node
 
 		for (var i = 0; i < Enemies.Count; i++)
 		{
-			if (Enemies[i].Hp > 0)
+			if (Enemies[i].EntityData.Hp > 0)
 			{
 				var BattleTimerIncrement = 0;
 				// var BattleSpeedOffset = 255 - ((BattleSpeed - 1) * 24);
 				var BattleSpeedOffset = 1;
 
 				// HASTE
-				if (Enemies[i].Statuses.Contains(Enums.Status.Haste))
+				if (Enemies[i].EntityData.Statuses.Contains(Enums.Status.Haste))
 				{
-					BattleTimerIncrement += (126 * (Enemies[i].Agility + 20)) * BattleSpeedOffset / 16;
+					BattleTimerIncrement += (126 * (Enemies[i].EntityData.Agility + 20)) * BattleSpeedOffset / 16;
 				}
 				// SLOW
-				else if (Enemies[i].Statuses.Contains(Enums.Status.Slow))
+				else if (Enemies[i].EntityData.Statuses.Contains(Enums.Status.Slow))
 				{
-					BattleTimerIncrement += (48 * (Enemies[i].Agility + 20)) * BattleSpeedOffset / 16;
+					BattleTimerIncrement += (48 * (Enemies[i].EntityData.Agility + 20)) * BattleSpeedOffset / 16;
 				}
 				// (NORMAL)
 				else
 				{
-					BattleTimerIncrement += (96 * (Enemies[i].Agility + 20)) * BattleSpeedOffset / 16;
+					BattleTimerIncrement += (96 * (Enemies[i].EntityData.Agility + 20)) * BattleSpeedOffset / 16;
 				}
 				// Debug.WriteLine($"ENEMY INCREMENT: {BattleTimerIncrement}");
 
 				// Actually set the value
-				var CurrentTimerValue = EnemyBattleTimers[i].Value;
-				EnemyBattleTimers[i].Value += System.Math.Min(65536 - CurrentTimerValue, BattleTimerIncrement);
+				var CurrentTimerValue = Enemies[i].ProgressBar.Value;
+				Enemies[i].ProgressBar.Value += System.Math.Min(65536 - CurrentTimerValue, BattleTimerIncrement);
 			}
+			#endregion
 
 			#region EnemyAction
-			// If this player's bar is full...
-			if (EnemyBattleTimers[i].Value == 65536)
+			// If this enemy's bar is full...
+			if (Enemies[i].ProgressBar.Value == 65536)
 			{
+				Enemies[i].FullTimerBar = true;
 				// Active enemy logic
 				// Store which enemy is full
 				// Only add this in if it isn't there, or it will get added every tick that the bar is full :-P
-				if (!EnemiesWithFullTimerBar.Contains(i))
-					EnemiesWithFullTimerBar.Add(i);
+				// if (!EnemiesWithFullTimerBar.Contains(i))
+				// 	EnemiesWithFullTimerBar.Add(i);
 				
-				Globals.Battle_ActiveEnemyExists = true;
+				// Globals.Battle_ActiveEnemyExists = true;
 				// if (Globals.GameState == Enums.GameState.Battle)
 				// {
 					// ** QUEUE ENEMY ATTACK HERE ** - NOTE:  If we're on a "WAIT" menu, we won't even get to this part of the code
 					if (Globals.GameState != Enums.GameState.Battle_Party_Action)
 					{
-						
-						Globals.Battle_UpdateGameState(Enums.GameState.Battle_Enemy_Action);
-						
-						var FlashUniformMaterial = EnemyObjects[i].GetNode<Sprite2D>("Sprite2D").Material;
-						
-						FlashUniformMaterial.Set("shader_parameter/attack_flash", true);
-						Tween FlashTween = GetTree().CreateTween();
-						FlashTween.TweenCallback(Callable.From(() => {
-							FlashUniformMaterial.Set("shader_parameter/attack_flash", false);
+						var EnemyNode = Enemies[i].EntityNode;
+						if (!Enemies[i].IsQueued)
+						{
+							Enemies[i].IsQueued = true;
+							(EnemyNode as BaseEnemyAction).QueueTurn(Enemies[i]);
 						}
-						)).SetDelay(0.2f);
-
-
-						var EnemyNode = EnemyObjects[i];
-						(EnemyNode as IEnemyAction).ExecuteTurn(i);
-						EnemyBattleTimers[i].Value = 0;
-						EnemiesWithFullTimerBar.Remove(i);
 
 					}			
-
-					
 				// }
 			}
 			#endregion
 
 		}
 
-		#endregion
+
 
 
 		
@@ -458,6 +467,9 @@ public partial class BattleController : Node
 	private void CursorPressed(object sender, string Command)
 	{
 		GD.Print($"{Command} pressed!");
+		if (Globals.GameState == Enums.GameState.Battle_End ||
+				Globals.GameState == Enums.GameState.Battle_Won)
+				return;
 
 		// Cancellation - return to prior menu...
 		if (Command == "ui_cancel")
@@ -471,7 +483,7 @@ public partial class BattleController : Node
 			{
 				HandCursor.AssignCursorParent(FightMenuContainer);
 				NotSelectingTarget?.Invoke(this, EventArgs.Empty);
-				Globals.Battle_UpdateGameState(Enums.GameState.Battle_Menu_Normal);
+				Globals.Battle_UpdateGameState(this, Enums.GameState.Battle_Menu_Normal);
 			}
 			else if (Globals.GameState == Enums.GameState.Battle_Item_Selecting_Target_Characters ||
 			Globals.GameState == Enums.GameState.Battle_Item_Selecting_Target_Enemies ||
@@ -480,13 +492,13 @@ public partial class BattleController : Node
 			{
 				HandCursor.AssignCursorParent(ItemMenuContainer, CurrentMenuIndex);
 				NotSelectingTarget?.Invoke(this, EventArgs.Empty);
-				Globals.Battle_UpdateGameState(Enums.GameState.Battle_Menu_Item);
+				Globals.Battle_UpdateGameState(this, Enums.GameState.Battle_Menu_Item);
 			}
 			else if (Globals.GameState == Enums.GameState.Battle_Jump_Selecting_Target) // Jump & targeting back to fight menu
 			{
 				HandCursor.AssignCursorParent(FightMenuContainer, 1);
 				NotSelectingTarget?.Invoke(this, EventArgs.Empty);
-				Globals.Battle_UpdateGameState(Enums.GameState.Battle_Menu_Normal);
+				Globals.Battle_UpdateGameState(this, Enums.GameState.Battle_Menu_Normal);
 			}
 			else if (Globals.GameState == Enums.GameState.Battle_Magic_Selecting_Target_Characters ||
 			Globals.GameState == Enums.GameState.Battle_Magic_Selecting_Target_Enemies ||
@@ -495,7 +507,7 @@ public partial class BattleController : Node
 			{
 				HandCursor.AssignCursorParent(MagicMenuContainer, CurrentMenuIndex);
 				NotSelectingTarget?.Invoke(this, EventArgs.Empty);
-				Globals.Battle_UpdateGameState(Enums.GameState.Battle_Menu_Magic);
+				Globals.Battle_UpdateGameState(this, Enums.GameState.Battle_Menu_Magic);
 			}
 			else if (Globals.GameState == Enums.GameState.Battle_Menu_Blitz)
 			{
@@ -515,14 +527,14 @@ public partial class BattleController : Node
 			}
 			else if (Globals.GameState == Enums.GameState.Battle_Menu_Magic) // Magic Menu back to fight menu
 			{
-				Globals.Battle_UpdateGameState(Enums.GameState.Battle);
+				Globals.Battle_UpdateGameState(this, Enums.GameState.Battle);
 				HandCursor.AssignCursorParent(FightMenuContainer, 2);
 				// Hide the magic menu
 				MagicMenu.Visible = false;
 			}
 			else if (Globals.GameState == Enums.GameState.Battle_Menu_Item) // Item Menu back to fight menu
 			{
-				Globals.Battle_UpdateGameState(Enums.GameState.Battle);
+				Globals.Battle_UpdateGameState(this, Enums.GameState.Battle);
 				HandCursor.AssignCursorParent(FightMenuContainer, 3);
 				// Hide the item menu
 				ItemMenu.Visible = false;
@@ -534,7 +546,6 @@ public partial class BattleController : Node
 		#region NormalBattleMenu
 		if (Globals.GameState == Enums.GameState.Battle_Menu_Normal)
 		{
-
 			// "Top" button of the main 4 buttons
 			// If the icon is not visilbe, that should mean we set it invisible after a turn had commenced, and this should happen
 			// irrespective of the button press
@@ -544,30 +555,26 @@ public partial class BattleController : Node
 
 				// Switch which character is active if we're not in a selection menu AND if an ADDITIONAL player has a full ATB gauge
 				// The plain "Battle" state implies not in a menu selecting something
-				if (CharactersWithFullTimerBar.Count > 1)
+				if (Characters.Where(x => x.FullTimerBar).Count() > 1)	// If there's more than 1 character w/ a full bar
 				{
-					int ListIndex = CharactersWithFullTimerBar.FindIndex(x => x == ActiveCharacterIndex);
-					int NewIndex = ListIndex + 1;
-
-					// If we're at the end of the list, flip back to the beginning of it
-					if (ListIndex == CharactersWithFullTimerBar.Count - 1)
-						NewIndex = 0;
-
-					SetActiveCharacter(CharactersWithFullTimerBar[NewIndex]);
+					var ActiveCharacter = Characters.FirstOrDefault(x => x.Index == ActiveCharacterIndex);
+					// List concat w/ itself in order to wrap around to the beginning when we've reached the end
+					var NewActiveCharacter = Characters.Concat(Characters).SkipWhile(x => x == ActiveCharacter).FirstOrDefault();
+					SetActiveCharacter(NewActiveCharacter);
 				}
 				return;
 			}
 
 			else if (Command == "Fight")
 			{
-				Globals.Battle_UpdateGameState(Enums.GameState.Battle_Fight_Selecting_Target_Enemies);
+				Globals.Battle_UpdateGameState(this, Enums.GameState.Battle_Fight_Selecting_Target_Enemies);
 				SelectingTarget?.Invoke(this, EventArgs.Empty);
 				return;
 			}
 
 			else if (Command == "Magic")
 			{
-				Globals.Battle_UpdateGameState(Enums.GameState.Battle_Menu_Magic);
+				Globals.Battle_UpdateGameState(this, Enums.GameState.Battle_Menu_Magic);
 
 				// Make the magic menu stuff visible
 				MagicMenu.Visible = true;
@@ -582,7 +589,7 @@ public partial class BattleController : Node
 
 			else if (Command == "Item")
 			{
-				Globals.Battle_UpdateGameState(Enums.GameState.Battle_Menu_Item);
+				Globals.Battle_UpdateGameState(this, Enums.GameState.Battle_Menu_Item);
 				ItemMenu.Visible = true;
 				PopulateItemList();
 				HandCursor.AssignCursorParent(ItemMenuContainer);
@@ -608,9 +615,9 @@ public partial class BattleController : Node
 				// GD.Print($"Magic selected :{ActionSelected.Name}");
 				
 				if (Spell.MagicClass == "White")
-					Globals.Battle_UpdateGameState(Enums.GameState.Battle_Magic_Selecting_Target_Characters);
+					Globals.Battle_UpdateGameState(this, Enums.GameState.Battle_Magic_Selecting_Target_Characters);
 				else
-					Globals.Battle_UpdateGameState(Enums.GameState.Battle_Magic_Selecting_Target_Enemies);
+					Globals.Battle_UpdateGameState(this, Enums.GameState.Battle_Magic_Selecting_Target_Enemies);
 
 				// Here & now, change how the HandCursor script works!
 				SelectingTarget?.Invoke(this, EventArgs.Empty);
@@ -641,7 +648,7 @@ public partial class BattleController : Node
 					// ItemSelected = Item;
 					ActionSelected = Item;
 					GD.Print($"Item selected: {ActionSelected.Name}");
-					Globals.Battle_UpdateGameState(Enums.GameState.Battle_Item_Selecting_Target_Characters);
+					Globals.Battle_UpdateGameState(this, Enums.GameState.Battle_Item_Selecting_Target_Characters);
 
 					SelectingTarget?.Invoke(this, EventArgs.Empty);
 				}
@@ -664,39 +671,70 @@ public partial class BattleController : Node
 				HandCursorObject.Visible = false;
 				ActiveCharacterIcon.Visible = false;
 				NotSelectingTarget?.Invoke(this, EventArgs.Empty);
+				Characters[ActiveCharacterIndex].IsQueued = true;
 
 				// TODO :Set appropriate menu visibilities to false
-
 
 					// If targetting characters
 					if (Globals.GameState == Enums.GameState.Battle_Fight_Selecting_Target_Characters ||
 					Globals.GameState == Enums.GameState.Battle_Fight_Selecting_Target_Multiple_Characters)
 					{
-						Globals.Battle_UpdateGameState(Enums.GameState.Battle_Party_Action);				
+						var SelectedTargets = Characters.Where(x => x.Index == HandCursor.GetCurrentCursorIndex());
+						var BattleTargetObjects = new List<BattleTarget>();
 
-						Character SelectedTarget = Characters[HandCursor.GetCurrentCursorIndex()];
-						BattleAlgorithms.SetFightVariables(Characters[HandCursor.GetCurrentCursorIndex()], CharacterObjects[HandCursor.GetCurrentCursorIndex()]);
+						// TODO:  Handle multiple targets
+						// TODO:  Store the type of action (attack, spell, etc...)
+						// Right now, SelectedTargets will only have 1 object
+						foreach(var Target in SelectedTargets)
+						{
+							// CharacterAttack() method returns a BattleTarget object with all the damage, etc... calculated
+							BattleTargetObjects.Add(BattleAlgorithms.CharacterAttack(Characters[ActiveCharacterIndex], Target));
+						}
+
+						// BattleAlgorithms.SetFightVariables(Characters[HandCursor.GetCurrentCursorIndex()], CharacterObjects[HandCursor.GetCurrentCursorIndex()]);
+						var Turn = new BattleTurn() {
+							TurnType = Enums.BattleTurn.Party,
+							TargetMode = Enums.TargetMode.Allies,
+							Initiator = Characters[ActiveCharacterIndex],
+							InitiatorStats = Characters[ActiveCharacterIndex].EntityData,
+							Targets = BattleTargetObjects
+						};
+
+						BattleTurn.BattleQueue.Add(Turn);
 
 						// Animation plays regardless of if targeting enemies or characters.
-						BattleAnimations.TriggerFightAnimation(Characters[ActiveCharacterIndex], CharacterObjects[ActiveCharacterIndex],
-						Characters[HandCursor.GetCurrentCursorIndex()], CharacterObjects[HandCursor.GetCurrentCursorIndex()]);
+						// BattleAnimations.TriggerFightAnimation(Characters[ActiveCharacterIndex], Characters[ActiveCharacterIndex].EntityNode,
+						// Characters[HandCursor.GetCurrentCursorIndex()], CharacterObjects[HandCursor.GetCurrentCursorIndex()]);
 					}
 					// If targetting enemies
 					else if (Globals.GameState == Enums.GameState.Battle_Fight_Selecting_Target_Enemies ||
 					Globals.GameState == Enums.GameState.Battle_Fight_Selecting_Target_Multiple_Enemies)
 					{
-						Globals.Battle_UpdateGameState(Enums.GameState.Battle_Party_Action);
+						var SelectedTargets = Enemies.Where(x => x.Index == HandCursor.GetCurrentCursorIndex());
+						var BattleTargetObjects = new List<BattleTarget>();
+						foreach(var Target in SelectedTargets)
+						{
+							BattleTargetObjects.Add(BattleAlgorithms.CharacterAttack(Characters[ActiveCharacterIndex], Target));
+						}
+
+						var Turn = new BattleTurn() {
+							TurnType = Enums.BattleTurn.Party,
+							TargetMode = Enums.TargetMode.Adversaries,
+							Initiator = Characters[ActiveCharacterIndex],
+							InitiatorStats = Characters[ActiveCharacterIndex].EntityData,
+							Targets = BattleTargetObjects
+						};
+
+						BattleTurn.BattleQueue.Add(Turn);
 
 						// Set this so it can be passed back to this class so we can damage the correct enemy
-						Enemies[HandCursor.GetCurrentCursorIndex()].BattleListIndex = HandCursor.GetCurrentCursorIndex();
-
-						// Damage & Damage Text
-						BattleAlgorithms.SetFightVariables(Enemies[HandCursor.GetCurrentCursorIndex()], EnemyObjects[HandCursor.GetCurrentCursorIndex()]);
-
-						// Animation plays regardless of if targeting enemies or characters.
-						BattleAnimations.TriggerFightAnimation(Characters[ActiveCharacterIndex], CharacterObjects[ActiveCharacterIndex],
-						Enemies[HandCursor.GetCurrentCursorIndex()], EnemyObjects[HandCursor.GetCurrentCursorIndex()]);
+						// TODO: Set the index to the SELECTED (Cursor) Enemy
+						// Enemies[HandCursor.GetCurrentCursorIndex()].BattleListIndex = HandCursor.GetCurrentCursorIndex();
 					}
+
+				FightMenu.Visible = false;
+				Globals.UpdateGameState(Enums.GameState.Battle);
+				
 			}
 
 
@@ -706,11 +744,17 @@ public partial class BattleController : Node
 
 
 
-	private void SetActiveCharacter(int Index)
+	public static void SetActiveCharacter(BattleGameObject Character)
 	{
 		GD.Print("Setting active character...");
 
-		ActiveCharacterIndex = Index;
+		if (Character is null)
+		{
+			ActiveCharacterIndex = -1;
+			return;
+		}
+
+		ActiveCharacterIndex = Character.Index;
 
 		if (ActiveCharacterIndex >= 0)
 		{
@@ -719,13 +763,10 @@ public partial class BattleController : Node
 				ActiveCharacterIcon.Visible = true;
 			
 			var CursorPlayer = ActiveCharacterIcon.GetNode<AnimationPlayer>("AnimationPlayer");
-
 			// Trigger the animation
 			CursorPlayer.Play("CursorActive");
 			
-
-			var ActiveCharacterObject = CharacterObjects[Index];
-			ActiveCharacterIcon.GlobalPosition = new Vector2((ActiveCharacterObject as Node2D).GlobalPosition.X, (ActiveCharacterObject as Node2D).GlobalPosition.Y - 110);
+			ActiveCharacterIcon.GlobalPosition = new Vector2((Character.EntityNode as Node2D).GlobalPosition.X, Character.EntityNode.GlobalPosition.Y - 110);
 		}
 	}
 
@@ -740,7 +781,8 @@ public partial class BattleController : Node
 			Label.QueueFree();
 
 		// Get the spells!
-		var CharacterName = Characters[CharacterIndex].Name;
+		// var CharacterName = Characters[CharacterIndex].Name;
+		var CharacterName = Characters.Where(x => x.Index == CharacterIndex).First().EntityData.Name;
 		var CharacterMagic = DatabaseHandler.GetCharacterMagic(CharacterName);
 
 		// Load the Icon images
@@ -861,64 +903,49 @@ public partial class BattleController : Node
 	/// This needs to be done in the BattleController for access to the UI elements
 	/// </summary>
 	/// <param name="TheCharacter"></param>
-	private void UpdateCharacterAfterAttack(object sender, Character TheCharacter)
+	private void UpdateCharacterAfterAttack(object sender, BattleGameObject TheCharacter)
 	{
 		FightMenu.Visible = false;
 		HandCursorObject.Visible = false;
 
-		CharacterBattleTimers[ActiveCharacterIndex].Value = 0;
-		CharactersWithFullTimerBar.Remove(ActiveCharacterIndex);
+		TheCharacter.ProgressBar.Value = 0;
+		// CharactersWithFullTimerBar.Remove(ActiveCharacterIndex);
 		// The process method will set this right back appropriately if another character has a full battle gauge
-		Globals.Battle_ActivePlayerExists = false;
-		SetActiveCharacter(-1);
+		// Globals.Battle_ActivePlayerExists = false;
+		SetActiveCharacter(null);
 
 		UpdateCharacterStats(TheCharacter);
 
-		Globals.Battle_UpdateGameState(Enums.GameState.Battle);
+		// TODO - account for party defeat, etc...
+		Globals.Battle_UpdateGameState(this, Enums.GameState.Battle);
 	}
 
 
 
-	private void UpdateAfterEnemyDamage(object sender, Enemy TheEnemy)
+	private void UpdateAfterEnemyDamage(object sender, BattleGameObject TheEnemy)
 	{
 		FightMenu.Visible = false;
 		HandCursorObject.Visible = false;
 
-		GD.Print($"Size: {CharacterBattleTimers.Count}");
+		// GD.Print($"Size: {CharacterBattleTimers.Count}");
 		GD.Print($"Active Character Index: {ActiveCharacterIndex}");
 
-		// Down the Enemy's HP on the object and whatnot
-		CharacterBattleTimers[ActiveCharacterIndex].Value = 0;
-		CharactersWithFullTimerBar.Remove(ActiveCharacterIndex);
-		// The process method will set this right back appropriately if another character has a full battle gauge
-		Globals.Battle_ActivePlayerExists = false;
-		SetActiveCharacter(-1);
-
 		// Update the stats of the enemy 
-		var Enemy = Enemies[TheEnemy.BattleListIndex];
-		
-		// NEW =D
-		var EnemyObject = EnemyObjects[TheEnemy.BattleListIndex];
-		
-		GD.Print($"Enemy HP before: {Enemy.Hp}");
-		GD.Print($"Enemy HP after: {TheEnemy.Hp}");
-
-		// Set it to the TheEnemy w/ the updated stats
-		Enemy = TheEnemy;
+		GD.Print($"Enemy HP: {TheEnemy.EntityData.Hp}");
 
 		// Remove upon death!
-		if (TheEnemy.Hp <= 0)
+		if (TheEnemy.EntityData.Hp <= 0)
 		{
 			Tween DelayTween = GetTree().CreateTween();
 
 			DelayTween.TweenCallback(Callable.From(() => {
 				EnemyDeathSound.Play();
-				EnemyObjects[TheEnemy.BattleListIndex].QueueFree();
+				TheEnemy.EntityNode.QueueFree();
 				
 				// Remove enemy from the list (UI on the left)
 				foreach (Label EnemyLabel in EnemyMenuContainer.GetChildren())
 				{
-					if (EnemyLabel.Text == TheEnemy.Name)
+					if (EnemyLabel.Text == TheEnemy.EntityData.Name)
 					{
 						EnemyLabel.QueueFree();
 						break;
@@ -930,11 +957,13 @@ public partial class BattleController : Node
 		}
 
 
-		// If all enemies have <= 0 HP
-		if (Enemies.Where(x => x.Hp > 0).Count() <= 0)
+		// If the battle is won!
+		if (Enemies.Where(x => x.EntityData.Hp > 0).Count() <= 0)
 		{
-			Globals.Battle_UpdateGameState(Enums.GameState.Battle_Won);
+			var EndCallable = Callable.From(() => Globals.Battle_UpdateGameState(this, Enums.GameState.Battle_Won));
+			EndCallable.CallDeferred();
 			ActiveCharacterIcon.Visible = false;
+			HandCursorObject.Visible = false;
 
 			Tween BattleEndTween = GetTree().CreateTween();
 
@@ -942,15 +971,12 @@ public partial class BattleController : Node
 				GetNode<AudioStreamPlayer>("BattleTemplate/BattleTheme").Stop();
 				Fanfare.Play();
 
-				var UnwoundedCharacters = Characters.Where(x => x.Hp > 0).ToList();
+				var UnwoundedCharacters = Characters.Where(x => x.EntityData.Hp > 0).ToList();
 
 				// Play victory animation if the character is still standing :)
-				foreach (Character Character in Characters.Where(x => x.Hp > 0))
+				foreach (BattleGameObject Character in Characters.Where(x => x.EntityData.Hp > 0))
 				{
-					// Get the list index so we can get the Node2D from that list (indices will be the same)
-					var Index = Characters.FindIndex(x => x == Character);
-
-					var Player = CharacterObjects[Index].GetNode<AnimationPlayer>("Battle_AnimationPlayer");
+					var Player = Character.EntityNode.GetNode<AnimationPlayer>("Battle_AnimationPlayer");
 					Player.Queue("Spin");
 					Player.Queue("Fanfare");
 				}
@@ -960,7 +986,7 @@ public partial class BattleController : Node
 				var Exp = 0;
 				foreach(var Enemy in Enemies)
 				{
-					Exp += Enemy.ExperienceGiven;
+					Exp += Enemy.EntityData.ExperienceGiven;
 				}
 
 				// I THINK the experience in FF6 is displaying PER CHARACTER, ergo...
@@ -969,8 +995,8 @@ public partial class BattleController : Node
 
 				foreach	(var Character in UnwoundedCharacters)
 				{
-					Character.Experience += Exp;
-					DatabaseHandler.UpdateCharacter(Character);
+					Character.EntityData.Experience += Exp;
+					DatabaseHandler.UpdateCharacter(Character.EntityData as Character);
 				}
 				
 				// Espers / Magic points
@@ -983,9 +1009,9 @@ public partial class BattleController : Node
 
 				foreach (var Enemy in Enemies)
 				{
-					foreach(KeyValuePair<string,float> Item in Enemy.DroppedItems)
+					foreach(KeyValuePair<string,float> Item in Enemy.EntityData.DroppedItems)
 					{
-						GD.Print($"Iterating over {Enemy} dropped item: {Item.Key}");
+						GD.Print($"Iterating over {Enemy.EntityData.Name} dropped item: {Item.Key}");
 
 						Random gen = new Random();
 						double TriggerValue = gen.NextDouble();
@@ -1020,7 +1046,7 @@ public partial class BattleController : Node
 				var GP = 0;
 				foreach (var Enemy in Enemies)
 				{
-					GP += Enemy.Gil;
+					GP += Enemy.EntityData.Gil;
 				}
 
 				VictoryTextList.Add($"Got {GP} GP");
@@ -1030,17 +1056,29 @@ public partial class BattleController : Node
 				BattleWonTextIndex += 1;
  
 			})).SetDelay(2.0f);
-
-
 		}
-		else
-			Globals.Battle_UpdateGameState(Enums.GameState.Battle);
+		else 
+		{
+			var Initiator = Characters.Where(x => x.Index == ActiveCharacterIndex).First();
+			Initiator.ProgressBar.Value = 0;
+			Initiator.FullTimerBar = false;
+			Initiator.IsActiveCharacter = false;
+			Initiator.IsQueued = false;
+
+			// The process method will set this right back appropriately if another character has a full battle gauge
+			// Globals.Battle_ActivePlayerExists = false;
+			SetActiveCharacter(null);
+
+			HandCursor.AssignCursorParent(FightMenuContainer);
+			NotSelectingTarget?.Invoke(this, EventArgs.Empty);
+			// Globals.Battle_UpdateGameState(Enums.GameState.Battle);
+		}
 	}
 
 
-	private void UpdateCharacterStats(Character TheCharacter)
+	private void UpdateCharacterStats(BattleGameObject TheCharacter)
 	{
-		var CharacterName = TheCharacter.Name;
+		var CharacterName = TheCharacter.EntityData.Name;
 		var TargetIndex = "0";
 
 		// We're just after the number here, 1-4 - the label with the character's name
@@ -1060,10 +1098,15 @@ public partial class BattleController : Node
 		{
 			if (Label.Name.ToString().Contains(TargetIndex))
 			{
-				Label.Text = TheCharacter.Hp.ToString();
+				Label.Text = TheCharacter.EntityData.Hp.ToString();
 				GD.Print($"Updating text in {Label}");
 			}
 		}
+
+
+		// HandCursor.AssignCursorParent(FightMenuContainer);
+		// NotSelectingTarget?.Invoke(this, EventArgs.Empty);
+		// Globals.Battle_UpdateGameState(Enums.GameState.Battle);
 	}
 
 	#endregion

@@ -28,6 +28,8 @@
 /home/q/Documents/Godot/Final Fantasy Battle/Graphics/Weapons/Lightbringer_Slash_Line.png
 /home/q/Documents/Godot/Final Fantasy Battle/Graphics/Weapons/Lightbringer_Slash_Center.png
 /home/q/Documents/Godot/Final Fantasy Battle/Graphics/Shaders/mode7.gdshader
+/home/q/Documents/Godot/Final Fantasy Battle/Graphics/Shaders/attack_flash.gdshader.uid
+/home/q/Documents/Godot/Final Fantasy Battle/Graphics/Shaders/mode7.gdshader.uid
 /home/q/Documents/Godot/Final Fantasy Battle/Graphics/Shaders/attack_flash.gdshader
 /home/q/Documents/Godot/Final Fantasy Battle/Graphics/Particles/Particle_Magic_Cure2.png
 /home/q/Documents/Godot/Final Fantasy Battle/Graphics/Particles/Particle_Magic_Cure1.png

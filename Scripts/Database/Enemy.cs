@@ -37,14 +37,7 @@ public class Enemy : IBattleEntity
     public IDictionary<string, float> RagnarokItems { get; set; }
 
 
-    // Experience & Gil/GP gained when defeated in battle
-    public int ExperienceGiven { get; set; }
-    public int Gil { get; set; }
 
-    // Dropped items and their probabilities of being dropped
-    public IDictionary<string, float> DroppedItems { get; set; }
-    // Items that can be stolen, and their probability of being stolen
-    public IDictionary<string, float> StolenItems { get; set; }
 
 
     // Use this to track the position in the list of enemies during battle,

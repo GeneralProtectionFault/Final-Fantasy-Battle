@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Diagnostics;
 using Godot;
 
 public static class Globals
@@ -125,7 +126,7 @@ public static class Globals
 
     };
 
-    public static readonly List<Enums.Status> BattleInactiveStates = new() {
+    public static readonly List<Enums.Status> BattleInactiveStatuses = new() {
         Enums.Status.Wounded,
         Enums.Status.Petrified,
         Enums.Status.Zombie,
@@ -135,8 +136,6 @@ public static class Globals
     };
 
     
-
-
 
     // When switching between targetting of characters vs. enemies, use this to simplify switching to the appropriate battle state
     public static readonly Dictionary<Enums.GameState, Enums.GameState> SelectingStateOpposites = new Dictionary<Enums.GameState, Enums.GameState> () {
@@ -167,7 +166,16 @@ public static class Globals
 
 
 
-    public static readonly List<Enums.GameState> BattleWaitStates = new List<Enums.GameState>();
+    public static readonly List<Enums.GameState> BattleWaitStates = new();
+
+
+    public static readonly List<Enums.Status> AlwaysHitStatuses = new() {
+        Enums.Status.Sleep,
+        Enums.Status.Petrified,
+        Enums.Status.Frozen,
+        Enums.Status.Stop
+    };
+
 
 
 
@@ -186,10 +194,10 @@ public static class Globals
 	/// This will also update the debug information on the battle screen
 	/// </summary>
 	/// <param name="State"></param>
-	public static void Battle_UpdateGameState(Enums.GameState State)
+	public static void Battle_UpdateGameState(object sender, Enums.GameState State)
 	{
+        // Debug.WriteLine($"Updating game state to --- {State} -- from: {sender}");
 		UpdateGameState(State);
-		// var DebugWindow = GetNode("BattleCanvas/Control_DebugOutput/LabelDebugOutput");
 		BattleController.DebugWindow.Set("text", $"Game State: {Globals.GameState.ToString()}");
 	}
 

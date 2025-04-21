@@ -23,23 +23,9 @@ public class Character : IBattleEntity
     public IDictionary<string, int> UniqueAbilityActivationList { get; set; }
 
 
-    
-
-
-
-    public Enums.BattleRowPositions RowPosition { get; set; }
-
     public bool IsPartyLead { get; set; }
 
-
-
-
-    public string RightHandEquipped { get; set; }
-    public string LeftHandEquipped { get; set; }    
-    public string BodyEquipped { get; set; }
-    public string RelicEquipped { get; set; }
-
-    public int Experience { get; set; }
+    // public int Experience { get; set; }
 
 
 

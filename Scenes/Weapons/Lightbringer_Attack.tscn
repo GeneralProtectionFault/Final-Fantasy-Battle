@@ -97,8 +97,8 @@ tracks/2/keys = {
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_at6kh"]
 _data = {
-"Attack": SubResource("Animation_2r44x"),
-"RESET": SubResource("Animation_qbct6")
+&"Attack": SubResource("Animation_2r44x"),
+&"RESET": SubResource("Animation_qbct6")
 }
 
 [node name="Lightbringer_Attack" type="Node2D"]
@@ -112,6 +112,6 @@ texture = ExtResource("1_pdjdm")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {
-"": SubResource("AnimationLibrary_at6kh")
+&"": SubResource("AnimationLibrary_at6kh")
 }
 autoplay = "Attack"

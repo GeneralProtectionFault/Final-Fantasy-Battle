@@ -12,7 +12,7 @@ config_version=5
 
 config/name="Final Fantasy Battle"
 run/main_scene="res://Scenes/GameRoot.tscn"
-config/features=PackedStringArray("4.3", "C#", "Forward Plus")
+config/features=PackedStringArray("4.4", "C#", "Forward Plus")
 config/icon="res://icon.svg"
 
 [autoload]
@@ -23,6 +23,7 @@ DatabaseHandler="*res://Scripts/Database/DatabaseHandler.cs"
 BattleAnimations="*res://Scripts/Battle/BattleAnimations.cs"
 GitIgnoreList="*res://Scripts/GitIgnoreList.cs"
 PhantomCameraManager="*res://addons/phantom_camera/scripts/managers/phantom_camera_manager.gd"
+BattleTurn="*res://Scripts/Battle/BattleTurn.cs"
 
 [display]
 
@@ -37,7 +38,7 @@ project/assembly_name="Final Fantasy Battle"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/anthonyec.camera_preview/plugin.cfg", "res://addons/phantom_camera/plugin.cfg")
+enabled=PackedStringArray("res://addons/phantom_camera/plugin.cfg")
 
 [input]
 

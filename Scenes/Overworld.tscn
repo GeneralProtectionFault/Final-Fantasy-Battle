@@ -1,10 +1,10 @@
 [gd_scene load_steps=14 format=3 uid="uid://cvq5mjfr0eckg"]
 
-[ext_resource type="Script" path="res://Scripts/Overworld/Overworld.cs" id="1_7gyjo"]
+[ext_resource type="Script" uid="uid://b0xijvo3j7grc" path="res://Scripts/Overworld/Overworld.cs" id="1_7gyjo"]
 [ext_resource type="AudioStream" uid="uid://cfjsg3bjwxfgc" path="res://Audio/Final_Fantasy_6_Terra_of_the_Bells_OC_ReMix.mp3" id="1_tvlcb"]
 [ext_resource type="Texture2D" uid="uid://dty3akxdlhqou" path="res://Graphics/Sprites/Overworld_4x.png" id="3_0x7n2"]
-[ext_resource type="Shader" path="res://Graphics/Shaders/mode7.gdshader" id="3_lgimy"]
-[ext_resource type="Script" path="res://Scripts/Overworld/OverworldTown.cs" id="4_ttvrv"]
+[ext_resource type="Shader" uid="uid://rtxf5c7iqm7w" path="res://Graphics/Shaders/mode7.gdshader" id="3_lgimy"]
+[ext_resource type="Script" uid="uid://dgy3d524bylil" path="res://Scripts/Overworld/OverworldTown.cs" id="4_ttvrv"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_ig7ru"]
 shader = ExtResource("3_lgimy")

@@ -10,7 +10,8 @@ public partial class CharacterController : CharacterBody2D
 	// Get the gravity from the project settings to be synced with RigidBody nodes.
 	public float gravity = 0;// ProjectSettings.GetSetting("physics/2d/default_gravity").AsSingle();
 	
-
+	
+	public string Name { get; private set; }
 
 
 	public override void _PhysicsProcess(double delta)
@@ -76,9 +77,37 @@ public partial class CharacterController : CharacterBody2D
 
 
 
+
 	public void FightAnimation()
 	{
-		BattleAnimations.FightAnimation();
+		// BattleAnimations.FightAnimation();
+
+		string Weapon = BattleTurn.ActiveBattleTurn.InitiatorStats.RightHandEquipped;
+
+		var WeaponSpawnPoint = this.GetNode<Node2D>("Sprite2D/WeaponOrigin");
+
+		// Need to have action for bare hands if nothing equipped and all that jazz
+		if (Weapon != null)
+		{
+			var WeaponScene = GD.Load<PackedScene>($"res://Scenes/Weapons/{Weapon}.tscn");
+
+			// Spawns the weapon and the weapon object will autoplay its animation
+			WeaponSpawnPoint.AddChild(WeaponScene.Instantiate());
+
+			// Add slash through target
+			var WeaponAttackScene = GD.Load<PackedScene>($"res://Scenes/Weapons/{Weapon}_Attack.tscn").Instantiate();
+
+			// TODO: Add functionality to either spawn effects on all enemies at once, or one at a time (for example, Offering relic)
+			foreach (var target in BattleTurn.ActiveBattleTurn.Targets)
+			{
+				target.TargetEntity.EntityNode.AddChild(WeaponAttackScene);
+
+				// POPULATE DAMAGE TEXT!!  BUT - This needs to be timed properly from the weapon slash...
+				// We can receive the WeaponAttacking event from WeaponController.cs, attaached to the weapon scene
+
+				// DAMAGE THE TARGETS!!
+			}
+		}
 	}
 
 

@@ -4,13 +4,17 @@ using System;
 public static class Enums
 {
 	public enum BattleTurn {Party, Enemy}
+	public enum TargetMode {Allies, Adversaries, All}
+	public enum BattleObjectType {Character, Enemy}
+
 
     public enum AbilityType {Spell, Unique, SwordTech, Blitz, Dance, Rage, Lore, Tool, Magitek, Desperation, EnemyNormal, EnemySpecial}
 	
 	// Magitek "status" will change the available battle options (fire beam, etc...)
-	public enum Status {Berserk, Float, Poisoned, Regen, Confused, Condemned, Undead, Imp, Clear, Image, Mute, Seizure, Sleep, Slow, Haste, Dark, Zombie, Petrified, Stop,
+	public enum Status {Berserk, Float, Poisoned, Regen, Confused, Condemned, Undead, Imp, Clear, Image, Mute, Seizure, Sleep, Slow, Haste, Dark, Zombie, Petrified, Stop, Frozen,
+	Morph,
 	Shell, Safe, Reflect, NearFatal,
-	Wounded, InvulnerableToDeath, InstantDeath, FractionalDamage, Magitek}
+	Wounded, InvulnerableToDeath, InstantDeath, FractionalDamage, Magitek, Defending}
 
 	public enum Elemental {None, Fire, Water, Ice, Thunder, Poison, Earth, Wind, Holy}
 

@@ -3,8 +3,9 @@ using System;
 
 public partial class WeaponController : Node
 {
-	public void TriggerDamageText()
+	public static void TriggerDamage()
 	{
-		BattleAlgorithms.PopulateDamageText(Enums.BattleTurn.Party);
+		// BattleAlgorithms.PopulateDamageText(Enums.BattleTurn.Party);
+		BattleTurn.DamageTargets();
 	}
 }

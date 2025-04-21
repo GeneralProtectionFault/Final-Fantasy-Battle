@@ -1,6 +1,6 @@
 [gd_scene load_steps=34 format=3 uid="uid://ohf53ihjjx7h"]
 
-[ext_resource type="Script" path="res://Scripts/CharacterController.cs" id="1_di8uc"]
+[ext_resource type="Script" uid="uid://csr22fk04vicf" path="res://Scripts/CharacterController.cs" id="1_di8uc"]
 [ext_resource type="Texture2D" uid="uid://bhw7c1j4lkckv" path="res://Graphics/Sprites/Characters/Locke_4x_nearest.png" id="2_2rkp6"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_4ye8o"]
@@ -275,16 +275,16 @@ tracks/4/keys = {
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_v6h3v"]
 _data = {
-"Locke_IdleBattle": SubResource("Animation_d1bph"),
-"Locke_IdleDown": SubResource("Animation_voee6"),
-"Locke_IdleLeft": SubResource("Animation_ir1wc"),
-"Locke_IdleRight": SubResource("Animation_v1rop"),
-"Locke_IdleUp": SubResource("Animation_3pmg7"),
-"Locke_WalkDown": SubResource("Animation_1plvt"),
-"Locke_WalkLeft": SubResource("Animation_2ekiy"),
-"Locke_WalkRight": SubResource("Animation_glyqk"),
-"Locke_WalkUp": SubResource("Animation_jkkph"),
-"RESET": SubResource("Animation_x01et")
+&"Locke_IdleBattle": SubResource("Animation_d1bph"),
+&"Locke_IdleDown": SubResource("Animation_voee6"),
+&"Locke_IdleLeft": SubResource("Animation_ir1wc"),
+&"Locke_IdleRight": SubResource("Animation_v1rop"),
+&"Locke_IdleUp": SubResource("Animation_3pmg7"),
+&"Locke_WalkDown": SubResource("Animation_1plvt"),
+&"Locke_WalkLeft": SubResource("Animation_2ekiy"),
+&"Locke_WalkRight": SubResource("Animation_glyqk"),
+&"Locke_WalkUp": SubResource("Animation_jkkph"),
+&"RESET": SubResource("Animation_x01et")
 }
 
 [sub_resource type="Animation" id="Animation_pcqtx"]
@@ -475,10 +475,10 @@ tracks/1/keys = {
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_qig4r"]
 _data = {
-"Attack": SubResource("Animation_pcqtx"),
-"Fanfare": SubResource("Animation_i083o"),
-"RESET": SubResource("Animation_x7lv1"),
-"Spin": SubResource("Animation_qcykk")
+&"Attack": SubResource("Animation_pcqtx"),
+&"Fanfare": SubResource("Animation_i083o"),
+&"RESET": SubResource("Animation_x7lv1"),
+&"Spin": SubResource("Animation_qcykk")
 }
 
 [node name="Locke" type="CharacterBody2D" groups=["Characters"]]
@@ -520,10 +520,10 @@ parameters/Walk_BlendSpace2D/blend_position = Vector2(0.00802851, -0.0442477)
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {
-"": SubResource("AnimationLibrary_v6h3v")
+&"": SubResource("AnimationLibrary_v6h3v")
 }
 
 [node name="Battle_AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {
-"": SubResource("AnimationLibrary_qig4r")
+&"": SubResource("AnimationLibrary_qig4r")
 }

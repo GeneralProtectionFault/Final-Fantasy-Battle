@@ -4,10 +4,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
-public partial class Rhinotaur : Node2D, IEnemyAction
+public partial class Rhinotaur : BaseEnemyAction
 {
 	// Interface properties
-	public int TurnsExecuted { get; set; } = 0;
+	public bool IsQueued { get; set; } = false;
+	public int TurnCounter { get; set; } = 0;
 	public Enemy EnemyStats { get; set; }
 
 	// Specific properties
@@ -50,33 +51,13 @@ public partial class Rhinotaur : Node2D, IEnemyAction
 	}
 
 
-	public async void ExecuteTurn(int EnemyIndex)
+	public async override void QueueTurn(BattleGameObject Enemy)
 	{
-		TurnsExecuted += 1;
-
-		using (SceneTreeTimer Delay = GetTree().CreateTimer(2.0f))
-			await ToSignal(Delay, SceneTreeTimer.SignalName.Timeout);
-
-		// Use this to get the stats
-		var ThisEnemy = BattleController.Enemies[EnemyIndex];
-
-		// Picks a random target among the party
-		var Target = BattleAlgorithms.EnemyPickCharacterTarget();
-
-
-		// BattleAlgorithms.EnemySetFightVariables(ThisEnemy, this,
-		// 				Characters[HandCursor.GetCurrentCursorIndex()], Target);
-
-
-
-
-		Debug.WriteLine($"Rhinotaur attacking: {Target.Name}");
-		
 		Random R = new Random();
 		// By default, between 0 and 1 - use to act based on % chance
 		var Num = R.NextDouble();
 
-		if (TurnsExecuted == 1)
+		if (TurnCounter == 1)
 		{
 			// 33% chance of doing nothing on only the first action
 			if (Num < .33)
@@ -95,18 +76,54 @@ public partial class Rhinotaur : Node2D, IEnemyAction
 			{
 				// Normal attack
 				Debug.WriteLine("Rhinotaur attacking with normal attack");
-				var Dmg = BattleAlgorithms.GetEnemyPhysicalAttackDamage(ThisEnemy, Vigor);
-				BattleAlgorithms.SetDamage(Dmg);
-				BattleAlgorithms.PopulateDamageText(Enums.BattleTurn.Party);
+				var Dmg = BattleAlgorithms.GetEnemyPhysicalAttackDamage((Enemy)Enemy.EntityData, Vigor);
+				// BattleAlgorithms.SetDamage(Dmg);
+				// BattleAlgorithms.PopulateDamageText(Enums.BattleTurn.Party);
 			}
 		}
-		// Debug.WriteLine($"Setting to previous state: {Globals.PreviousGameState}");
-		Globals.Battle_UpdateGameState(Globals.PreviousGameState);
-		Debug.WriteLine($"State at start of attack: {Globals.GameState}");
+		
+
+		// ************** Add the turn to the queue! *******************
+		var SelectedTargets = BattleAlgorithms.EnemyPickCharacterTarget();
+		var BattleTargetObjects = new List<BattleTarget>();
+
+		// TODO:  Handle multiple targets
+		// TODO:  Store the type of action (attack, spell, etc...)
+		// Right now, SelectedTargets will only have 1 object
+		foreach(var Target in SelectedTargets)
+		{
+			// CharacterAttack() method returns a BattleTarget object with all the damage, etc... calculated
+			// TODO:  MAKE THIS ENEMY ATTACK - check gamefaqs for the enemy algorithm!
+			BattleTarget TargetObject = new BattleTarget() {
+				TargetEntity = Target,
+				DamageHP = 10		// Etc, etc...
+			};
+
+			BattleTargetObjects.Add(TargetObject);
+			Debug.WriteLine($"Rhinotaur attacking: {Target.EntityData.Name}");
+		}
+
+		// Finishing the above code will give us battle target objects w/ damage calculations, etc... to add to the BattleTurn
+
+		var Turn = new BattleTurn() {
+			TurnType = Enums.BattleTurn.Enemy,
+			TargetMode = Enums.TargetMode.Adversaries,
+			Initiator = Enemy,
+			InitiatorStats = EnemyStats,
+			Targets = BattleTargetObjects
+		};
+		
+		BattleTurn.BattleQueue.Add(Turn);
 	}
 
 
-	public void Attacked(Ability AttackingAbility, int EnemyIndex)
+	public async override void ExecuteTurn(BattleGameObject Enemy)
+	{
+		base.ExecuteTurn(Enemy);
+	}
+
+
+	public async override void Attacked(Ability AttackingAbility, int EnemyIndex)
 	{
 		// Log anything relevant--in this case, if attacked by magic
 		if (AttackingAbility.Type == Enums.AbilityType.Spell)
@@ -120,4 +137,6 @@ public partial class Rhinotaur : Node2D, IEnemyAction
 		}
 		
 	}
+
+
 }
