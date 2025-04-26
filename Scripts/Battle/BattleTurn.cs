@@ -43,6 +43,7 @@ public partial class BattleTurn : Node
 	public override void _Process(double delta)
 	{
 		if (Globals.BattleWaitStates.Contains(Globals.GameState) ||
+		Globals.BattleActionStates.Contains(Globals.GameState) ||
 		Globals.GameState == Enums.GameState.Battle_Won)
 		{
 			return;
@@ -100,37 +101,21 @@ public partial class BattleTurn : Node
 	public static void DamageTargets()
 	{
 		// TODO: This would be for a simultaneous effect, Offering attach should be handled differently
-		foreach(var target in BattleTurn.ActiveBattleTurn.Targets)
+		foreach(var target in ActiveBattleTurn.Targets)
 		{
 			DamageText(target);
 
-			// PARTY ATTACKING ----------------------------------------------------------------------------------------------
-			// if (ActiveBattleTurn.TargetMode == Enums.TargetMode.Adversaries)
-			// {
-				if (target.TargetEntity.EntityData is Enemy)
-				{
-					DamageEnemy(target.TargetEntity.EntityData, target.DamageHP);	// Actually updates the damage
-					DamagingEnemy?.Invoke(null, target.TargetEntity);
-				}
-				else if (target.TargetEntity.EntityData is Character)
-				{
-					// TODO:  Add whatever algorithm/enemy script implementation to get the damage done to the character(s)
-					UpdateCharacterDamage(target.TargetEntity.EntityData, target.DamageHP);	
-					DamagingCharacter?.Invoke(null, target.TargetEntity);
-				}
-
-			// }
-
-			// // ENEMY ATTACKING ----------------------------------------------------------------------------------------------
-			// else // This doesn't fire off the event back to the BattleController, which would re-enable the fight menu, etc...
-			// {
-			// 	GD.Print("Chipping the HP off the character");
-			// 	var CurrentHP = DatabaseHandler.GetCharacterStatAsString(Target.Name, "Hp");
-			// 	var HP = CurrentHP.ToInt() - DamageAmount;
-
-			// 	Target.Hp = HP;
-			// 	DatabaseHandler.UpdateCharacter(Target as Character);
-			// }
+			if (target.TargetEntity.EntityData is Enemy)
+			{
+				DamageEnemy(target.TargetEntity.EntityData, target.DamageHP);	// Actually updates the damage
+				DamagingEnemy?.Invoke(null, target.TargetEntity);
+			}
+			else if (target.TargetEntity.EntityData is Character)
+			{
+				// TODO:  Add whatever algorithm/enemy script implementation to get the damage done to the character(s)
+				UpdateCharacterDamage(target.TargetEntity.EntityData, target.DamageHP);	
+				DamagingCharacter?.Invoke(null, target.TargetEntity);
+			}
 		}
 
 		BattleQueue.Remove(ActiveBattleTurn);
@@ -139,15 +124,15 @@ public partial class BattleTurn : Node
 		else
 			ActiveBattleTurn = null;
 		
-		Globals.UpdateGameState(Enums.GameState.Battle);
-}
+		Globals.Battle_UpdateGameState(null, Enums.GameState.Battle);
+	}
 
 
 
 	private static void UpdateCharacterDamage(IBattleEntity Target, int DamageAmount)
     {
 		var CurrentHP = DatabaseHandler.GetCharacterStatAsString(Target.Name, "Hp");
-		var HP = Mathf.Min(CurrentHP.ToInt() - DamageAmount, 0);
+		var HP = Mathf.Max(CurrentHP.ToInt() - DamageAmount, 0);
 
 		Target.Hp = HP;
 		if (HP == 0)

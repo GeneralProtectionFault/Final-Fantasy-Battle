@@ -25,18 +25,6 @@ public partial class BattleController : Node
 
 	public static List<BattleGameObject> Characters = new();
 	public static List<BattleGameObject> Enemies = new();
-	// // These are the objects with the character/enemy stats
-	// public static List<Character> Characters = new List<Character>();
-	// public static List<Enemy> Enemies = new List<Enemy>();
-	
-	// // These are the Godot objects
-	// public static List<Node2D> CharacterObjects = new List<Node2D>();
-	// public static List<Node2D> EnemyObjects = new List<Node2D>();
-
-	// private static List<int> CharactersWithFullTimerBar = new List<int>();
-	// private static List<int> EnemiesWithFullTimerBar = new List<int>();
-	// private static List<TextureProgressBar> CharacterBattleTimers = new List<TextureProgressBar>();
-	// private static List<TextureProgressBar> EnemyBattleTimers = new List<TextureProgressBar>();
 
 	private static Sprite2D ActiveCharacterIcon; // The icon that appears over the head of the active character
 	private static TextureRect HandCursorObject;
@@ -178,7 +166,6 @@ public partial class BattleController : Node
 			var HP = DatabaseHandler.GetCharacterStatAsString(CharacterName, "Hp");
 			HPNode.Text = HP;
 			HPNode.Visible = true;	
-
 
 			// Create the "super" all-knowing object
 			Characters.Add(new BattleGameObject() {
@@ -362,7 +349,6 @@ public partial class BattleController : Node
 				if (Globals.GameState == Enums.GameState.Battle)
 				{
 					Globals.Battle_UpdateGameState(this, Enums.GameState.Battle_Menu_Normal);
-					Debug.WriteLine("Setting Menu Normal from 365!");
 				
 					// Reveal the menu!
 					if (FightMenu.Visible == false)
@@ -425,27 +411,18 @@ public partial class BattleController : Node
 			if (Enemies[i].ProgressBar.Value == 65536)
 			{
 				Enemies[i].FullTimerBar = true;
-				// Active enemy logic
-				// Store which enemy is full
-				// Only add this in if it isn't there, or it will get added every tick that the bar is full :-P
-				// if (!EnemiesWithFullTimerBar.Contains(i))
-				// 	EnemiesWithFullTimerBar.Add(i);
-				
-				// Globals.Battle_ActiveEnemyExists = true;
-				// if (Globals.GameState == Enums.GameState.Battle)
-				// {
-					// ** QUEUE ENEMY ATTACK HERE ** - NOTE:  If we're on a "WAIT" menu, we won't even get to this part of the code
-					if (Globals.GameState != Enums.GameState.Battle_Party_Action)
+		
+				// ** QUEUE ENEMY ATTACK HERE ** - NOTE:  If we're on a "WAIT" menu, we won't even get to this part of the code
+				if (Globals.GameState != Enums.GameState.Battle_Party_Action)
+				{
+					var EnemyNode = Enemies[i].EntityNode;
+					if (!Enemies[i].IsQueued)
 					{
-						var EnemyNode = Enemies[i].EntityNode;
-						if (!Enemies[i].IsQueued)
-						{
-							Enemies[i].IsQueued = true;
-							(EnemyNode as BaseEnemyAction).QueueTurn(Enemies[i]);
-						}
+						Enemies[i].IsQueued = true;
+						(EnemyNode as BaseEnemyAction).QueueTurn(Enemies[i]);
+					}
 
-					}			
-				// }
+				}		
 			}
 			#endregion
 

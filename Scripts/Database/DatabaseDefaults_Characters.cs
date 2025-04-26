@@ -48,8 +48,10 @@ public static class DatabaseDefaults_Characters
             ExtraHP = 40,
             ExtraMP = 16,
 
-            Hp = 40,
-            HpMax = 40,
+            // Hp = 40,
+            // HpMax = 40,
+            Hp = 9999,
+            HpMax = 9999,
             Mp = 45,
             MpMax = 45,
 
@@ -124,8 +126,10 @@ public static class DatabaseDefaults_Characters
                     ExtraHP = 48,
                     ExtraMP = 7,
 
-                    Hp = 54,
-                    HpMax = 60,
+                    // Hp = 54,
+                    // HpMax = 60,
+                    Hp = 9999,
+                    HpMax = 9999,
                     Mp = 35,
                     MpMax = 35,
 

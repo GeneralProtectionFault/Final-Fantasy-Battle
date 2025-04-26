@@ -167,7 +167,10 @@ public static class Globals
 
 
     public static readonly List<Enums.GameState> BattleWaitStates = new();
-
+    public static readonly List<Enums.GameState> BattleActionStates = new() {
+        Enums.GameState.Battle_Party_Action,
+        Enums.GameState.Battle_Enemy_Action
+    };
 
     public static readonly List<Enums.Status> AlwaysHitStatuses = new() {
         Enums.Status.Sleep,
@@ -197,8 +200,8 @@ public static class Globals
 	public static void Battle_UpdateGameState(object sender, Enums.GameState State)
 	{
         // Debug.WriteLine($"Updating game state to --- {State} -- from: {sender}");
-		UpdateGameState(State);
-		BattleController.DebugWindow.Set("text", $"Game State: {Globals.GameState.ToString()}");
+        UpdateGameState(State);
+		BattleController.DebugWindow.Set("text", $"Game State: {GameState}");
 	}
 
 
@@ -216,9 +219,8 @@ public static class Globals
         BattleWaitStates.Add(Enums.GameState.Battle_Won);
         BattleWaitStates.Add(Enums.GameState.Battle_Lost);
 
-        BattleWaitStates.Add(Enums.GameState.Battle_Party_Action);
-        BattleWaitStates.Add(Enums.GameState.Battle_Enemy_Action);
-
+        // BattleWaitStates.Add(Enums.GameState.Battle_Party_Action);
+        // BattleWaitStates.Add(Enums.GameState.Battle_Enemy_Action);
 
         // Store the Overworld in memory here.  The sprite is huge, so it will hang if we have to load it every time
         Overworld = ResourceLoader.Load<PackedScene>("res://Scenes/Overworld.tscn").Instantiate();

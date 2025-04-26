@@ -16,13 +16,7 @@ public abstract partial class BaseEnemyAction : Node2D
 
     public async virtual void ExecuteTurn(BattleGameObject Enemy)
     {
-        Enemy.IsQueued = false;
-        // TODO:  Call this at the appropriate time from wherever we're moving through the battle queue according to state
-		Enemy.ProgressBar.Value = 0;
-		Enemy.FullTimerBar = false;
-
-
-		// Flash effect!
+        // Flash effect!
 		var FlashUniformMaterial = Enemy.EntityNode.GetNode<Sprite2D>("Sprite2D").Material;
 		FlashUniformMaterial.Set("shader_parameter/attack_flash", true);
 		Tween FlashTween = GetTree().CreateTween();
@@ -35,8 +29,12 @@ public abstract partial class BaseEnemyAction : Node2D
 		using (SceneTreeTimer Delay = GetTree().CreateTimer(2.0f))
 			await ToSignal(Delay, SceneTreeTimer.SignalName.Timeout);	
 
-		BattleTurn.BattleQueue.Remove(BattleTurn.ActiveBattleTurn);
-		BattleTurn.ActiveBattleTurn = null;
+		BattleTurn.DamageTargets();	// This will include popping the active battle turn off the queue, etc...
+		
+		Enemy.IsQueued = false;
+        // TODO:  Call this at the appropriate time from wherever we're moving through the battle queue according to state
+		Enemy.ProgressBar.Value = 0;
+		Enemy.FullTimerBar = false;
 
         // Handle the state as appropriate
 		Globals.Battle_UpdateGameState(this, Globals.PreviousGameState);

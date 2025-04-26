@@ -159,9 +159,9 @@ public partial class HandCursor : TextureRect
 
 						// This mess accouts for if the finger is pointing at a Label or HBoxContainer (since we use the latter for icon + magic spell)
 						// In either case, nfires the event off so the BattleController can receive the selected item/spell/whatever and act on it
-						if (CurrentMenuItem.GetType().Equals(new Label().GetType()))
+						if (CurrentMenuItem is Label)
 							CursorSelected?.Invoke(this, (CurrentMenuItem as Label).Text);
-						else if (CurrentMenuItem.GetType().Equals(new HBoxContainer().GetType()))
+						else if (CurrentMenuItem is HBoxContainer)
 							// This will be the MagicList HBoxContainer w/ icon & label
 							CursorSelected?.Invoke(this, ((CurrentMenuItem as Control).GetChild(1) as Label).Text);
 					}
