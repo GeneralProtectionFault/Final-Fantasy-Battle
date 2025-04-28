@@ -26,104 +26,80 @@ public static class Globals
 
     public static Enums.GameState GameState;
     public static Enums.GameState PreviousGameState;
+    public static Enums.SelectionState SelectionState;
+    public static Enums.SelectionState PreviousSelectionState;
+
+
+
 
     // Use this to test if "in battle," etc...
-    public static readonly List<Enums.GameState> BattleStates = new List<Enums.GameState>() {
+    public static readonly List<Enums.GameState> BattleStates = new() {
         Enums.GameState.Battle,
         Enums.GameState.Battle_Enemy_Action,
         Enums.GameState.Battle_Party_Action,
 
-        Enums.GameState.Battle_Fight_Selecting_Target_Characters,
-		Enums.GameState.Battle_Fight_Selecting_Target_Enemies,
-		Enums.GameState.Battle_Magic_Selecting_Target_Characters,
-		Enums.GameState.Battle_Magic_Selecting_Target_Enemies,
-		Enums.GameState.Battle_Jump_Selecting_Target,
-		Enums.GameState.Battle_Item_Selecting_Target_Characters,
-		Enums.GameState.Battle_Item_Selecting_Target_Enemies,
-		Enums.GameState.Battle_Tool_Selecting_Target,
-
-		Enums.GameState.Battle_Fight_Selecting_Target_Multiple_Characters,
-		Enums.GameState.Battle_Fight_Selecting_Target_Multiple_Enemies,
-		Enums.GameState.Battle_Magic_Selecting_Target_Multiple_Characters,
-		Enums.GameState.Battle_Magic_Selecting_Target_Multiple_Enemies,
-		Enums.GameState.Battle_Item_Selecting_Target_Multiple_Characters,
-		Enums.GameState.Battle_Item_Selecting_Target_Multiple_Enemies,
-		Enums.GameState.Battle_Tool_Selecting_Target_Multiple,
-
-        Enums.GameState.Battle_Menu_Normal,
         Enums.GameState.Battle_Magitek,
-
-        Enums.GameState.Battle_Menu_Blitz,
-        Enums.GameState.Battle_Menu_Dance,
-        Enums.GameState.Battle_Menu_Item,
-        Enums.GameState.Battle_Menu_Lore,
-        Enums.GameState.Battle_Menu_Magic,
-        Enums.GameState.Battle_Menu_Magitek,
-        Enums.GameState.Battle_Menu_Rage,
-        Enums.GameState.Battle_Menu_SwordTech,
-        Enums.GameState.Battle_Menu_Tool,
         
         Enums.GameState.Battle_Won,
         Enums.GameState.Battle_Lost,
         Enums.GameState.Battle_End
     };
 
-    public static readonly List<Enums.GameState> BattleSelectingObjectStates = new List<Enums.GameState>() {
-        Enums.GameState.Battle_Fight_Selecting_Target_Characters,
-		Enums.GameState.Battle_Fight_Selecting_Target_Enemies,
-		Enums.GameState.Battle_Magic_Selecting_Target_Characters,
-		Enums.GameState.Battle_Magic_Selecting_Target_Enemies,
-		Enums.GameState.Battle_Jump_Selecting_Target,
-		Enums.GameState.Battle_Item_Selecting_Target_Characters,
-		Enums.GameState.Battle_Item_Selecting_Target_Enemies,
-		Enums.GameState.Battle_Tool_Selecting_Target,
+    public static readonly List<Enums.SelectionState> BattleSelectingObjectStates = new() {
+        Enums.SelectionState.Battle_Fight_Selecting_Target_Characters,
+		Enums.SelectionState.Battle_Fight_Selecting_Target_Enemies,
+		Enums.SelectionState.Battle_Magic_Selecting_Target_Characters,
+		Enums.SelectionState.Battle_Magic_Selecting_Target_Enemies,
+		Enums.SelectionState.Battle_Jump_Selecting_Target,
+		Enums.SelectionState.Battle_Item_Selecting_Target_Characters,
+		Enums.SelectionState.Battle_Item_Selecting_Target_Enemies,
+		Enums.SelectionState.Battle_Tool_Selecting_Target,
 
-		Enums.GameState.Battle_Fight_Selecting_Target_Multiple_Characters,
-		Enums.GameState.Battle_Fight_Selecting_Target_Multiple_Enemies,
-		Enums.GameState.Battle_Magic_Selecting_Target_Multiple_Characters,
-		Enums.GameState.Battle_Magic_Selecting_Target_Multiple_Enemies,
-		Enums.GameState.Battle_Item_Selecting_Target_Multiple_Characters,
-		Enums.GameState.Battle_Item_Selecting_Target_Multiple_Enemies,
-		Enums.GameState.Battle_Tool_Selecting_Target_Multiple
+		Enums.SelectionState.Battle_Fight_Selecting_Target_Multiple_Characters,
+		Enums.SelectionState.Battle_Fight_Selecting_Target_Multiple_Enemies,
+		Enums.SelectionState.Battle_Magic_Selecting_Target_Multiple_Characters,
+		Enums.SelectionState.Battle_Magic_Selecting_Target_Multiple_Enemies,
+		Enums.SelectionState.Battle_Item_Selecting_Target_Multiple_Characters,
+		Enums.SelectionState.Battle_Item_Selecting_Target_Multiple_Enemies,
+		Enums.SelectionState.Battle_Tool_Selecting_Target_Multiple
     };
 
 
-    public static readonly List<Enums.GameState> BattleSelectingCharactersStates = new List<Enums.GameState>() {
-        Enums.GameState.Battle_Fight_Selecting_Target_Characters,
-		Enums.GameState.Battle_Magic_Selecting_Target_Characters,
-		Enums.GameState.Battle_Item_Selecting_Target_Characters,
+    public static readonly List<Enums.SelectionState> BattleSelectingCharactersStates = new() {
+        Enums.SelectionState.Battle_Fight_Selecting_Target_Characters,
+		Enums.SelectionState.Battle_Magic_Selecting_Target_Characters,
+		Enums.SelectionState.Battle_Item_Selecting_Target_Characters,
 
-		Enums.GameState.Battle_Fight_Selecting_Target_Multiple_Characters,
-		Enums.GameState.Battle_Magic_Selecting_Target_Multiple_Characters,
-		Enums.GameState.Battle_Item_Selecting_Target_Multiple_Characters,
-		Enums.GameState.Battle_Tool_Selecting_Target_Multiple
+		Enums.SelectionState.Battle_Fight_Selecting_Target_Multiple_Characters,
+		Enums.SelectionState.Battle_Magic_Selecting_Target_Multiple_Characters,
+		Enums.SelectionState.Battle_Item_Selecting_Target_Multiple_Characters,
+		Enums.SelectionState.Battle_Tool_Selecting_Target_Multiple
     };
 
-    public static readonly List<Enums.GameState> BattleSelectingEnemyStates = new List<Enums.GameState>() {
-        Enums.GameState.Battle_Fight_Selecting_Target_Enemies,
-		Enums.GameState.Battle_Magic_Selecting_Target_Enemies,
-		Enums.GameState.Battle_Jump_Selecting_Target,
-		Enums.GameState.Battle_Item_Selecting_Target_Enemies,
-		Enums.GameState.Battle_Tool_Selecting_Target,
+    public static readonly List<Enums.SelectionState> BattleSelectingEnemyStates = new() {
+        Enums.SelectionState.Battle_Fight_Selecting_Target_Enemies,
+		Enums.SelectionState.Battle_Magic_Selecting_Target_Enemies,
+		Enums.SelectionState.Battle_Jump_Selecting_Target,
+		Enums.SelectionState.Battle_Item_Selecting_Target_Enemies,
+		Enums.SelectionState.Battle_Tool_Selecting_Target,
 
-		Enums.GameState.Battle_Fight_Selecting_Target_Multiple_Enemies,
-		Enums.GameState.Battle_Magic_Selecting_Target_Multiple_Enemies,
-		Enums.GameState.Battle_Item_Selecting_Target_Multiple_Enemies,
-		Enums.GameState.Battle_Tool_Selecting_Target_Multiple
+		Enums.SelectionState.Battle_Fight_Selecting_Target_Multiple_Enemies,
+		Enums.SelectionState.Battle_Magic_Selecting_Target_Multiple_Enemies,
+		Enums.SelectionState.Battle_Item_Selecting_Target_Multiple_Enemies,
+		Enums.SelectionState.Battle_Tool_Selecting_Target_Multiple
     };
 
-    public static readonly List<Enums.GameState> BattleSelectingMenuStates = new List<Enums.GameState>() {
-        Enums.GameState.Battle_Menu_Normal,
-        Enums.GameState.Battle_Menu_Blitz,
-        Enums.GameState.Battle_Menu_Dance,
-        Enums.GameState.Battle_Menu_Item,
-        Enums.GameState.Battle_Menu_Lore,
-        Enums.GameState.Battle_Menu_Magic,
-        Enums.GameState.Battle_Menu_Magitek,
-        Enums.GameState.Battle_Menu_Rage,
-        Enums.GameState.Battle_Menu_SwordTech,
-        Enums.GameState.Battle_Menu_Tool
-
+    public static readonly List<Enums.SelectionState> BattleSelectingMenuStates = new() {
+        Enums.SelectionState.Battle_Menu_Normal,
+        Enums.SelectionState.Battle_Menu_Blitz,
+        Enums.SelectionState.Battle_Menu_Dance,
+        Enums.SelectionState.Battle_Menu_Item,
+        Enums.SelectionState.Battle_Menu_Lore,
+        Enums.SelectionState.Battle_Menu_Magic,
+        Enums.SelectionState.Battle_Menu_Magitek,
+        Enums.SelectionState.Battle_Menu_Rage,
+        Enums.SelectionState.Battle_Menu_SwordTech,
+        Enums.SelectionState.Battle_Menu_Tool
     };
 
     public static readonly List<Enums.Status> BattleInactiveStatuses = new() {
@@ -138,35 +114,36 @@ public static class Globals
     
 
     // When switching between targetting of characters vs. enemies, use this to simplify switching to the appropriate battle state
-    public static readonly Dictionary<Enums.GameState, Enums.GameState> SelectingStateOpposites = new Dictionary<Enums.GameState, Enums.GameState> () {
-        {Enums.GameState.Battle_Fight_Selecting_Target_Characters, Enums.GameState.Battle_Fight_Selecting_Target_Enemies},
-		{Enums.GameState.Battle_Fight_Selecting_Target_Enemies, Enums.GameState.Battle_Fight_Selecting_Target_Characters},
-		{Enums.GameState.Battle_Magic_Selecting_Target_Characters, Enums.GameState.Battle_Magic_Selecting_Target_Enemies},
-		{Enums.GameState.Battle_Magic_Selecting_Target_Enemies, Enums.GameState.Battle_Magic_Selecting_Target_Characters},
+    public static readonly Dictionary<Enums.SelectionState, Enums.SelectionState> SelectingStateOpposites = new () {
+        {Enums.SelectionState.Battle_Fight_Selecting_Target_Characters, Enums.SelectionState.Battle_Fight_Selecting_Target_Enemies},
+		{Enums.SelectionState.Battle_Fight_Selecting_Target_Enemies, Enums.SelectionState.Battle_Fight_Selecting_Target_Characters},
+		{Enums.SelectionState.Battle_Magic_Selecting_Target_Characters, Enums.SelectionState.Battle_Magic_Selecting_Target_Enemies},
+		{Enums.SelectionState.Battle_Magic_Selecting_Target_Enemies, Enums.SelectionState.Battle_Magic_Selecting_Target_Characters},
 
         // Force no change if it is not applicable
-		{Enums.GameState.Battle_Jump_Selecting_Target, Enums.GameState.Battle_Jump_Selecting_Target},
-		{Enums.GameState.Battle_Item_Selecting_Target_Characters, Enums.GameState.Battle_Item_Selecting_Target_Enemies},
-		{Enums.GameState.Battle_Item_Selecting_Target_Enemies, Enums.GameState.Battle_Item_Selecting_Target_Characters},
+		{Enums.SelectionState.Battle_Jump_Selecting_Target, Enums.SelectionState.Battle_Jump_Selecting_Target},
+		{Enums.SelectionState.Battle_Item_Selecting_Target_Characters, Enums.SelectionState.Battle_Item_Selecting_Target_Enemies},
+		{Enums.SelectionState.Battle_Item_Selecting_Target_Enemies, Enums.SelectionState.Battle_Item_Selecting_Target_Characters},
 		
         // No change...
-        {Enums.GameState.Battle_Tool_Selecting_Target, Enums.GameState.Battle_Tool_Selecting_Target},
+        {Enums.SelectionState.Battle_Tool_Selecting_Target, Enums.SelectionState.Battle_Tool_Selecting_Target},
 
         // Current behavior removes the multiple select if they switch 
-		{Enums.GameState.Battle_Fight_Selecting_Target_Multiple_Characters, Enums.GameState.Battle_Fight_Selecting_Target_Enemies},
-		{Enums.GameState.Battle_Fight_Selecting_Target_Multiple_Enemies, Enums.GameState.Battle_Fight_Selecting_Target_Characters},
-		{Enums.GameState.Battle_Magic_Selecting_Target_Multiple_Characters, Enums.GameState.Battle_Magic_Selecting_Target_Enemies},
-		{Enums.GameState.Battle_Magic_Selecting_Target_Multiple_Enemies, Enums.GameState.Battle_Magic_Selecting_Target_Characters},
-		{Enums.GameState.Battle_Item_Selecting_Target_Multiple_Characters, Enums.GameState.Battle_Item_Selecting_Target_Enemies},
-		{Enums.GameState.Battle_Item_Selecting_Target_Multiple_Enemies, Enums.GameState.Battle_Item_Selecting_Target_Characters},
+		{Enums.SelectionState.Battle_Fight_Selecting_Target_Multiple_Characters, Enums.SelectionState.Battle_Fight_Selecting_Target_Enemies},
+		{Enums.SelectionState.Battle_Fight_Selecting_Target_Multiple_Enemies, Enums.SelectionState.Battle_Fight_Selecting_Target_Characters},
+		{Enums.SelectionState.Battle_Magic_Selecting_Target_Multiple_Characters, Enums.SelectionState.Battle_Magic_Selecting_Target_Enemies},
+		{Enums.SelectionState.Battle_Magic_Selecting_Target_Multiple_Enemies, Enums.SelectionState.Battle_Magic_Selecting_Target_Characters},
+		{Enums.SelectionState.Battle_Item_Selecting_Target_Multiple_Characters, Enums.SelectionState.Battle_Item_Selecting_Target_Enemies},
+		{Enums.SelectionState.Battle_Item_Selecting_Target_Multiple_Enemies, Enums.SelectionState.Battle_Item_Selecting_Target_Characters},
 		
         // No change...
-        {Enums.GameState.Battle_Tool_Selecting_Target_Multiple, Enums.GameState.Battle_Tool_Selecting_Target_Multiple}
+        {Enums.SelectionState.Battle_Tool_Selecting_Target_Multiple, Enums.SelectionState.Battle_Tool_Selecting_Target_Multiple}
     };
 
 
 
-    public static readonly List<Enums.GameState> BattleWaitStates = new();
+    public static readonly List<Enums.SelectionState> BattleWaitStates = new();
+
     public static readonly List<Enums.GameState> BattleActionStates = new() {
         Enums.GameState.Battle_Party_Action,
         Enums.GameState.Battle_Enemy_Action
@@ -192,6 +169,19 @@ public static class Globals
 		Globals.GameState = State;
 	}
 
+    // <summary>
+	/// Literally update the selection (menus, etc...) state
+	/// </summary>
+	/// <param name="State"></param>
+	public static void UpdateSelectionState(Enums.SelectionState State)
+	{
+		Globals.PreviousSelectionState = Globals.SelectionState;
+		Globals.SelectionState = State;
+	}
+
+
+
+
 	/// <summary>
 	/// Update the game state if in battle.
 	/// This will also update the debug information on the battle screen
@@ -201,7 +191,19 @@ public static class Globals
 	{
         // Debug.WriteLine($"Updating game state to --- {State} -- from: {sender}");
         UpdateGameState(State);
-		BattleController.DebugWindow.Set("text", $"Game State: {GameState}");
+		BattleController.BattleDebugWindow.Set("text", $"Battle State: {GameState}");
+	}
+
+
+    /// <summary>
+	/// Update the selection (menus) state if in battle.
+	/// This will also update the debug information on the battle screen
+	/// </summary>
+	/// <param name="State"></param>
+	public static void Battle_UpdateSelectionState(object sender, Enums.SelectionState State)
+	{
+        UpdateSelectionState(State);
+		BattleController.SelectionDebugWindow.Set("text", $"Select State: {SelectionState}");
 	}
 
 
@@ -213,11 +215,13 @@ public static class Globals
         // Use other lists to simplify making any states in which "wait" applies (as opposed to "active")
         BattleWaitStates.AddRange(BattleSelectingObjectStates);
         BattleWaitStates.AddRange(BattleSelectingMenuStates);
-        // Timer bars should still increment in the vanilla "Fight, etc..." menu
-        BattleWaitStates.Remove(Enums.GameState.Battle_Menu_Normal);
         BattleWaitStates.AddRange(BattleSelectingEnemyStates);
-        BattleWaitStates.Add(Enums.GameState.Battle_Won);
-        BattleWaitStates.Add(Enums.GameState.Battle_Lost);
+
+        // Timer bars should still increment in the vanilla "Fight, etc..." menu
+        BattleWaitStates.Remove(Enums.SelectionState.Battle_Menu_Normal);
+        
+        // BattleWaitStates.Add(Enums.GameState.Battle_Won);
+        // BattleWaitStates.Add(Enums.GameState.Battle_Lost);
 
         // BattleWaitStates.Add(Enums.GameState.Battle_Party_Action);
         // BattleWaitStates.Add(Enums.GameState.Battle_Enemy_Action);

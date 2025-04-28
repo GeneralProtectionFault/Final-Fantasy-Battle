@@ -31,6 +31,29 @@ public static class Enums
 	public enum GameState {
 		
 		Battle,
+		
+		
+		Battle_Magitek,
+
+
+		Battle_Party_Action,
+		Battle_Enemy_Action,
+
+		Battle_Won,
+		Battle_Lost,
+		Battle_End, // Use this to distinguish between won/lost.  We will set to this in Process, but not run Process once @ Battle_End
+		
+		// NON-BATTLE STATES
+		Overworld,
+		Town,
+		Party_Menu
+	}
+
+
+	// The reason for separating these out is for situations where an enemy or character might be attacking,
+	// but we do not want to either always allow or always deny the ability to select.
+	// So, the selection needs to be decoupled from the action.
+	public enum SelectionState {
 		Battle_Menu_Normal,
 		Battle_Menu_Magic,
 		Battle_Menu_SwordTech,
@@ -40,8 +63,7 @@ public static class Enums
 		Battle_Menu_Lore,
 		Battle_Menu_Tool,
 		Battle_Menu_Item,
-		
-		Battle_Magitek,
+
 		Battle_Menu_Magitek,
 
 		Battle_Fight_Selecting_Target_Characters,
@@ -60,18 +82,7 @@ public static class Enums
 		Battle_Item_Selecting_Target_Multiple_Characters,
 		Battle_Item_Selecting_Target_Multiple_Enemies,
 		Battle_Tool_Selecting_Target_Multiple,
-
-		Battle_Party_Action,
-		Battle_Enemy_Action,
-
-		Battle_Won,
-		Battle_Lost,
-		Battle_End // Use this to distinguish between won/lost.  We will set to this in Process, but not run Process once @ Battle_End
-		
-		// NON-BATTLE STATES
-		,Overworld,
-		Town,
-		Party_Menu
+		None
 	}
 }
 

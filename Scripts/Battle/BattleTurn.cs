@@ -42,9 +42,11 @@ public partial class BattleTurn : Node
 
 	public override void _Process(double delta)
 	{
-		if (Globals.BattleWaitStates.Contains(Globals.GameState) ||
+		if (Globals.BattleWaitStates.Contains(Globals.SelectionState) ||
 		Globals.BattleActionStates.Contains(Globals.GameState) ||
-		Globals.GameState == Enums.GameState.Battle_Won)
+		Globals.GameState == Enums.GameState.Battle_Won ||
+		Globals.GameState == Enums.GameState.Battle_End ||
+		Globals.GameState == Enums.GameState.Battle_Lost)
 		{
 			return;
 		}
@@ -118,6 +120,8 @@ public partial class BattleTurn : Node
 			}
 		}
 
+		ActiveBattleTurn.Initiator.ProgressBar.Value = 0;
+		
 		BattleQueue.Remove(ActiveBattleTurn);
 		if (BattleQueue.Count() > 0)
 			ActiveBattleTurn = BattleQueue.First();

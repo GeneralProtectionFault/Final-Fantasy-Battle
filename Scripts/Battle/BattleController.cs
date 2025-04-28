@@ -63,7 +63,8 @@ public partial class BattleController : Node
 	// To return to normal selection, pass in the cursor index
 	public static event EventHandler NotSelectingTarget;
 
-	public static Node DebugWindow;
+	public static Node BattleDebugWindow;
+	public static Node SelectionDebugWindow;
 
 	
 
@@ -93,7 +94,9 @@ public partial class BattleController : Node
 		FF6Font = new FontVariation();
 		FF6Font.Set("base_font", ResourceLoader.Load<FontFile>("res://Fonts/final_fantasy_36_font.ttf"));
 
-		DebugWindow = GetNode("BattleCanvas/Control_DebugOutput/LabelDebugOutput");
+		BattleDebugWindow = GetNode("BattleCanvas/Control_DebugOutput/LabelBattleState");
+		SelectionDebugWindow = GetNode("BattleCanvas/Control_DebugOutput2/LabelSelectState");
+
 		
 		MenuSwitchSound = GetNode<AudioStreamPlayer>("BattleTemplate/MenuSwitch");
 		EnemyDeathSound = GetNode<AudioStreamPlayer>("BattleTemplate/EnemyDeathSound");
@@ -122,6 +125,7 @@ public partial class BattleController : Node
 		CharacterGrid = GetNode<Control>("BattleCanvas/BlueBattlePanelRight/Control_PartyMenuBackground/MarginContainer/GridContainer");
 		// GD.Print($"Character Grid; {CharacterGrid}");
 
+		Globals.Battle_UpdateSelectionState(this, Enums.SelectionState.None);
 
 		// Spawn the players in the party
 		var CharactersDatabase = DatabaseHandler.GetCharactersInParty().ToList();
@@ -304,7 +308,7 @@ public partial class BattleController : Node
 
 		if (Globals.BattleMode == Enums.BattleMode.Wait)
 		{
-			if (Globals.BattleWaitStates.Contains(Globals.GameState))
+			if (Globals.BattleWaitStates.Contains(Globals.SelectionState))
 			{
 				return;
 			}
@@ -346,9 +350,9 @@ public partial class BattleController : Node
 			// If this player's bar is full and not already queued to attack...
 			if (Characters[i].ProgressBar.Value == 65536 && !Characters[i].IsQueued)
 			{
-				if (Globals.GameState == Enums.GameState.Battle)
+				if (Globals.SelectionState == Enums.SelectionState.None)
 				{
-					Globals.Battle_UpdateGameState(this, Enums.GameState.Battle_Menu_Normal);
+					Globals.Battle_UpdateSelectionState(this, Enums.SelectionState.Battle_Menu_Normal);
 				
 					// Reveal the menu!
 					if (FightMenu.Visible == false)
@@ -435,6 +439,7 @@ public partial class BattleController : Node
 
 	}
 
+
 	/// <summary>
 	/// This event brought to you by HandCursor.cs
 	/// We be handling all the input here.
@@ -453,65 +458,65 @@ public partial class BattleController : Node
 		{
 			HandCursorObject.Visible = true;
 
-			if (Globals.GameState == Enums.GameState.Battle_Fight_Selecting_Target_Characters ||
-			Globals.GameState == Enums.GameState.Battle_Fight_Selecting_Target_Enemies ||
-			Globals.GameState == Enums.GameState.Battle_Fight_Selecting_Target_Multiple_Characters ||
-			Globals.GameState == Enums.GameState.Battle_Fight_Selecting_Target_Multiple_Enemies) // Fight & targeting back to fight menu
+			if (Globals.SelectionState == Enums.SelectionState.Battle_Fight_Selecting_Target_Characters ||
+			Globals.SelectionState == Enums.SelectionState.Battle_Fight_Selecting_Target_Enemies ||
+			Globals.SelectionState == Enums.SelectionState.Battle_Fight_Selecting_Target_Multiple_Characters ||
+			Globals.SelectionState == Enums.SelectionState.Battle_Fight_Selecting_Target_Multiple_Enemies) // Fight & targeting back to fight menu
 			{
 				HandCursor.AssignCursorParent(FightMenuContainer);
 				NotSelectingTarget?.Invoke(this, EventArgs.Empty);
-				Globals.Battle_UpdateGameState(this, Enums.GameState.Battle_Menu_Normal);
+				Globals.Battle_UpdateSelectionState(this, Enums.SelectionState.Battle_Menu_Normal);
 			}
-			else if (Globals.GameState == Enums.GameState.Battle_Item_Selecting_Target_Characters ||
-			Globals.GameState == Enums.GameState.Battle_Item_Selecting_Target_Enemies ||
-			Globals.GameState == Enums.GameState.Battle_Item_Selecting_Target_Multiple_Characters ||
-			Globals.GameState == Enums.GameState.Battle_Item_Selecting_Target_Multiple_Enemies) // Item selected & targeting back to item menu
+			else if (Globals.SelectionState == Enums.SelectionState.Battle_Item_Selecting_Target_Characters ||
+			Globals.SelectionState == Enums.SelectionState.Battle_Item_Selecting_Target_Enemies ||
+			Globals.SelectionState == Enums.SelectionState.Battle_Item_Selecting_Target_Multiple_Characters ||
+			Globals.SelectionState == Enums.SelectionState.Battle_Item_Selecting_Target_Multiple_Enemies) // Item selected & targeting back to item menu
 			{
 				HandCursor.AssignCursorParent(ItemMenuContainer, CurrentMenuIndex);
 				NotSelectingTarget?.Invoke(this, EventArgs.Empty);
-				Globals.Battle_UpdateGameState(this, Enums.GameState.Battle_Menu_Item);
+				Globals.Battle_UpdateSelectionState(this, Enums.SelectionState.Battle_Menu_Item);
 			}
-			else if (Globals.GameState == Enums.GameState.Battle_Jump_Selecting_Target) // Jump & targeting back to fight menu
+			else if (Globals.SelectionState == Enums.SelectionState.Battle_Jump_Selecting_Target) // Jump & targeting back to fight menu
 			{
 				HandCursor.AssignCursorParent(FightMenuContainer, 1);
 				NotSelectingTarget?.Invoke(this, EventArgs.Empty);
-				Globals.Battle_UpdateGameState(this, Enums.GameState.Battle_Menu_Normal);
+				Globals.Battle_UpdateSelectionState(this, Enums.SelectionState.Battle_Menu_Normal);
 			}
-			else if (Globals.GameState == Enums.GameState.Battle_Magic_Selecting_Target_Characters ||
-			Globals.GameState == Enums.GameState.Battle_Magic_Selecting_Target_Enemies ||
-			Globals.GameState == Enums.GameState.Battle_Magic_Selecting_Target_Multiple_Characters ||
-			Globals.GameState == Enums.GameState.Battle_Magic_Selecting_Target_Multiple_Enemies) // Magic & targeting back to magic menu
+			else if (Globals.SelectionState == Enums.SelectionState.Battle_Magic_Selecting_Target_Characters ||
+			Globals.SelectionState == Enums.SelectionState.Battle_Magic_Selecting_Target_Enemies ||
+			Globals.SelectionState == Enums.SelectionState.Battle_Magic_Selecting_Target_Multiple_Characters ||
+			Globals.SelectionState == Enums.SelectionState.Battle_Magic_Selecting_Target_Multiple_Enemies) // Magic & targeting back to magic menu
 			{
 				HandCursor.AssignCursorParent(MagicMenuContainer, CurrentMenuIndex);
 				NotSelectingTarget?.Invoke(this, EventArgs.Empty);
-				Globals.Battle_UpdateGameState(this, Enums.GameState.Battle_Menu_Magic);
+				Globals.Battle_UpdateSelectionState(this, Enums.SelectionState.Battle_Menu_Magic);
 			}
-			else if (Globals.GameState == Enums.GameState.Battle_Menu_Blitz)
+			else if (Globals.SelectionState == Enums.SelectionState.Battle_Menu_Blitz)
 			{
 
 			}
-			else if (Globals.GameState == Enums.GameState.Battle_Menu_Dance)
+			else if (Globals.SelectionState == Enums.SelectionState.Battle_Menu_Dance)
 			{
 
 			}
-			else if (Globals.GameState == Enums.GameState.Battle_Menu_Lore)
+			else if (Globals.SelectionState == Enums.SelectionState.Battle_Menu_Lore)
 			{
 
 			}
-			else if (Globals.GameState == Enums.GameState.Battle_Menu_Rage)
+			else if (Globals.SelectionState == Enums.SelectionState.Battle_Menu_Rage)
 			{
 
 			}
-			else if (Globals.GameState == Enums.GameState.Battle_Menu_Magic) // Magic Menu back to fight menu
+			else if (Globals.SelectionState == Enums.SelectionState.Battle_Menu_Magic) // Magic Menu back to fight menu
 			{
-				Globals.Battle_UpdateGameState(this, Enums.GameState.Battle);
+				Globals.Battle_UpdateSelectionState(this, Enums.SelectionState.Battle_Menu_Normal);
 				HandCursor.AssignCursorParent(FightMenuContainer, 2);
 				// Hide the magic menu
 				MagicMenu.Visible = false;
 			}
-			else if (Globals.GameState == Enums.GameState.Battle_Menu_Item) // Item Menu back to fight menu
+			else if (Globals.SelectionState == Enums.SelectionState.Battle_Menu_Item) // Item Menu back to fight menu
 			{
-				Globals.Battle_UpdateGameState(this, Enums.GameState.Battle);
+				Globals.Battle_UpdateSelectionState(this, Enums.SelectionState.Battle_Menu_Normal);
 				HandCursor.AssignCursorParent(FightMenuContainer, 3);
 				// Hide the item menu
 				ItemMenu.Visible = false;
@@ -521,7 +526,7 @@ public partial class BattleController : Node
 
 
 		#region NormalBattleMenu
-		if (Globals.GameState == Enums.GameState.Battle_Menu_Normal)
+		if (Globals.SelectionState == Enums.SelectionState.Battle_Menu_Normal)
 		{
 			// "Top" button of the main 4 buttons
 			// If the icon is not visilbe, that should mean we set it invisible after a turn had commenced, and this should happen
@@ -544,14 +549,14 @@ public partial class BattleController : Node
 
 			else if (Command == "Fight")
 			{
-				Globals.Battle_UpdateGameState(this, Enums.GameState.Battle_Fight_Selecting_Target_Enemies);
+				Globals.Battle_UpdateSelectionState(this, Enums.SelectionState.Battle_Fight_Selecting_Target_Enemies);
 				SelectingTarget?.Invoke(this, EventArgs.Empty);
 				return;
 			}
 
 			else if (Command == "Magic")
 			{
-				Globals.Battle_UpdateGameState(this, Enums.GameState.Battle_Menu_Magic);
+				Globals.Battle_UpdateSelectionState(this, Enums.SelectionState.Battle_Menu_Magic);
 
 				// Make the magic menu stuff visible
 				MagicMenu.Visible = true;
@@ -566,7 +571,7 @@ public partial class BattleController : Node
 
 			else if (Command == "Item")
 			{
-				Globals.Battle_UpdateGameState(this, Enums.GameState.Battle_Menu_Item);
+				Globals.Battle_UpdateSelectionState(this, Enums.SelectionState.Battle_Menu_Item);
 				ItemMenu.Visible = true;
 				PopulateItemList();
 				HandCursor.AssignCursorParent(ItemMenuContainer);
@@ -579,7 +584,7 @@ public partial class BattleController : Node
 
 
 		#region MagicMenu
-		if (Globals.GameState == Enums.GameState.Battle_Menu_Magic)
+		if (Globals.SelectionState == Enums.SelectionState.Battle_Menu_Magic)
 		{
 			var Spell = DatabaseHandler.AbilityCollection.FindOne(x => x.Name == Command);
 
@@ -592,9 +597,9 @@ public partial class BattleController : Node
 				// GD.Print($"Magic selected :{ActionSelected.Name}");
 				
 				if (Spell.MagicClass == "White")
-					Globals.Battle_UpdateGameState(this, Enums.GameState.Battle_Magic_Selecting_Target_Characters);
+					Globals.Battle_UpdateSelectionState(this, Enums.SelectionState.Battle_Magic_Selecting_Target_Characters);
 				else
-					Globals.Battle_UpdateGameState(this, Enums.GameState.Battle_Magic_Selecting_Target_Enemies);
+					Globals.Battle_UpdateSelectionState(this, Enums.SelectionState.Battle_Magic_Selecting_Target_Enemies);
 
 				// Here & now, change how the HandCursor script works!
 				SelectingTarget?.Invoke(this, EventArgs.Empty);
@@ -605,7 +610,7 @@ public partial class BattleController : Node
 
 
 		#region ItemMenu
-		if (Globals.GameState == Enums.GameState.Battle_Menu_Item)
+		if (Globals.SelectionState == Enums.SelectionState.Battle_Menu_Item)
 		{
 			// The Item includes space-surrounded colon and the inventory count.  To find it, we need to strip off that stuff
 			
@@ -625,7 +630,7 @@ public partial class BattleController : Node
 					// ItemSelected = Item;
 					ActionSelected = Item;
 					GD.Print($"Item selected: {ActionSelected.Name}");
-					Globals.Battle_UpdateGameState(this, Enums.GameState.Battle_Item_Selecting_Target_Characters);
+					Globals.Battle_UpdateSelectionState(this, Enums.SelectionState.Battle_Item_Selecting_Target_Characters);
 
 					SelectingTarget?.Invoke(this, EventArgs.Empty);
 				}
@@ -640,77 +645,68 @@ public partial class BattleController : Node
 		{
 			// FIGHT
 			// *** If we're targetting characters OR enemies! ***
-			if (Globals.GameState == Enums.GameState.Battle_Fight_Selecting_Target_Characters ||
-				Globals.GameState == Enums.GameState.Battle_Fight_Selecting_Target_Multiple_Characters ||
-				Globals.GameState == Enums.GameState.Battle_Fight_Selecting_Target_Enemies ||
-				Globals.GameState == Enums.GameState.Battle_Fight_Selecting_Target_Multiple_Enemies)
+			if (Globals.SelectionState == Enums.SelectionState.Battle_Fight_Selecting_Target_Characters ||
+				Globals.SelectionState == Enums.SelectionState.Battle_Fight_Selecting_Target_Multiple_Characters ||
+				Globals.SelectionState == Enums.SelectionState.Battle_Fight_Selecting_Target_Enemies ||
+				Globals.SelectionState == Enums.SelectionState.Battle_Fight_Selecting_Target_Multiple_Enemies)
 			{
 				HandCursorObject.Visible = false;
 				ActiveCharacterIcon.Visible = false;
 				NotSelectingTarget?.Invoke(this, EventArgs.Empty);
 				Characters[ActiveCharacterIndex].IsQueued = true;
 
-				// TODO :Set appropriate menu visibilities to false
 
-					// If targetting characters
-					if (Globals.GameState == Enums.GameState.Battle_Fight_Selecting_Target_Characters ||
-					Globals.GameState == Enums.GameState.Battle_Fight_Selecting_Target_Multiple_Characters)
+				// If targetting characters
+				if (Globals.SelectionState == Enums.SelectionState.Battle_Fight_Selecting_Target_Characters ||
+				Globals.SelectionState == Enums.SelectionState.Battle_Fight_Selecting_Target_Multiple_Characters)
+				{
+					var SelectedTargets = Characters.Where(x => x.Index == HandCursor.GetCurrentCursorIndex());
+					var BattleTargetObjects = new List<BattleTarget>();
+
+					// TODO:  Handle multiple targets
+					// TODO:  Store the type of action (attack, spell, etc...)
+					// Right now, SelectedTargets will only have 1 object
+					foreach(var Target in SelectedTargets)
 					{
-						var SelectedTargets = Characters.Where(x => x.Index == HandCursor.GetCurrentCursorIndex());
-						var BattleTargetObjects = new List<BattleTarget>();
-
-						// TODO:  Handle multiple targets
-						// TODO:  Store the type of action (attack, spell, etc...)
-						// Right now, SelectedTargets will only have 1 object
-						foreach(var Target in SelectedTargets)
-						{
-							// CharacterAttack() method returns a BattleTarget object with all the damage, etc... calculated
-							BattleTargetObjects.Add(BattleAlgorithms.CharacterAttack(Characters[ActiveCharacterIndex], Target));
-						}
-
-						// BattleAlgorithms.SetFightVariables(Characters[HandCursor.GetCurrentCursorIndex()], CharacterObjects[HandCursor.GetCurrentCursorIndex()]);
-						var Turn = new BattleTurn() {
-							TurnType = Enums.BattleTurn.Party,
-							TargetMode = Enums.TargetMode.Allies,
-							Initiator = Characters[ActiveCharacterIndex],
-							InitiatorStats = Characters[ActiveCharacterIndex].EntityData,
-							Targets = BattleTargetObjects
-						};
-
-						BattleTurn.BattleQueue.Add(Turn);
-
-						// Animation plays regardless of if targeting enemies or characters.
-						// BattleAnimations.TriggerFightAnimation(Characters[ActiveCharacterIndex], Characters[ActiveCharacterIndex].EntityNode,
-						// Characters[HandCursor.GetCurrentCursorIndex()], CharacterObjects[HandCursor.GetCurrentCursorIndex()]);
+						// CharacterAttack() method returns a BattleTarget object with all the damage, etc... calculated
+						BattleTargetObjects.Add(BattleAlgorithms.CharacterAttack(Characters[ActiveCharacterIndex], Target));
 					}
-					// If targetting enemies
-					else if (Globals.GameState == Enums.GameState.Battle_Fight_Selecting_Target_Enemies ||
-					Globals.GameState == Enums.GameState.Battle_Fight_Selecting_Target_Multiple_Enemies)
+
+					var Turn = new BattleTurn() {
+						TurnType = Enums.BattleTurn.Party,
+						TargetMode = Enums.TargetMode.Allies,
+						Initiator = Characters[ActiveCharacterIndex],
+						InitiatorStats = Characters[ActiveCharacterIndex].EntityData,
+						Targets = BattleTargetObjects
+					};
+
+					BattleTurn.BattleQueue.Add(Turn);
+				}
+				// If targetting enemies
+				else if (Globals.SelectionState == Enums.SelectionState.Battle_Fight_Selecting_Target_Enemies ||
+				Globals.SelectionState == Enums.SelectionState.Battle_Fight_Selecting_Target_Multiple_Enemies)
+				{
+					var SelectedTargets = Enemies.Where(x => x.Index == HandCursor.GetCurrentCursorIndex());
+					var BattleTargetObjects = new List<BattleTarget>();
+					foreach(var Target in SelectedTargets)
 					{
-						var SelectedTargets = Enemies.Where(x => x.Index == HandCursor.GetCurrentCursorIndex());
-						var BattleTargetObjects = new List<BattleTarget>();
-						foreach(var Target in SelectedTargets)
-						{
-							BattleTargetObjects.Add(BattleAlgorithms.CharacterAttack(Characters[ActiveCharacterIndex], Target));
-						}
-
-						var Turn = new BattleTurn() {
-							TurnType = Enums.BattleTurn.Party,
-							TargetMode = Enums.TargetMode.Adversaries,
-							Initiator = Characters[ActiveCharacterIndex],
-							InitiatorStats = Characters[ActiveCharacterIndex].EntityData,
-							Targets = BattleTargetObjects
-						};
-
-						BattleTurn.BattleQueue.Add(Turn);
-
-						// Set this so it can be passed back to this class so we can damage the correct enemy
-						// TODO: Set the index to the SELECTED (Cursor) Enemy
-						// Enemies[HandCursor.GetCurrentCursorIndex()].BattleListIndex = HandCursor.GetCurrentCursorIndex();
+						BattleTargetObjects.Add(BattleAlgorithms.CharacterAttack(Characters[ActiveCharacterIndex], Target));
 					}
+
+					var Turn = new BattleTurn() {
+						TurnType = Enums.BattleTurn.Party,
+						TargetMode = Enums.TargetMode.Adversaries,
+						Initiator = Characters[ActiveCharacterIndex],
+						InitiatorStats = Characters[ActiveCharacterIndex].EntityData,
+						Targets = BattleTargetObjects
+					};
+
+					BattleTurn.BattleQueue.Add(Turn);
+				}
 
 				FightMenu.Visible = false;
-				Globals.UpdateGameState(Enums.GameState.Battle);
+				Debug.WriteLine("SELECTION TO NONE!!!!");
+				Globals.Battle_UpdateSelectionState(this, Enums.SelectionState.None);
 				
 			}
 
@@ -732,6 +728,8 @@ public partial class BattleController : Node
 		}
 
 		ActiveCharacterIndex = Character.Index;
+		Debug.WriteLine($"Setting the active character index to: {ActiveCharacterIndex}");
+		Debug.WriteLine($"CHARACTER: {Character.EntityData.Name}");
 
 		if (ActiveCharacterIndex >= 0)
 		{
@@ -882,13 +880,8 @@ public partial class BattleController : Node
 	/// <param name="TheCharacter"></param>
 	private void UpdateCharacterAfterAttack(object sender, BattleGameObject TheCharacter)
 	{
-		FightMenu.Visible = false;
-		HandCursorObject.Visible = false;
+		// TheCharacter.ProgressBar.Value = 0;
 
-		TheCharacter.ProgressBar.Value = 0;
-		// CharactersWithFullTimerBar.Remove(ActiveCharacterIndex);
-		// The process method will set this right back appropriately if another character has a full battle gauge
-		// Globals.Battle_ActivePlayerExists = false;
 		SetActiveCharacter(null);
 
 		UpdateCharacterStats(TheCharacter);
@@ -901,9 +894,6 @@ public partial class BattleController : Node
 
 	private void UpdateAfterEnemyDamage(object sender, BattleGameObject TheEnemy)
 	{
-		FightMenu.Visible = false;
-		HandCursorObject.Visible = false;
-
 		// GD.Print($"Size: {CharacterBattleTimers.Count}");
 		GD.Print($"Active Character Index: {ActiveCharacterIndex}");
 
