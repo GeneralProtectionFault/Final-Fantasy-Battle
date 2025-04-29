@@ -15,7 +15,10 @@ public partial class BattleController : Node
 	private const string CharacterScenePath = "res://Scenes/Characters/";
 	private const string EnemyScenePath = "res://Scenes/Enemies/";
 
-	private static int ActiveCharacterIndex = -1; // Stores which character is active/being controlled via Index (-1 for when no character has a full ATB gauge)
+
+	// TODO:  IMPLEMENT!!!
+	public static BattleGameObject ActiveCharacter;
+	// private static int ActiveCharacterIndex = -1; // Stores which character is active/being controlled via Index (-1 for when no character has a full ATB gauge)
 	private static int CurrentMenuIndex = 0;  // When selecting a spell, item, etc..., store the index of the selected item here for cancelling and such
 
 	private static AudioStreamPlayer MenuSwitchSound;
@@ -74,7 +77,7 @@ public partial class BattleController : Node
 	public override void _Ready()
 	{
 		// Reset stuff...
-		ActiveCharacterIndex = -1;
+		ActiveCharacter = null;
 		// CharacterObjects.Clear();
 		// EnemyObjects.Clear();
 		// Enemies.Clear();
@@ -348,7 +351,7 @@ public partial class BattleController : Node
 
 
 			// If this player's bar is full and not already queued to attack...
-			if (Characters[i].ProgressBar.Value == 65536 && !Characters[i].IsQueued)
+			if (Characters[i].ProgressBar.Value == 65536 && !Characters[i].FullTimerBar)
 			{
 				if (Globals.SelectionState == Enums.SelectionState.None)
 				{
@@ -369,7 +372,6 @@ public partial class BattleController : Node
 				{
 					MenuSwitchSound.Play();
 					SetActiveCharacter(Characters[i]);
-					Characters[i].IsActiveCharacter = true;
 					HandCursor.AssignCursorParent(FightMenuContainer);
 				}				
 			}
@@ -539,7 +541,7 @@ public partial class BattleController : Node
 				// The plain "Battle" state implies not in a menu selecting something
 				if (Characters.Where(x => x.FullTimerBar).Count() > 1)	// If there's more than 1 character w/ a full bar
 				{
-					var ActiveCharacter = Characters.FirstOrDefault(x => x.Index == ActiveCharacterIndex);
+					// var ActiveCharacter = Characters.FirstOrDefault(x => x.Index == ActiveCharacterIndex);
 					// List concat w/ itself in order to wrap around to the beginning when we've reached the end
 					var NewActiveCharacter = Characters.Concat(Characters).SkipWhile(x => x == ActiveCharacter).FirstOrDefault();
 					SetActiveCharacter(NewActiveCharacter);
@@ -562,7 +564,7 @@ public partial class BattleController : Node
 				MagicMenu.Visible = true;
 
 				// Populate the magic for the ACTIVE character
-				PopulateMagicList(ActiveCharacterIndex);
+				PopulateMagicList(ActiveCharacter);
 
 				// Set the Hand Cursor's parent so the hand cursor now applies to this menu!
 				HandCursor.AssignCursorParent(MagicMenuContainer);
@@ -653,7 +655,8 @@ public partial class BattleController : Node
 				HandCursorObject.Visible = false;
 				ActiveCharacterIcon.Visible = false;
 				NotSelectingTarget?.Invoke(this, EventArgs.Empty);
-				Characters[ActiveCharacterIndex].IsQueued = true;
+				// Characters[ActiveCharacterIndex].IsQueued = true;
+				ActiveCharacter.IsQueued = true;
 
 
 				// If targetting characters
@@ -669,14 +672,14 @@ public partial class BattleController : Node
 					foreach(var Target in SelectedTargets)
 					{
 						// CharacterAttack() method returns a BattleTarget object with all the damage, etc... calculated
-						BattleTargetObjects.Add(BattleAlgorithms.CharacterAttack(Characters[ActiveCharacterIndex], Target));
+						BattleTargetObjects.Add(BattleAlgorithms.CharacterAttack(ActiveCharacter, Target));
 					}
 
 					var Turn = new BattleTurn() {
 						TurnType = Enums.BattleTurn.Party,
 						TargetMode = Enums.TargetMode.Allies,
-						Initiator = Characters[ActiveCharacterIndex],
-						InitiatorStats = Characters[ActiveCharacterIndex].EntityData,
+						Initiator = ActiveCharacter,
+						InitiatorStats = ActiveCharacter.EntityData,
 						Targets = BattleTargetObjects
 					};
 
@@ -690,14 +693,14 @@ public partial class BattleController : Node
 					var BattleTargetObjects = new List<BattleTarget>();
 					foreach(var Target in SelectedTargets)
 					{
-						BattleTargetObjects.Add(BattleAlgorithms.CharacterAttack(Characters[ActiveCharacterIndex], Target));
+						BattleTargetObjects.Add(BattleAlgorithms.CharacterAttack(ActiveCharacter, Target));
 					}
 
 					var Turn = new BattleTurn() {
 						TurnType = Enums.BattleTurn.Party,
 						TargetMode = Enums.TargetMode.Adversaries,
-						Initiator = Characters[ActiveCharacterIndex],
-						InitiatorStats = Characters[ActiveCharacterIndex].EntityData,
+						Initiator = ActiveCharacter,
+						InitiatorStats = ActiveCharacter.EntityData,
 						Targets = BattleTargetObjects
 					};
 
@@ -721,18 +724,21 @@ public partial class BattleController : Node
 	{
 		GD.Print("Setting active character...");
 
+		foreach(var C in Characters)
+			C.IsActiveCharacter = false;
+
 		if (Character is null)
 		{
-			ActiveCharacterIndex = -1;
+			// ActiveCharacterIndex = -1;
+			ActiveCharacter = null;
 			return;
 		}
-
-		ActiveCharacterIndex = Character.Index;
-		Debug.WriteLine($"Setting the active character index to: {ActiveCharacterIndex}");
-		Debug.WriteLine($"CHARACTER: {Character.EntityData.Name}");
-
-		if (ActiveCharacterIndex >= 0)
+		else
 		{
+			Character.IsActiveCharacter = true;
+			ActiveCharacter = Character;
+			Debug.WriteLine($"ACTIVE CHARACTER: {Character.EntityData.Name} - INDEX: {Character.Index}");
+			
 			// Ensure active icon is visible and locate it above character
 			if (!ActiveCharacterIcon.Visible)
 				ActiveCharacterIcon.Visible = true;
@@ -747,7 +753,7 @@ public partial class BattleController : Node
 
 
 	
-	private void PopulateMagicList(int CharacterIndex)
+	private void PopulateMagicList(BattleGameObject Character)
 	{
 		GD.Print("Populating Magic...");
 
@@ -757,7 +763,7 @@ public partial class BattleController : Node
 
 		// Get the spells!
 		// var CharacterName = Characters[CharacterIndex].Name;
-		var CharacterName = Characters.Where(x => x.Index == CharacterIndex).First().EntityData.Name;
+		var CharacterName = Character.EntityData.Name;
 		var CharacterMagic = DatabaseHandler.GetCharacterMagic(CharacterName);
 
 		// Load the Icon images
@@ -880,10 +886,7 @@ public partial class BattleController : Node
 	/// <param name="TheCharacter"></param>
 	private void UpdateCharacterAfterAttack(object sender, BattleGameObject TheCharacter)
 	{
-		// TheCharacter.ProgressBar.Value = 0;
-
 		SetActiveCharacter(null);
-
 		UpdateCharacterStats(TheCharacter);
 
 		// TODO - account for party defeat, etc...
@@ -894,9 +897,6 @@ public partial class BattleController : Node
 
 	private void UpdateAfterEnemyDamage(object sender, BattleGameObject TheEnemy)
 	{
-		// GD.Print($"Size: {CharacterBattleTimers.Count}");
-		GD.Print($"Active Character Index: {ActiveCharacterIndex}");
-
 		// Update the stats of the enemy 
 		GD.Print($"Enemy HP: {TheEnemy.EntityData.Hp}");
 
@@ -1026,19 +1026,18 @@ public partial class BattleController : Node
 		}
 		else 
 		{
-			var Initiator = Characters.Where(x => x.Index == ActiveCharacterIndex).First();
+			var Initiator = ActiveCharacter;
 			Initiator.ProgressBar.Value = 0;
 			Initiator.FullTimerBar = false;
 			Initiator.IsActiveCharacter = false;
 			Initiator.IsQueued = false;
 
 			// The process method will set this right back appropriately if another character has a full battle gauge
-			// Globals.Battle_ActivePlayerExists = false;
 			SetActiveCharacter(null);
 
 			HandCursor.AssignCursorParent(FightMenuContainer);
 			NotSelectingTarget?.Invoke(this, EventArgs.Empty);
-			// Globals.Battle_UpdateGameState(Enums.GameState.Battle);
+			Globals.Battle_UpdateGameState(this, Enums.GameState.Battle);
 		}
 	}
 
