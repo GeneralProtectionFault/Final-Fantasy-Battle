@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
@@ -27,6 +28,8 @@ public partial class HandCursor : TextureRect
 	private static Enums.HandCursorMode HandCursorMode; // For delineating behavior between selecting menu items & characters/enemies
 	private static AudioStreamPlayer FingerSoundPlayer;
 
+	private static BattleGameObject SelectedObject;
+
 
 	// This is public so that the hand cursor can be applied to other menus/nodes from outside the script
 	// Probably needs a set method to move parenting (as opposed to just assigning)
@@ -48,6 +51,7 @@ public partial class HandCursor : TextureRect
 
 	private void EnableObjectSelectMode(object sender, EventArgs e)
 	{
+		Debug.WriteLine($"Enabling object selection mode; {e}");
 		HandCursorMode = Enums.HandCursorMode.Object;
 		CursorIndex = 0; // Since we will be moving from a menu to selecting characters & enemies, this needs to reset
 
@@ -56,8 +60,9 @@ public partial class HandCursor : TextureRect
 	}
 
 
-	private void EnableMenuSelectMode(object sender, EventArgs args)
+	private void EnableMenuSelectMode(object sender, EventArgs e)
 	{
+		Debug.WriteLine($"Enabling menu selection mode; {e}");
 		HandCursorMode = Enums.HandCursorMode.Menu;
 	}
 
@@ -97,6 +102,8 @@ public partial class HandCursor : TextureRect
 	public override void _Process(double delta)
 	{
 		var Input = Vector2.Zero;
+
+		// Debug.WriteLine($"ACTIVE CHARACTER? {BattleController.Characters.Where(x => x.IsActiveCharacter).Any()}");
 		
 		// If in a battle and if there ought be a menu...
 		if (!Globals.CursorLocked && BattleController.Characters.Where(x => x.IsActiveCharacter).Any())
@@ -152,6 +159,7 @@ public partial class HandCursor : TextureRect
 				// *** Confirming any choice ***
 				else if (Godot.Input.IsActionJustPressed("ui_accept"))
 				{
+					Debug.WriteLine($"UI ACCEPT IN MENU MODE!");
 					var CurrentMenuItem = GetMenuItemAtIndex(CursorIndex);
 					if (CurrentMenuItem is not null)
 					{
@@ -195,10 +203,11 @@ public partial class HandCursor : TextureRect
 			// OBJECT INPUT (selecting characters, monsters, etc...)
 			else if (HandCursorMode == Enums.HandCursorMode.Object)
 			{
+				// Debug.WriteLine("HAND CURSOR OBJECT MODE");
 				// BATTLE
 				if (Globals.BattleSelectingObjectStates.Contains(Globals.SelectionState))
 				{
-					
+					// Debug.WriteLine("HAND CURSOR AND SELECTION STATE CONFIRMED");
 					if (Godot.Input.IsActionJustPressed("ui_down"))
 					{
 						// Also play the sound for moving (or trying to move) selection
@@ -254,88 +263,74 @@ public partial class HandCursor : TextureRect
 	/// </summary>
 	private void TargetCurrent()
 	{
-		Node2D NextObject = new Node2D();
+		Debug.WriteLine("TARGETTING CURRENT (FIRST TARGET)");
 		Sprite2D ObjectSprite;
 
 		if (Globals.BattleSelectingEnemyStates.Contains(Globals.SelectionState))
 		{
-			// NextObject = BattleController.EnemyObjects[CursorIndex];
-			NextObject = BattleController.Enemies.Where(x => x.Index == CursorIndex).First().EntityNode;
+			SelectedObject = BattleController.Enemies[0];
 		}
 		else if (Globals.BattleSelectingCharactersStates.Contains(Globals.SelectionState))
 		{
-			// NextObject = BattleController.CharacterObjects[CursorIndex];
-			NextObject = BattleController.Characters.Where(x => x.Index == CursorIndex).First().EntityNode;
+			SelectedObject = BattleController.Characters[0];
 		}
 
-		// Node2D NextObject = BattleController.CharactersAndEnemies[CursorIndex];
-		ObjectSprite = NextObject.GetNode<Sprite2D>("Sprite2D");
-		
+		ObjectSprite = SelectedObject.EntityNode.GetNode<Sprite2D>("Sprite2D");
 		SetCursorPosition_Object(ObjectSprite);
 	}
 
 
 	private void TargetNext()
 	{
-		Node2D NextObject = new Node2D();
-		Sprite2D ObjectSprite;
-
 		if (Globals.BattleSelectingEnemyStates.Contains(Globals.SelectionState))
 		{
-			if (CursorIndex == BattleController.Enemies.Count - 1)
-				CursorIndex = 0;
-			else
-				CursorIndex += 1;
-
-			// NextObject = BattleController.EnemyObjects[CursorIndex];
-			NextObject = BattleController.Enemies.Where(x => x.Index == CursorIndex).First().EntityNode;
+			// Only target the next enemy if there is more than 1
+			if (BattleController.Enemies.Count > 1)
+			{
+				SelectedObject = BattleController.Enemies.Concat(BattleController.Enemies).SkipWhile(x => x == SelectedObject).First();
+			}
 		}
 		else if (Globals.BattleSelectingCharactersStates.Contains(Globals.SelectionState))
 		{
-			if (CursorIndex == BattleController.Characters.Count - 1)
-				CursorIndex = 0;
-			else
-				CursorIndex += 1;
-
-			// NextObject = BattleController.CharacterObjects[CursorIndex];
-			NextObject = BattleController.Characters.Where(x => x.Index == CursorIndex).First().EntityNode;
+			// Only target the next character if there is a next character that isn't wounded, zombied, etc...
+			if (BattleController.Characters.Where(x => Globals.BattleInactiveStatuses.Intersect(x.EntityData.Statuses).Any()).Count() > 1)
+			{
+				SelectedObject = BattleController.Characters.Concat(BattleController.Characters).SkipWhile(x => x == SelectedObject).First();
+			}
 		}
 
 		
 		// Node2D NextObject = BattleController.CharactersAndEnemies[CursorIndex];
-		ObjectSprite = NextObject.GetNode<Sprite2D>("Sprite2D");
-		
+		var ObjectSprite = SelectedObject.EntityNode.GetNode<Sprite2D>("Sprite2D");
 		SetCursorPosition_Object(ObjectSprite);
 	}
 
 	private void TargetPrevious()
 	{
-		Node2D PrevObject = new Node2D();
-		Sprite2D ObjectSprite;
-
 		if (Globals.BattleSelectingEnemyStates.Contains(Globals.SelectionState))
 		{
-			if (CursorIndex == BattleController.Enemies.Count - 1)
-				CursorIndex = 0;
-			else
-				CursorIndex += 1;
-
-			// PrevObject = BattleController.EnemyObjects[CursorIndex];
-			PrevObject = BattleController.Enemies.Where(x => x.Index == CursorIndex).First().EntityNode;
+			// Only target the next enemy if there is more than 1
+			if (BattleController.Enemies.Count > 1)
+			{
+				List<BattleGameObject> reversedEnemies = BattleController.Enemies.ToList();
+				reversedEnemies.Reverse();
+				SelectedObject = reversedEnemies.Concat(reversedEnemies).Reverse().SkipWhile(x => x == SelectedObject).First();
+			}
 		}
 		else if (Globals.BattleSelectingCharactersStates.Contains(Globals.SelectionState))
 		{
-			if (CursorIndex == BattleController.Characters.Count - 1)
-				CursorIndex = 0;
-			else
-				CursorIndex += 1;
-
-			// PrevObject = BattleController.CharacterObjects[CursorIndex];
-			PrevObject = BattleController.Characters.Where(x => x.Index == CursorIndex).First().EntityNode;
+			// Only target the next character if there is a next character that isn't wounded, zombied, etc...
+			if (BattleController.Characters.Where(x => Globals.BattleInactiveStatuses.Intersect(x.EntityData.Statuses).Any()).Count() > 1)
+			{
+				List<BattleGameObject> reversedCharacters = BattleController.Characters.ToList();
+				reversedCharacters.Reverse();
+				SelectedObject = reversedCharacters.Concat(reversedCharacters).Reverse().SkipWhile(x => x == SelectedObject).First();
+			}
 		}
 
-
-		ObjectSprite = PrevObject.GetNode<Sprite2D>("Sprite2D");
+		
+		// Node2D NextObject = BattleController.CharactersAndEnemies[CursorIndex];
+		var ObjectSprite = SelectedObject.EntityNode.GetNode<Sprite2D>("Sprite2D");
 		SetCursorPosition_Object(ObjectSprite);
 	}
 
@@ -366,7 +361,8 @@ public partial class HandCursor : TextureRect
         CursorIndex = Index;
 
 		// If it's a scroll menu, this should not be null and this will keep the selected item in view
-		if (Scroller is not null && MenuParent.GetParent().GetType().Equals(new ScrollContainer().GetType()))
+		// if (Scroller is not null && MenuParent.GetParent().GetType().Equals(new ScrollContainer().GetType()))
+		if (Scroller is not null && MenuParent.GetParent() is ScrollContainer)
         	Scroller.EnsureControlVisible(MenuItem);
 		
 		CallDeferred("SetCursorPosition");
@@ -392,7 +388,7 @@ public partial class HandCursor : TextureRect
 		var SpriteOrigin = ObjectSprite.GetGlobalTransform().Origin;
 		var SpriteSize = ObjectSprite.GetRect().Size;
 
-							// Origin.....subtract half the width (to the left edge)....and the offset (the Y offset doesn't make as much sense on the characters/enemies)
+		// Origin.....subtract half the width (to the left edge)....and the offset (the Y offset doesn't make as much sense on the characters/enemies)
 		var NewCursorPosition = SpriteOrigin - new Vector2((SpriteSize.X / 2f + 25), 0) - new Vector2(CursorOffset.X, 0);
 
 		ThisHandCursor.SetGlobalPosition(NewCursorPosition);

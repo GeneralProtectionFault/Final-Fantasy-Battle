@@ -143,6 +143,7 @@ public partial class BattleTurn : Node
 			Target.Statuses.Add(Enums.Status.Wounded);
 			
 		DatabaseHandler.UpdateCharacter(Target as Character);   
+		// TODO:  Need to update the BattleGameObject??
     }
 
 

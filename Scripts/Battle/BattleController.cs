@@ -351,7 +351,7 @@ public partial class BattleController : Node
 
 
 			// If this player's bar is full and not already queued to attack...
-			if (Characters[i].ProgressBar.Value == 65536 && !Characters[i].FullTimerBar)
+			if (Characters[i].ProgressBar.Value == 65536 && !Characters[i].IsQueued)
 			{
 				if (Globals.SelectionState == Enums.SelectionState.None)
 				{
@@ -886,7 +886,6 @@ public partial class BattleController : Node
 	/// <param name="TheCharacter"></param>
 	private void UpdateCharacterAfterAttack(object sender, BattleGameObject TheCharacter)
 	{
-		SetActiveCharacter(null);
 		UpdateCharacterStats(TheCharacter);
 
 		// TODO - account for party defeat, etc...

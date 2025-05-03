@@ -5,3 +5,6 @@
 Audio/
 Graphics/
 Shaders/
+
+# Exclude the database files
+*.db
