@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
+
 public partial class BattleTurn : Node
 {
 	public static event EventHandler<BattleGameObject> DamagingCharacter;
@@ -23,6 +24,9 @@ public partial class BattleTurn : Node
 	// Use the character or enemy performing the action to act as an index
 	public BattleGameObject Initiator { get; set; }
 	public IBattleEntity InitiatorStats { get; set; }
+	public PackedScene AbilityEffect { get; set; }
+
+
 
 	public List<BattleTarget> Targets { get; set; } = new();
 
@@ -61,7 +65,7 @@ public partial class BattleTurn : Node
 			else
 			{
 				Globals.Battle_UpdateGameState(this, Enums.GameState.Battle_Enemy_Action);
-				// Get the enemie's script to perform whatever diverse stuff they do...
+				// Get the enemy's script to perform whatever diverse stuff they do...
 				(ActiveBattleTurn.Initiator.EntityNode as BaseEnemyAction).ExecuteTurn(ActiveBattleTurn.Initiator);
 			}
 		}
@@ -94,7 +98,6 @@ public partial class BattleTurn : Node
 		var DamageText = GD.Load<PackedScene>("res://Scenes/Battle/DamageHealText.tscn").Instantiate();
 		(DamageText as DamageHealthText).Amount = target.DamageHP;
 		target.TargetEntity.EntityNode.AddChild(DamageText);
-		
     }
 
 
@@ -105,6 +108,9 @@ public partial class BattleTurn : Node
 		// TODO: This would be for a simultaneous effect, Offering attach should be handled differently
 		foreach(var target in ActiveBattleTurn.Targets)
 		{
+			if (ActiveBattleTurn.AbilityEffect is not null)
+				target.TargetEntity.EntityNode.AddChild(ActiveBattleTurn.AbilityEffect.Instantiate());
+
 			DamageText(target);
 
 			if (target.TargetEntity.EntityData is Enemy)

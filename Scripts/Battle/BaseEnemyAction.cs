@@ -7,6 +7,8 @@ public abstract partial class BaseEnemyAction : Node2D
     public int TurnCounter { get; set; }
     public Enemy EnemyStats { get; set; }
 
+	private PackedScene AttackEffect;
+
 
     public async virtual void QueueTurn(BattleGameObject Enemy)
     {
@@ -20,13 +22,14 @@ public abstract partial class BaseEnemyAction : Node2D
 		var FlashUniformMaterial = Enemy.EntityNode.GetNode<Sprite2D>("Sprite2D").Material;
 		FlashUniformMaterial.Set("shader_parameter/attack_flash", true);
 		Tween FlashTween = GetTree().CreateTween();
+		// Activates the flash for .2 seconds (waits that long before shutting the shader off again)
 		FlashTween.TweenCallback(Callable.From(() => {
 			FlashUniformMaterial.Set("shader_parameter/attack_flash", false);
 		}
 		)).SetDelay(0.2f);
 
 		// Simple delay so it's not absurdly instantaneous
-		using (SceneTreeTimer Delay = GetTree().CreateTimer(2.0f))
+		using (SceneTreeTimer Delay = GetTree().CreateTimer(1.0f))
 			await ToSignal(Delay, SceneTreeTimer.SignalName.Timeout);	
 
 		BattleTurn.DamageTargets();	// This will include popping the active battle turn off the queue, etc...

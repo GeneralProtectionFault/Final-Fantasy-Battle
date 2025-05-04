@@ -4,6 +4,7 @@
 /home/q/Documents/Godot/Final Fantasy Battle/Audio/FFVI_Victory_Fanfare_Trimmed.ogg
 /home/q/Documents/Godot/Final Fantasy Battle/Audio/Final_Fantasy_6_Terra_of_the_Bells_OC_ReMix.mp3
 /home/q/Documents/Godot/Final Fantasy Battle/Audio/WeaponSounds/A4SwordSlash.wav
+/home/q/Documents/Godot/Final Fantasy Battle/Audio/WeaponSounds/Scratch.wav
 /home/q/Documents/Godot/Final Fantasy Battle/Audio/Town/The_Magic_House (Jidoor).ogg
 /home/q/Documents/Godot/Final Fantasy Battle/Audio/Town/Final Fantasy VI - 04 - The Mines Of Narshe.mp3
 /home/q/Documents/Godot/Final Fantasy Battle/Audio/MenuSounds/FF6_MenuSwitch.ogg

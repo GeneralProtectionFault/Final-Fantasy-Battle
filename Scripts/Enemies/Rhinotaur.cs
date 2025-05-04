@@ -77,8 +77,7 @@ public partial class Rhinotaur : BaseEnemyAction
 				// Normal attack
 				Debug.WriteLine("Rhinotaur attacking with normal attack");
 				var Dmg = BattleAlgorithms.GetEnemyPhysicalAttackDamage((Enemy)Enemy.EntityData, Vigor);
-				// BattleAlgorithms.SetDamage(Dmg);
-				// BattleAlgorithms.PopulateDamageText(Enums.BattleTurn.Party);
+
 			}
 		}
 		
@@ -110,6 +109,7 @@ public partial class Rhinotaur : BaseEnemyAction
 			TargetMode = Enums.TargetMode.Adversaries,
 			Initiator = Enemy,
 			InitiatorStats = EnemyStats,
+			AbilityEffect = GD.Load<PackedScene>($"res://Scenes/AbilityEffects/TripleSlash_Red.tscn"),
 			Targets = BattleTargetObjects
 		};
 		
@@ -119,6 +119,9 @@ public partial class Rhinotaur : BaseEnemyAction
 
 	public async override void ExecuteTurn(BattleGameObject Enemy)
 	{
+		// var AttackEffect = GD.Load<PackedScene>("res://Scenes/AttackEffects/TripleSlash_Red.tscn");
+		// (DamageText as DamageHealthText).Amount = target.DamageHP;
+		// target.TargetEntity.EntityNode.AddChild(DamageText);
 		base.ExecuteTurn(Enemy);
 	}
 
