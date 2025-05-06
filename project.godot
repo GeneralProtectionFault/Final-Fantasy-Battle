@@ -24,6 +24,7 @@ BattleAnimations="*res://Scripts/Battle/BattleAnimations.cs"
 GitIgnoreList="*res://Scripts/GitIgnoreList.cs"
 PhantomCameraManager="*res://addons/phantom_camera/scripts/managers/phantom_camera_manager.gd"
 BattleTurn="*res://Scripts/Battle/BattleTurn.cs"
+NodeHelpers="*res://Scripts/NodeHelpers.cs"
 
 [display]
 
