@@ -41,7 +41,7 @@ public partial class NodeHelpers : Node
         };
 
         // Load the shader from the.gdshader file
-        var shader = (Shader)ResourceLoader.Load("res://Shaders/fade_to_black.gdshader");
+        var shader = (Shader)ResourceLoader.Load("res://Graphics/Shaders/fade_to_black.gdshader");
         var shaderMaterial = new ShaderMaterial { Shader = shader };
 
         fadeRect.Material = shaderMaterial;
