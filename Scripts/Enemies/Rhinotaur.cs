@@ -49,6 +49,8 @@ public partial class Rhinotaur : BaseEnemyAction
 
     public async override void QueueTurn(BattleGameObject Enemy)
     {
+        base.QueueTurn(Enemy);
+
         Random R = new Random();
         // By default, between 0 and 1 - use to act based on % chance
         var Num = R.NextDouble();

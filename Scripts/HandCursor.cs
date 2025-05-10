@@ -28,7 +28,7 @@ public partial class HandCursor : TextureRect
     private static Enums.HandCursorMode HandCursorMode; // For delineating behavior between selecting menu items & characters/enemies
     private static AudioStreamPlayer FingerSoundPlayer;
 
-    private static BattleGameObject SelectedObject;
+    public static List<BattleGameObject> SelectedObjects = new();
 
 
     // This is public so that the hand cursor can be applied to other menus/nodes from outside the script
@@ -258,74 +258,96 @@ public partial class HandCursor : TextureRect
     /// </summary>
     private void TargetCurrent()
     {
-        Debug.WriteLine("TARGETTING CURRENT (FIRST TARGET)");
+        SelectedObjects.Clear();
         Sprite2D ObjectSprite;
 
         if (Globals.BattleSelectingEnemyStates.Contains(Globals.SelectionState))
         {
-            SelectedObject = BattleController.Enemies[0];
+            SelectedObjects.Add(BattleController.Enemies.Where(x => x.IsValidTarget).First());
         }
         else if (Globals.BattleSelectingCharactersStates.Contains(Globals.SelectionState))
         {
-            SelectedObject = BattleController.Characters[0];
+            SelectedObjects.Add(BattleController.Characters.Where(x => x.IsValidTarget).First());
         }
 
-        ObjectSprite = SelectedObject.EntityNode.GetNode<Sprite2D>("Sprite2D");
+        ObjectSprite = SelectedObjects.First().EntityNode.GetNode<Sprite2D>("Sprite2D");
         SetCursorPosition_Object(ObjectSprite);
     }
 
 
     private void TargetNext()
     {
+        var CurrentlySelected = SelectedObjects.First();
+        SelectedObjects.Clear(); // TODO:  Multiple targetting - this makes sense for single select
+
         if (Globals.BattleSelectingEnemyStates.Contains(Globals.SelectionState))
         {
             // Only target the next enemy if there is more than 1
-            if (BattleController.Enemies.Count > 1)
+            if (BattleController.Enemies.Where(x => x.IsValidTarget).Count() > 1)
             {
-                SelectedObject = BattleController.Enemies.Concat(BattleController.Enemies).SkipWhile(x => x == SelectedObject).First();
+                SelectedObjects.Add(BattleController.Enemies.Concat(BattleController.Enemies).SkipWhile(x => x == CurrentlySelected).First());
+            }
+            else
+            {
+                SelectedObjects.Add(BattleController.Enemies.First());
             }
         }
         else if (Globals.BattleSelectingCharactersStates.Contains(Globals.SelectionState))
         {
             // Only target the next character if there is a next character that isn't wounded, zombied, etc...
-            if (BattleController.Characters.Where(x => Globals.BattleInactiveStatuses.Intersect(x.EntityData.Statuses).Any()).Count() > 1)
+            if (BattleController.Characters.Where(x => x.IsValidTarget).Count() > 1)
             {
-                SelectedObject = BattleController.Characters.Concat(BattleController.Characters).SkipWhile(x => x == SelectedObject).First();
+                SelectedObjects.Add(BattleController.Characters.Concat(BattleController.Characters).SkipWhile(x => x == CurrentlySelected).First());
+            }
+            else
+            {
+                SelectedObjects.Add(BattleController.Characters.First());
             }
         }
 
 
         // Node2D NextObject = BattleController.CharactersAndEnemies[CursorIndex];
-        var ObjectSprite = SelectedObject.EntityNode.GetNode<Sprite2D>("Sprite2D");
+        var ObjectSprite = SelectedObjects.First().EntityNode.GetNode<Sprite2D>("Sprite2D");
         SetCursorPosition_Object(ObjectSprite);
     }
 
     private void TargetPrevious()
     {
+        var CurrentlySelected = SelectedObjects.First();
+        SelectedObjects.Clear(); // TODO:  Multiple targetting - this makes sense for single select
+
         if (Globals.BattleSelectingEnemyStates.Contains(Globals.SelectionState))
         {
             // Only target the next enemy if there is more than 1
-            if (BattleController.Enemies.Count > 1)
+            if (BattleController.Enemies.Where(x => x.IsValidTarget).Count() > 1)
             {
-                List<BattleGameObject> reversedEnemies = BattleController.Enemies.ToList();
+                List<BattleGameObject> reversedEnemies = BattleController.Enemies;
                 reversedEnemies.Reverse();
-                SelectedObject = reversedEnemies.Concat(reversedEnemies).Reverse().SkipWhile(x => x == SelectedObject).First();
+                SelectedObjects.Add(reversedEnemies.Concat(reversedEnemies).Reverse().SkipWhile(x => x == CurrentlySelected).First());
+            }
+            else
+            {
+                SelectedObjects.Add(BattleController.Enemies.First());
             }
         }
         else if (Globals.BattleSelectingCharactersStates.Contains(Globals.SelectionState))
         {
             // Only target the next character if there is a next character that isn't wounded, zombied, etc...
-            if (BattleController.Characters.Where(x => Globals.BattleInactiveStatuses.Intersect(x.EntityData.Statuses).Any()).Count() > 1)
+            if (BattleController.Characters.Where(x => x.IsValidTarget).Count() > 1)
             {
                 List<BattleGameObject> reversedCharacters = BattleController.Characters.ToList();
                 reversedCharacters.Reverse();
-                SelectedObject = reversedCharacters.Concat(reversedCharacters).Reverse().SkipWhile(x => x == SelectedObject).First();
+                SelectedObjects.Add(reversedCharacters.Concat(reversedCharacters).Reverse().SkipWhile(x => x == CurrentlySelected).First());
+            }
+            else
+            {
+                SelectedObjects.Add(BattleController.Characters.First());
             }
         }
 
 
         // Node2D NextObject = BattleController.CharactersAndEnemies[CursorIndex];
-        var ObjectSprite = SelectedObject.EntityNode.GetNode<Sprite2D>("Sprite2D");
+        var ObjectSprite = SelectedObjects.First().EntityNode.GetNode<Sprite2D>("Sprite2D");
         SetCursorPosition_Object(ObjectSprite);
     }
 

@@ -429,7 +429,6 @@ public partial class BattleController : Node
                         Enemies[i].IsQueued = true;
                         (EnemyNode as BaseEnemyAction).QueueTurn(Enemies[i]);
                     }
-
                 }
             }
             #endregion
@@ -657,11 +656,13 @@ public partial class BattleController : Node
                 string Weapon = ActiveCharacter.EntityData.RightHandEquipped;
                 var WeaponAttackScene = GD.Load<PackedScene>($"res://Scenes/Weapons/{Weapon}_Attack.tscn");
 
+                SelectedTargets = HandCursor.SelectedObjects;
+
                 // If targetting characters ----------------------------------------------------------------------------
                 if (Globals.SelectionState == Enums.SelectionState.Battle_Fight_Selecting_Target_Characters ||
                 Globals.SelectionState == Enums.SelectionState.Battle_Fight_Selecting_Target_Multiple_Characters)
                 {
-                    SelectedTargets = Characters.Where(x => x.Index == HandCursor.GetCurrentCursorIndex());
+                    // SelectedTargets = Characters.Where(x => x.Index == HandCursor.GetCurrentCursorIndex());
                     
                     // TODO:  Handle multiple targets
                     // TODO:  Store the type of action (attack, spell, etc...)
@@ -676,7 +677,7 @@ public partial class BattleController : Node
                 else if (Globals.SelectionState == Enums.SelectionState.Battle_Fight_Selecting_Target_Enemies ||
                 Globals.SelectionState == Enums.SelectionState.Battle_Fight_Selecting_Target_Multiple_Enemies)
                 {
-                    SelectedTargets = Enemies.Where(x => x.Index == HandCursor.GetCurrentCursorIndex());
+                    // SelectedTargets = Enemies.Where(x => x.Index == HandCursor.GetCurrentCursorIndex());
                     
                     foreach (var Target in SelectedTargets)
                     {
@@ -888,7 +889,7 @@ public partial class BattleController : Node
     private void UpdateAfterEnemyDamage(object sender, BattleGameObject TheEnemy)
     {
         // Update the stats of the enemy
-        GD.Print($"Enemy HP: {TheEnemy.EntityData.Hp}");
+        Debug.WriteLine($"Enemy HP: {TheEnemy.EntityData.Hp}");
 
         // Remove upon death!
         if (TheEnemy.EntityData.Hp <= 0)
@@ -909,7 +910,6 @@ public partial class BattleController : Node
                         break;
                     }
                 }
-
             }
             )).SetDelay(1.0f);
         }
@@ -1052,11 +1052,6 @@ public partial class BattleController : Node
                 GD.Print($"Updating text in {Label}");
             }
         }
-
-
-        // HandCursor.AssignCursorParent(FightMenuContainer);
-        // NotSelectingTarget?.Invoke(this, EventArgs.Empty);
-        // Globals.Battle_UpdateGameState(Enums.GameState.Battle);
     }
 
     #endregion
