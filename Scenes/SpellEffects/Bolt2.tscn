@@ -1,0 +1,73 @@
+[gd_scene load_steps=6 format=3 uid="uid://bqd8v1smfini"]
+
+[ext_resource type="Texture2D" uid="uid://b4e1q2q2rv5er" path="res://Graphics/SpellEffects/Bolt2_Animation.png" id="1_3x2qv"]
+[ext_resource type="AudioStream" uid="uid://brv58g03vp1pw" path="res://Audio/SpellSounds/3DBolt2.wav" id="2_6kmuf"]
+
+[sub_resource type="Animation" id="Animation_6kmuf"]
+resource_name = "Default"
+length = 0.6
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Bolt2Animation:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.0333333, 0.0666667, 0.1, 0.133333, 0.166667, 0.2, 0.233333, 0.266667, 0.3, 0.333333, 0.366667, 0.4, 0.433333),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [0, 1, 2, 3, 4, 5, 6, 7, 8, 10, 9, 10, 11, 12]
+}
+tracks/1/type = "method"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0.6),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"queue_free"
+}]
+}
+
+[sub_resource type="Animation" id="Animation_csoyh"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Bolt2Animation:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [0]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_6fo6w"]
+_data = {
+&"Default": SubResource("Animation_6kmuf"),
+&"RESET": SubResource("Animation_csoyh")
+}
+
+[node name="Bolt2" type="Node2D"]
+
+[node name="Bolt2Animation" type="Sprite2D" parent="."]
+position = Vector2(0, -68)
+texture = ExtResource("1_3x2qv")
+hframes = 13
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_6fo6w")
+}
+autoplay = "Default"
+speed_scale = 0.8
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("2_6kmuf")
+autoplay = true

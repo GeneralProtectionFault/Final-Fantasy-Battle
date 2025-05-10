@@ -60,8 +60,8 @@ public static class BattleAlgorithms
         // if (Initiator.EntityData.RelicsEquipped.Contains("Gauntlet"))
         //     Attack += (int)(Initiator.EntityData.Attack * .75);
         
-        var Damage = Initiator.EntityData.Attack + 
-        Math.Pow(Initiator.EntityData.Level, 2) * Initiator.EntityData.Attack / 256 * 3 / 2;
+        var Damage = Attack + 
+        Math.Pow(Initiator.EntityData.Level, 2) * Attack / 256 * 3 / 2;
 
         // TODO: Same as above...
         // if (Initiator.EntityData.RelicsEquipped.Contains("Offering"))

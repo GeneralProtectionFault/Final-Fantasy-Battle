@@ -1,8 +1,7 @@
-[gd_scene load_steps=8 format=3 uid="uid://cjf1gcero3j5i"]
+[gd_scene load_steps=7 format=3 uid="uid://cjf1gcero3j5i"]
 
 [ext_resource type="Texture2D" uid="uid://c1o8fpp5eiecq" path="res://Graphics/Weapons/Lightbringer.png" id="1_8bo3w"]
 [ext_resource type="Texture2D" uid="uid://byriugvweal12" path="res://Graphics/Weapons/Lightbringer_Sash.png" id="1_73cdh"]
-[ext_resource type="Script" uid="uid://cit5ymrp2e024" path="res://Scripts/Battle/WeaponController.cs" id="1_lk8r8"]
 [ext_resource type="AudioStream" uid="uid://b30472uogsryu" path="res://Audio/WeaponSounds/A4SwordSlash.wav" id="3_r8x2e"]
 
 [sub_resource type="Animation" id="Animation_w1fsf"]
@@ -63,12 +62,9 @@ tracks/4/path = NodePath(".")
 tracks/4/interp = 1
 tracks/4/loop_wrap = true
 tracks/4/keys = {
-"times": PackedFloat32Array(0.2, 0.6),
-"transitions": PackedFloat32Array(1, 1),
+"times": PackedFloat32Array(0.6),
+"transitions": PackedFloat32Array(1),
 "values": [{
-"args": [],
-"method": &"TriggerDamage"
-}, {
 "args": [],
 "method": &"queue_free"
 }]
@@ -132,7 +128,6 @@ _data = {
 }
 
 [node name="Lightbringer" type="Node2D"]
-script = ExtResource("1_lk8r8")
 
 [node name="SwordAnchor" type="Node2D" parent="."]
 rotation = 0.785398

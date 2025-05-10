@@ -30,22 +30,19 @@ public abstract partial class BaseEnemyAction : Node2D
         )).SetDelay(0.2f);
 
         // Simple delay so it's not absurdly instantaneous
-        using (SceneTreeTimer Delay = GetTree().CreateTimer(1.0f))
-            await ToSignal(Delay, SceneTreeTimer.SignalName.Timeout);
+        // using (SceneTreeTimer Delay = GetTree().CreateTimer(1.0f))
+        //     await ToSignal(Delay, SceneTreeTimer.SignalName.Timeout);
 
-        BattleTurn.DamageTargets(); // This will include popping the active battle turn off the queue, etc...
+        BattleTurn.Instance.DamageTargets(1); // This will include popping the active battle turn off the queue, etc...
 
         Enemy.IsQueued = false;
         Enemy.ProgressBar.Value = 0;
         Enemy.FullTimerBar = false;
-
-        // Handle the state as appropriate
-        Globals.Battle_UpdateGameState(this, Globals.PreviousGameState);
     }
 
 
     /// Process what happenes to enemy when they are attacked
-    public async virtual void Attacked(Ability AttackingAbility, int EnemyIndex)
+    public async virtual void Attacked(Ability AttackingAbility)
     {
 
     }

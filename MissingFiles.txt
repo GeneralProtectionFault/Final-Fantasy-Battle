@@ -9,6 +9,9 @@
 /home/q/Documents/Godot/Final Fantasy Battle/Audio/Town/Final Fantasy VI - 04 - The Mines Of Narshe.mp3
 /home/q/Documents/Godot/Final Fantasy Battle/Audio/MenuSounds/FF6_MenuSwitch.ogg
 /home/q/Documents/Godot/Final Fantasy Battle/Audio/MenuSounds/finger.ogg
+/home/q/Documents/Godot/Final Fantasy Battle/Audio/SpellSounds/3DBolt2.wav
+/home/q/Documents/Godot/Final Fantasy Battle/Audio/SpellSounds/15Bolt3.wav
+/home/q/Documents/Godot/Final Fantasy Battle/Audio/SpellSounds/43Bolt1.wav
 /home/q/Documents/Godot/Final Fantasy Battle/Graphics/Black.png
 /home/q/Documents/Godot/Final Fantasy Battle/Graphics/Icons/WhiteMagicIcon_4x.png
 /home/q/Documents/Godot/Final Fantasy Battle/Graphics/Icons/GrayMagicIcon_4x.png
@@ -43,6 +46,7 @@
 /home/q/Documents/Godot/Final Fantasy Battle/Graphics/Sprites/Overworld_4x_boundaries.png
 /home/q/Documents/Godot/Final Fantasy Battle/Graphics/Sprites/Overworld_4x.png
 /home/q/Documents/Godot/Final Fantasy Battle/Graphics/AttackEffects/TripleSlash_Red..png
+/home/q/Documents/Godot/Final Fantasy Battle/Graphics/SpellEffects/Bolt2_Animation.png
 /home/q/Documents/Godot/Final Fantasy Battle/Graphics/Towns/Jidoor/Jidoor_MainTown_4x.png
 /home/q/Documents/Godot/Final Fantasy Battle/Graphics/Towns/Narshe/Narshe_TopBottom_4x.png
 /home/q/Documents/Godot/Final Fantasy Battle/Graphics/Sprites/Enemies/Rhinotaur_4x.png

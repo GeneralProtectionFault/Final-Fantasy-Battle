@@ -258,7 +258,7 @@ public partial class BattleController : Node
 
     private void EndBattle()
     {
-        var FadeTween = NodeHelpers.Instance.FadeToBlack(GetNode<CanvasLayer>("BattleCanvas"), 1.25f);
+        var FadeTween = NodeHelpers.Instance.FadeToBlack(GetNode<CanvasLayer>("BattleCanvas"), .75f);
         FadeTween.TweenCallback(Callable.From(() =>
         {
             Debug.WriteLine("Fade to black complete!");
@@ -285,7 +285,7 @@ public partial class BattleController : Node
         #region BattleWon!
         if (Globals.GameState == Enums.GameState.Battle_Won)
         {
-            if (Input.IsActionJustPressed("ui_accept"))
+            if (Input.IsActionJustPressed("ui_accept") && !Globals.CursorLocked)
             {
                 // If we've reached the end of the list of text stuff to display after the battle...
                 // END THE BATTLE IN THIS CASE =D (Tween out, whatever...)
@@ -651,15 +651,18 @@ public partial class BattleController : Node
                 HandCursorObject.Visible = false;
                 ActiveCharacterIcon.Visible = false;
                 ActiveCharacter.IsQueued = true;
-                
 
-                // If targetting characters
+                IEnumerable<BattleGameObject> SelectedTargets;
+                var BattleTargetObjects = new List<BattleTarget>();
+                string Weapon = ActiveCharacter.EntityData.RightHandEquipped;
+                var WeaponAttackScene = GD.Load<PackedScene>($"res://Scenes/Weapons/{Weapon}_Attack.tscn");
+
+                // If targetting characters ----------------------------------------------------------------------------
                 if (Globals.SelectionState == Enums.SelectionState.Battle_Fight_Selecting_Target_Characters ||
                 Globals.SelectionState == Enums.SelectionState.Battle_Fight_Selecting_Target_Multiple_Characters)
                 {
-                    var SelectedTargets = Characters.Where(x => x.Index == HandCursor.GetCurrentCursorIndex());
-                    var BattleTargetObjects = new List<BattleTarget>();
-
+                    SelectedTargets = Characters.Where(x => x.Index == HandCursor.GetCurrentCursorIndex());
+                    
                     // TODO:  Handle multiple targets
                     // TODO:  Store the type of action (attack, spell, etc...)
                     // Right now, SelectedTargets will only have 1 object
@@ -668,52 +671,41 @@ public partial class BattleController : Node
                         // CharacterAttack() method returns a BattleTarget object with all the damage, etc... calculated
                         BattleTargetObjects.Add(BattleAlgorithms.CharacterAttack(ActiveCharacter, Target));
                     }
-
-                    var Turn = new BattleTurn()
-                    {
-                        TurnType = Enums.BattleTurn.Party,
-                        TargetMode = Enums.TargetMode.Allies,
-                        Initiator = ActiveCharacter,
-                        InitiatorStats = ActiveCharacter.EntityData,
-                        Targets = BattleTargetObjects
-                    };
-
-                    BattleTurn.BattleQueue.Add(Turn);
                 }
-                // If targetting enemies
+                // If targetting enemies -------------------------------------------------------------------------------
                 else if (Globals.SelectionState == Enums.SelectionState.Battle_Fight_Selecting_Target_Enemies ||
                 Globals.SelectionState == Enums.SelectionState.Battle_Fight_Selecting_Target_Multiple_Enemies)
                 {
-                    var SelectedTargets = Enemies.Where(x => x.Index == HandCursor.GetCurrentCursorIndex());
-                    var BattleTargetObjects = new List<BattleTarget>();
+                    SelectedTargets = Enemies.Where(x => x.Index == HandCursor.GetCurrentCursorIndex());
+                    
                     foreach (var Target in SelectedTargets)
                     {
                         BattleTargetObjects.Add(BattleAlgorithms.CharacterAttack(ActiveCharacter, Target));
                     }
-
-                    var Turn = new BattleTurn()
-                    {
-                        TurnType = Enums.BattleTurn.Party,
-                        TargetMode = Enums.TargetMode.Adversaries,
-                        Initiator = ActiveCharacter,
-                        InitiatorStats = ActiveCharacter.EntityData,
-                        Targets = BattleTargetObjects
-                    };
-
-                    BattleTurn.BattleQueue.Add(Turn);
                 }
+
+                // Create the BattleTurn object and add it to the BattleQueue
+                var Turn = new BattleTurn()
+                {
+                    TurnType = Enums.BattleTurn.Party,
+                    TargetMode = Enums.TargetMode.Adversaries,
+                    Initiator = ActiveCharacter,
+                    AbilityEffect = WeaponAttackScene,
+                    InitiatorStats = ActiveCharacter.EntityData,
+                    Targets = BattleTargetObjects
+                };
+
+                BattleTurn.BattleQueue.Add(Turn);
+
+                // Do all the menu/state reset nonsense                
+                // Initiator.ProgressBar.Value = 0; // Done in DamageTargets()
+                ActiveCharacter.FullTimerBar = false;
+                ActiveCharacter.IsActiveCharacter = false;
+
+                SetActiveCharacter(null);
 
                 FightMenu.Visible = false;
                 Globals.Battle_UpdateSelectionState(this, Enums.SelectionState.None);
-                // Even if no active charcter, go back to "Menu Select Mode" so we don't jack up the cursor
-
-                // If there's a full timer bar, the Process method will instantly set this back as appropriate on the first such character.
-                var Initiator = ActiveCharacter;
-                // Initiator.ProgressBar.Value = 0; // Done in DamageTargets()
-                Initiator.FullTimerBar = false;
-                Initiator.IsActiveCharacter = false;
-
-                SetActiveCharacter(null);
                 HandCursor.AssignCursorParent(FightMenuContainer);
                 NotSelectingTarget?.Invoke(this, EventArgs.Empty);
             }
@@ -926,6 +918,8 @@ public partial class BattleController : Node
         // If the battle is won!
         if (Enemies.Where(x => x.EntityData.Hp > 0).Count() <= 0)
         {
+            Globals.CursorLocked = true;
+
             var EndCallable = Callable.From(() => Globals.Battle_UpdateGameState(this, Enums.GameState.Battle_Won));
             EndCallable.CallDeferred();
             ActiveCharacterIcon.Visible = false;
@@ -957,7 +951,7 @@ public partial class BattleController : Node
                 }
 
                 // I THINK the experience in FF6 is displaying PER CHARACTER, ergo...
-                Exp = Exp / UnwoundedCharacters.Count;
+                Exp /= UnwoundedCharacters.Count;
                 VictoryTextList.Add($"Got {Exp} Exp. point(s)");
 
                 foreach (var Character in UnwoundedCharacters)
@@ -966,8 +960,7 @@ public partial class BattleController : Node
                     DatabaseHandler.UpdateCharacter(Character.EntityData as Character);
                 }
 
-                // Espers / Magic points
-
+                // TODO:  Espers / Magic points
 
                 // Items **************************************
                 // Create this as a dictionary to account for cases in which there's more than 1 of a particular item.
@@ -996,7 +989,6 @@ public partial class BattleController : Node
                             ItemData.InventoryCount += 1;
                             DatabaseHandler.UpdateItem(ItemData);
 
-
                             // Check if we already have this item
                             if (ItemList.ContainsKey(Item.Key))
                                 ItemList[Item.Key] += 1;
@@ -1022,19 +1014,15 @@ public partial class BattleController : Node
                 VictoryTextLabel.Text = VictoryTextList[0];
                 BattleWonTextIndex += 1;
 
+                Globals.CursorLocked = false;
+
             })).SetDelay(2.0f);
         }
         // If the battle is NOT won...
-        else
-        {
-            // var Initiator = ActiveCharacter;
-            // Initiator.ProgressBar.Value = 0;
-            // Initiator.FullTimerBar = false;
-            // Initiator.IsActiveCharacter = false;
-            // Initiator.IsQueued = false;
-
-            Globals.Battle_UpdateGameState(this, Enums.GameState.Battle);
-        }
+        // else
+        // {
+        //     Globals.Battle_UpdateGameState(this, Enums.GameState.Battle);
+        // }
     }
 
 

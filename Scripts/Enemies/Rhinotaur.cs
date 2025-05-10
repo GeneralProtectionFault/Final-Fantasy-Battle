@@ -52,6 +52,7 @@ public partial class Rhinotaur : BaseEnemyAction
         Random R = new Random();
         // By default, between 0 and 1 - use to act based on % chance
         var Num = R.NextDouble();
+        int Dmg = 0;
 
         if (TurnCounter == 1)
         {
@@ -67,12 +68,13 @@ public partial class Rhinotaur : BaseEnemyAction
             {
                 // Rush
                 Debug.WriteLine("Rhinotaur attacking with Rush");
+                Dmg = BattleAlgorithms.GetEnemyPhysicalAttackDamage((Enemy)Enemy.EntityData, Vigor*2);
             }
             else
             {
                 // Normal attack
                 Debug.WriteLine("Rhinotaur attacking with normal attack");
-                var Dmg = BattleAlgorithms.GetEnemyPhysicalAttackDamage((Enemy)Enemy.EntityData, Vigor);
+                Dmg = BattleAlgorithms.GetEnemyPhysicalAttackDamage((Enemy)Enemy.EntityData, Vigor);
 
             }
         }
@@ -92,7 +94,7 @@ public partial class Rhinotaur : BaseEnemyAction
             BattleTarget TargetObject = new BattleTarget()
             {
                 TargetEntity = Target,
-                DamageHP = 10       // Etc, etc...
+                DamageHP = Dmg       // Etc, etc...
             };
 
             BattleTargetObjects.Add(TargetObject);
@@ -124,10 +126,15 @@ public partial class Rhinotaur : BaseEnemyAction
     }
 
 
-    public async override void Attacked(Ability AttackingAbility, int EnemyIndex)
+    public async override void Attacked(Ability AttackingAbility)
     {
+        Debug.WriteLine("Enemy attacked------------------------------");
         // Log anything relevant--in this case, if attacked by magic
-        if (AttackingAbility.Type == Enums.AbilityType.Spell)
+        if (AttackingAbility is null)
+        {
+            ;
+        }
+        else if (AttackingAbility.Type == Enums.AbilityType.Spell)
         {
             // 33 % chance
             Random R = new Random();

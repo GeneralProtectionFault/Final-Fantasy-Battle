@@ -1,6 +1,7 @@
 using Godot;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 
@@ -74,7 +75,7 @@ public partial class BattleTurn : Node
 
 
 
-    public static void CommencePartyTurn()
+    public void CommencePartyTurn()
     {
         // Initiator animation
         var AttackerAnimationPlayer = ActiveBattleTurn.Initiator.EntityNode.GetNode<AnimationPlayer>("Battle_AnimationPlayer");
@@ -93,7 +94,7 @@ public partial class BattleTurn : Node
     /// </summary>
     /// <param name="ParentObject"></param>
     /// <param name="Damage"></param>
-    private static void DamageText(BattleTarget target)
+    private void DamageText(BattleTarget target)
     {
         var DamageText = GD.Load<PackedScene>("res://Scenes/Battle/DamageHealText.tscn").Instantiate();
         (DamageText as DamageHealthText).Amount = target.DamageHP;
@@ -103,21 +104,29 @@ public partial class BattleTurn : Node
 
     /// This should loop through all the targets in cases of simultaneous effects on multiple targets
     /// However, multiple/separated hits on a single target should be handled
-    public static void DamageTargets()
+    public async void DamageTargets(double DelaySeconds)
     {
+        using (SceneTreeTimer Delay = GetTree().CreateTimer(DelaySeconds))
+            await ToSignal(Delay, SceneTreeTimer.SignalName.Timeout);
+
+
         // TODO: This would be for a simultaneous effect, Offering attach should be handled differently
         foreach (var target in ActiveBattleTurn.Targets)
         {
-            // Right now, the character attack is handled elsewhere, so it will not have the "slash" or whatever stored here
-            // This is currently only for enemy attack
-            if (ActiveBattleTurn.AbilityEffect is not null)
-                target.TargetEntity.EntityNode.AddChild(ActiveBattleTurn.AbilityEffect.Instantiate());
+            // TODO: Add functionality to either spawn effects on all enemies at once, or one at a time (for example, Offering relic)
 
+            // Spawns the "slash" or whatever effect on the target
+            target.TargetEntity.EntityNode.AddChild(ActiveBattleTurn.AbilityEffect.Instantiate());
             DamageText(target);
 
             if (target.TargetEntity.EntityData is Enemy)
             {
-                DamageEnemy(target.TargetEntity.EntityData, target.DamageHP);   // Actually updates the damage
+                target.TargetEntity.EntityData.Hp -= target.DamageHP;   // Actually updates the damage
+                target.TargetEntity.EntityData.Mp -= target.DamageMP;
+                target.TargetEntity.EntityData.Hp += target.ReplenishHP;
+                target.TargetEntity.EntityData.Mp += target.ReplenishMP;
+
+                (target.TargetEntity.EntityNode as BaseEnemyAction).Attacked(null); // Trigger any behavior of the enemy according to the attack, etc...
                 DamagingEnemy?.Invoke(null, target.TargetEntity);
             }
             else if (target.TargetEntity.EntityData is Character)
@@ -154,12 +163,4 @@ public partial class BattleTurn : Node
         DatabaseHandler.UpdateCharacter(Target as Character);
         // TODO:  Need to update the BattleGameObject??
     }
-
-
-    private static void DamageEnemy(IBattleEntity Target, int DamageAmount)
-    {
-        Target.Hp -= DamageAmount;
-    }
-
-
 }
