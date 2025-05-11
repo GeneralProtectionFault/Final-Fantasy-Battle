@@ -32,27 +32,30 @@ public partial class NodeHelpers : Node
         var ScreenResolution = new Vector2(Viewport.GetVisibleRect().Size.X, Viewport.GetVisibleRect().Size.Y);
 
         // Start the fade to black
-        var fadeRect = new ColorRect
+        using(
+            var fadeRect = new ColorRect
+            {
+                Visible = true,
+                Size = ScreenResolution,
+                ZIndex = 10,    // Make sure the fade is on top
+                Position = GetViewportUpperLeftPosition()
+            }
+        )
         {
-            Visible = true,
-            Size = ScreenResolution,
-            ZIndex = 10,    // Make sure the fade is on top
-            Position = GetViewportUpperLeftPosition()
-        };
+            // Load the shader from the.gdshader file
+            var shader = (Shader)ResourceLoader.Load("res://Graphics/Shaders/fade_to_black.gdshader");
+            var shaderMaterial = new ShaderMaterial { Shader = shader };
 
-        // Load the shader from the.gdshader file
-        var shader = (Shader)ResourceLoader.Load("res://Graphics/Shaders/fade_to_black.gdshader");
-        var shaderMaterial = new ShaderMaterial { Shader = shader };
+            fadeRect.Material = shaderMaterial;
 
-        fadeRect.Material = shaderMaterial;
+            // This has to be added to the canvas, because it's rendered after (over top of) the main battle scene
+            SceneNode.AddChild(fadeRect);
+            fadeRect.Material.Set("shader_parameter/fade_progress", 0.254); // Set to initial value to make partially visible
 
-        // This has to be added to the canvas, because it's rendered after (over top of) the main battle scene
-        SceneNode.AddChild(fadeRect);
-        fadeRect.Material.Set("shader_parameter/fade_progress", 0.254); // Set to initial value to make partially visible
+            var FadeTween = CreateTween();
+            FadeTween.TweenProperty(fadeRect.Material, "shader_parameter/fade_progress", 1.0f, SecondsDuration);
 
-        var FadeTween = CreateTween();
-        FadeTween.TweenProperty(fadeRect.Material, "shader_parameter/fade_progress", 1.0f, SecondsDuration);
-
-        return FadeTween;
+            return FadeTween;
+        }
     }
 }
